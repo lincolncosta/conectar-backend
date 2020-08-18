@@ -6,8 +6,8 @@ class PessoaBase(BaseModel):
     email: str
     is_active: bool = True
     is_superuser: bool = False
-    nome: str = None
-    telefone: str = None
+    nome: t.Optional[str] = None
+    telefone: t.Optional[str] = None
 
 
 class PessoaOut(PessoaBase):

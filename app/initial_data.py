@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 
 from app.db.session import get_db
-from app.db.crud import create_user
-from app.db.schemas import UserCreate
+from app.db.crud import create_pessoa
+from app.db.schemas import PessoaCreate
 from app.db.session import SessionLocal
 
 
 def init() -> None:
     db = SessionLocal()
 
-    create_user(
+    create_pessoa(
         db,
-        UserCreate(
-            email="lucasemanuelss@hotmail.com",
-            password="123",
+        PessoaCreate(
+            email="email@email.com",
+            password="admin",
+            username="admin",
             is_active=True,
             is_superuser=True,
         ),
@@ -21,6 +22,6 @@ def init() -> None:
 
 
 if __name__ == "__main__":
-    print("Creating superuser lucasemanuelss@hotmail.com")
+    print("Creating superuser email@email.com")
     init()
     print("Superuser created")

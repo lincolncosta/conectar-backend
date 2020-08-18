@@ -6,6 +6,8 @@ from app.db.session import get_db
 from app.core import security
 from app.core.auth import authenticate_pessoa, sign_up_new_pessoa
 
+from typing import Optional
+
 auth_router = r = APIRouter()
 
 
@@ -39,7 +41,7 @@ async def login(
 @r.post("/signup")
 async def signup(
     db=Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends(),
-    email: str = Form(...), telefone: str = Form(...), nome: str = Form(...)
+    email: str = Form(...), telefone: Optional[str] = Form(...), nome: Optional[str] = Form(...)
 ):
     pessoa = sign_up_new_pessoa(db, username=form_data.username,
                                 password=form_data.password, telefone=telefone,

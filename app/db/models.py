@@ -42,7 +42,7 @@ class Pessoa(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     nome = Column(String)
     password = Column(String, nullable=False)
-    telefone = Column(String, nullable=False)
+    telefone = Column(String)
     username = Column(String, unique=True)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)

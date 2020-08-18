@@ -6,6 +6,8 @@ from app.db import models, schemas, session
 from app.db.crud import get_pessoa_by_email, create_pessoa, get_pessoa_by_username
 from app.core import security
 
+from typing import Optional
+
 
 async def get_current_pessoa(
     db=Depends(session.get_db), token: str = Depends(security.oauth2_scheme)
@@ -19,6 +21,7 @@ async def get_current_pessoa(
         payload = jwt.decode(
             token, security.SECRET_KEY, algorithms=[security.ALGORITHM]
         )
+        print(payload)
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
@@ -66,7 +69,8 @@ def authenticate_pessoa(db, email: str, password: str):
     return pessoa
 
 
-def sign_up_new_pessoa(db, email: str, password: str, telefone: str, nome: str, username: str):
+def sign_up_new_pessoa(db, email: str, password: str, username: str, telefone: Optional[str] = None,
+                       nome: Optional[str] = None):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, username)
 
