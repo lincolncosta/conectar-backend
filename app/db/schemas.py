@@ -1,11 +1,14 @@
 from pydantic import BaseModel
 import typing as t
+from datetime import date
 
 
 class PessoaBase(BaseModel):
+    senha: str
+    data_nascimento: t.Optional[date] = None
     email: str
-    is_active: bool = True
-    is_superuser: bool = False
+    ativo: bool = True
+    superusuario: bool = False
     nome: t.Optional[str] = None
     telefone: t.Optional[str] = None
 
@@ -15,15 +18,14 @@ class PessoaOut(PessoaBase):
 
 
 class PessoaCreate(PessoaBase):
-    username: str
-    password: str
+    usuario: str
 
     class Config:
         orm_mode = True
 
 
 class PessoaEdit(PessoaBase):
-    password: t.Optional[str] = None
+    senha: t.Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -43,4 +45,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str = None
-    permissions: str = "user"
+    permission: str = "user"

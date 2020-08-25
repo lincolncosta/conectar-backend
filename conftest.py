@@ -98,15 +98,16 @@ def get_password_hash() -> str:
 
 
 @pytest.fixture
-def test_user(test_db) -> models.User:
+def test_user(test_db) -> models.Pessoa:
     """
     Make a test user in the database
     """
 
-    user = models.User(
+    user = models.Pessoa(
         email="fake@email.com",
-        hashed_password=get_password_hash(),
-        is_active=True,
+        senha=get_password_hash(),
+        usuario="usuario001"
+        ativo=True,
     )
     test_db.add(user)
     test_db.commit()
@@ -114,15 +115,15 @@ def test_user(test_db) -> models.User:
 
 
 @pytest.fixture
-def test_superuser(test_db) -> models.User:
+def test_superuser(test_db) -> models.Pessoa:
     """
     Superuser for testing
     """
 
-    user = models.User(
+    user = models.Pessoa(
         email="fakeadmin@email.com",
-        hashed_password=get_password_hash(),
-        is_superuser=True,
+        senha=get_password_hash(),
+        superusuario=True,
     )
     test_db.add(user)
     test_db.commit()
@@ -140,8 +141,8 @@ def user_token_headers(
     monkeypatch.setattr(security, "verify_password", verify_password_mock)
 
     login_data = {
-        "username": test_user.email,
-        "password": test_password,
+        "usuario": test_user.email,
+        "senha": test_password,
     }
     r = client.post("/api/token", data=login_data)
     tokens = r.json()
@@ -157,8 +158,8 @@ def superuser_token_headers(
     monkeypatch.setattr(security, "verify_password", verify_password_mock)
 
     login_data = {
-        "username": test_superuser.email,
-        "password": test_password,
+        "usuario": test_superuser.email,
+        "senha": test_password,
     }
     r = client.post("/api/token", data=login_data)
     tokens = r.json()

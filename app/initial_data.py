@@ -13,10 +13,10 @@ def init() -> None:
         db,
         PessoaCreate(
             email="email@email.com",
-            password="admin",
-            username="admin",
-            is_active=True,
-            is_superuser=True,
+            senha="admin",
+            usuario="admin",
+            ativo=True,
+            superusuario=True,
         ),
     )
 

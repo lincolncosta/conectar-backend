@@ -10,7 +10,7 @@ def get_pessoa(db: Session, pessoa_id: int):
     pessoa = db.query(models.Pessoa)\
         .filter(models.Pessoa.id == pessoa_id).first()
     if not pessoa:
-        raise HTTPException(status_code=404, detail="pessoa not found")
+        raise HTTPException(status_code=404, detail="pessoa não encontrada")
     return pessoa
 
 
@@ -18,8 +18,8 @@ def get_pessoa_by_email(db: Session, email: str) -> schemas.PessoaBase:
     return db.query(models.Pessoa).filter(models.Pessoa.email == email).first()
 
 
-def get_pessoa_by_username(db: Session, username: str) -> schemas.PessoaBase:
-    return db.query(models.Pessoa).filter(models.Pessoa.username == username)\
+def get_pessoa_by_username(db: Session, usuario: str) -> schemas.PessoaBase:
+    return db.query(models.Pessoa).filter(models.Pessoa.usuario == usuario)\
         .first()
 
 
@@ -30,16 +30,20 @@ def get_pessoas(
 
 
 def create_pessoa(db: Session, pessoa: schemas.PessoaCreate):
-    password = get_password_hash(pessoa.password)
-    db_pessoa = models.Pessoa(
-        nome=pessoa.nome,
-        email=pessoa.email,
-        telefone=pessoa.telefone,
-        username=pessoa.username,
-        is_active=pessoa.is_active,
-        is_superuser=pessoa.is_superuser,
-        password=password,
-    )
+    password = get_password_hash(pessoa.senha)
+    try:
+        db_pessoa = models.Pessoa(
+            nome=pessoa.nome,
+            email=pessoa.email,
+            telefone=pessoa.telefone,
+            usuario=pessoa.usuario,
+            ativo=pessoa.ativo,
+            superusuario=pessoa.superusuario,
+            senha=password,
+            data_nascimento=pessoa.data_nascimento
+        )
+    except Exception as e:
+        print(e)
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)
@@ -50,7 +54,7 @@ def delete_pessoa(db: Session, pessoa_id: int):
     pessoa = get_pessoa(db, pessoa_id)
     if not pessoa:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
-                            detail="pessoa not found")
+                            detail="pessoa não encontrada")
     db.delete(pessoa)
     db.commit()
     return pessoa
@@ -59,15 +63,40 @@ def delete_pessoa(db: Session, pessoa_id: int):
 def edit_pessoa(
     db: Session, pessoa_id: int, pessoa: schemas.PessoaEdit
 ) -> schemas.Pessoa:
+    '''
+        Edits pessoa on database.
+
+        Tries to find the person in the database, if it finds, updates each field
+        that was send with new information to the database.
+
+        Args:
+            db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
+            pessoa_id: Integer representing the pessoa id. Integer.
+            pessoa: New data to use on update of pessoa. Schema from PessoaEdit.
+
+        Returns:
+            A dict of pessoa with the updated values. For example:
+            old_pessoa: {
+                id: 1,
+                nome: "Lucas"
+            }
+            db_pessoa: {
+                id: 1,
+                nome: "Luis"
+            }
+
+        Raises:
+            HTTPException: No person corresponds to pessoa_id in the database.
+    '''
     db_pessoa = get_pessoa(db, pessoa_id)
     if not db_pessoa:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
-                            detail="pessoa not found")
+                            detail="pessoa não encontrada")
     update_data = pessoa.dict(exclude_unset=True)
 
-    if "password" in update_data:
-        update_data["password"] = get_password_hash(pessoa.password)
-        del update_data["password"]
+    if "senha" in update_data:
+        update_data["senha"] = get_password_hash(pessoa.senha)
+        del update_data["senha"]
 
     for key, value in update_data.items():
         setattr(db_pessoa, key, value)
