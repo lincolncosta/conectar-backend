@@ -7,7 +7,7 @@ from . import schemas
 from app.core.security.passwords import get_password_hash
 
 
-def get_pessoa(db: Session, pessoa_id: int):
+def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaBase:
     pessoa = db.query(models.Pessoa)\
         .filter(models.Pessoa.id == pessoa_id).first()
     if not pessoa:

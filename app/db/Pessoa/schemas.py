@@ -8,10 +8,12 @@ class PessoaBase(BaseModel):
     data_nascimento: t.Optional[date] = None
     email: str
     ativo: bool = True
-    superusuario: bool = False
+    # superusuario: bool = False
     nome: t.Optional[str] = None
     telefone: t.Optional[str] = None
-
+    colaborador_id: t.Optional[int] = None
+    idealizador_id: t.Optional[int] = None
+    aliado_id: t.Optional[int] = None
 
 class PessoaOut(PessoaBase):
     pass

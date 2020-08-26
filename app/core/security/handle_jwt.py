@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 from .passwords import ALGORITHM, SECRET_KEY
 
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
 class OAuth2PasswordCookie(OAuth2PasswordBearer):
     """OAuth2 password flow with token in a httpOnly cookie.
     """
