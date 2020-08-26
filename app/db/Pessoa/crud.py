@@ -2,8 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from . import models, schemas
-from app.core.security import get_password_hash
+from db import models
+from . import schemas
+from app.core.security.passwords import get_password_hash
 
 
 def get_pessoa(db: Session, pessoa_id: int):

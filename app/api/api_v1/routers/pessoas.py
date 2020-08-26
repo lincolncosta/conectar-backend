@@ -2,14 +2,14 @@ from fastapi import APIRouter, Request, Depends, Response, encoders
 import typing as t
 
 from app.db.session import get_db
-from app.db.crud import (
+from app.db.Pessoa.crud import (
     get_pessoas,
     get_pessoa,
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
 )
-from app.db.schemas import PessoaCreate, PessoaEdit, Pessoa, PessoaOut
+from app.db.Pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa, PessoaOut
 from app.core.auth import get_current_active_pessoa, get_current_active_superuser
 
 pessoas_router = r = APIRouter()

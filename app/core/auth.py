@@ -2,13 +2,16 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from jwt import PyJWTError
 
-from app.db import models, schemas, session
-from app.db.crud import (
+from app.db import models, session
+
+from app.db.Pessoa import schemas
+
+from app.db.Pessoa.crud import (
     get_pessoa_by_email,
     create_pessoa,
     get_pessoa_by_username,
 )
-from app.core import security
+from app.core.security import handle_jwt, passwords
 
 from typing import Optional
 
@@ -16,7 +19,7 @@ from datetime import date
 
 
 async def get_current_pessoa(
-    db=Depends(session.get_db), token: str = Depends(security.oauth2_scheme)
+    db=Depends(session.get_db), token: str = Depends(handle_jwt.oauth2_scheme)
 ):
     """
         Get the current logged in user.
@@ -25,7 +28,7 @@ async def get_current_pessoa(
 
         Args:
             db: Database Local Session. sqlalchemy.orm.sessionmaker instance
-            token: The JWT token using the oauth2_scheme from security
+            token: The JWT token using the oauth2_scheme from security.passwords
 
         Returns:
             A Pessoa object from database. Each object is represented as a
@@ -48,7 +51,7 @@ async def get_current_pessoa(
     )
     try:
         payload = jwt.decode(
-            token, security.SECRET_KEY, algorithms=[security.ALGORITHM]
+            token, passwords.SECRET_KEY, algorithms=[passwords.ALGORITHM]
         )
         email: str = payload.get("sub")
         if email is None:
@@ -90,11 +93,11 @@ def authenticate_pessoa(db, email: str, senha: str):
     if not pessoa:
         if not pessoa_username:
             return username_message
-        if not security.verify_password(senha, pessoa_username.senha):
+        if not passwords.verify_password(senha, pessoa_username.senha):
             return password_message
         else:
             return pessoa_username
-    if not security.verify_password(senha, pessoa.senha):
+    if not passwords.verify_password(senha, pessoa.senha):
         return password_message
     return pessoa
 

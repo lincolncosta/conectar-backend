@@ -2,7 +2,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
 
 from app.db.session import get_db
-from app.core import security
+from app.core.security import handle_jwt
 from app.core.auth import authenticate_pessoa, sign_up_new_pessoa
 
 from typing import Optional
@@ -54,13 +54,13 @@ async def login(
         )
 
     access_token_expires = timedelta(
-        minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
     )
     if pessoa.superusuario:
         permissions = "admin"
     else:
         permissions = "user"
-    access_token = security.create_access_token(
+    access_token = handle_jwt.create_access_token(
         data={"sub": pessoa.email, "permissions": permissions},
         expires_delta=access_token_expires,
     ).decode('utf-8')
@@ -112,13 +112,13 @@ async def signup(
         )
 
     access_token_expires = timedelta(
-        minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
     )
     if pessoa.superusuario:
         permissions = "admin"
     else:
         permissions = "user"
-    access_token = security.create_access_token(
+    access_token = handle_jwt.create_access_token(
         data={"sub": pessoa.email, "permissions": permissions},
         expires_delta=access_token_expires,
     ).decode('utf-8')

@@ -24,6 +24,7 @@ PessoaProjeto = Table(
     Column("papel_id", Integer, ForeignKey("tb_papel.id")),
     Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
     Column("tipo_acordo_id", Integer, ForeignKey("tb_tipo_acordo.id")),
+
 )
 
 ExperienciaArea = Table(
@@ -126,7 +127,7 @@ class Pessoa(Base):
 
     aliado_id = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'))
     aliado = relationship("Pessoa", foreign_keys=[aliado_id], uselist=False)
-    
+
     # colaborador = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'), nullable=True)
     # colaborador_rel = relationship(
     #     "Pessoa", backref=backref("colaborador", remote_side=[id], uselist=False)
