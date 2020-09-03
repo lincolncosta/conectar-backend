@@ -27,12 +27,28 @@ PessoaProjeto = Table(
 
 )
 
-ExperienciaArea = Table(
-    "tb_experiencia_area",
+ExperienciaProfArea = Table(
+    "tb_exp_profissional_area",
     Base.metadata,
     Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
-    Column("experiencia_id", ForeignKey("tb_experiencia.id"), primary_key=True),
+    Column("experiencia_id", ForeignKey("tb_experiencia_profissional.id"), primary_key=True),
+)
+
+ExperienciaProjArea = Table(
+    "tb_exp_projeto_area",
+    Base.metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
+    Column("experiencia_id", ForeignKey("tb_experiencia_projetos.id"), primary_key=True),
+)
+
+ExperienciaAcadArea = Table(
+    "tb_exp_academica_area",
+    Base.metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
+    Column("experiencia_id", ForeignKey("tb_experiencia_academica.id"), primary_key=True),
 )
 
 PessoaArea = Table(
@@ -165,9 +181,9 @@ class Projeto(Base):
     # monetizacao = Column(String, nullable=True)
 
 
-class Experiencia(Base):
+class ExperienciaProf(Base):
     """
-        Represents table "tb_experiencia"
+        Represents table "tb_experiencia_profissional"
 
 
         1. Many to Many relationship - Area
@@ -186,18 +202,92 @@ class Experiencia(Base):
             data_inicio: Date
             data_fim: Date
             pessoa_id: Integer, Foreign Key
+            cargo: String
             areas: Relationship
     """
 
-    __tablename__ = "tb_experiencia"
+    __tablename__ = "tb_experiencia_profissional"
 
     id = Column(Integer, primary_key=True, index=True)
-    descricao = Column(String)
+    descricao = Column(String, nullable=False)
     organizacao = Column(String)
-    data_inicio = Column(Date)
-    data_fim = Column(Date, nullable=True)
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    areas = relationship("Area", secondary=ExperienciaArea)
+    data_inicio = Column(Date, nullable=False)
+    data_fim = Column(Date)
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
+    cargo = Column(String)
+    areas = relationship("Area", secondary=ExperienciaProfArea)
+
+
+class ExperienciaAcad(Base):
+    """
+        Represents table "tb_experiencia_academica"
+
+
+        1. Many to Many relationship - Area
+        Many experiencias may be in may Areas
+        Many Areas may have many experiences
+
+        2. One to Many relationship - Pessoa
+        One Pessoa can have many Experience
+        One experience can only have one Pessoa
+
+
+        Attributes:
+            id: Integer, Primary key
+            descricao: String
+            instituicao: String - Institution name the person studied
+            data_inicio: Date
+            data_fim: Date
+            pessoa_id: Integer, Foreign Key
+            escolaridade: String - education level, e.g. high school or college.
+            areas: Relationship
+    """
+
+    __tablename__ = "tb_experiencia_academica"
+
+    id = Column(Integer, primary_key=True, index=True)
+    descricao = Column(String, nullable=False)
+    instituicao = Column(String)
+    data_inicio = Column(Date, nullable=False)
+    data_fim = Column(Date)
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
+    escolaridade = Column(String)
+    areas = relationship("Area", secondary=ExperienciaAcadArea)
+
+
+class ExperienciaProj(Base):
+    """
+        Represents table "tb_experiencia_projetos"
+
+
+        1. Many to Many relationship - Area
+        Many experiencias may be in may Areas
+        Many Areas may have many experiences
+
+        2. One to Many relationship - Pessoa
+        One Pessoa can have many Experience
+        One experience can only have one Pessoa
+
+
+        Attributes:
+            id: Integer, Primary key
+            nome: String
+            descricao: String
+            data_inicio: Date
+            data_fim: Date
+            pessoa_id: Integer, Foreign Key
+            areas: Relationship
+    """
+
+    __tablename__ = "tb_experiencia_projetos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False)
+    descricao = Column(String, nullable=False)
+    data_inicio = Column(Date, nullable=False)
+    data_fim = Column(Date)
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
+    areas = relationship("Area", secondary=ExperienciaProjArea)
 
 
 class Area(Base):
