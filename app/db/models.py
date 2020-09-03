@@ -129,7 +129,9 @@ class Pessoa(Base):
     ativo = Column(Boolean, default=True)
     superusuario = Column(Boolean, default=False)
 
-    experiencia = relationship("Experiencia")
+    experiencia_profissional = relationship("ExperienciaProf")
+    experiencia_projetos = relationship("ExperienciaProj")
+    experiencia_academica = relationship("ExperienciaAcad")
     projeto_pessoa = relationship("Projeto", secondary=PessoaProjeto)
     areas = relationship("Area", secondary=PessoaArea)
 
