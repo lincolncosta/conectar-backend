@@ -133,7 +133,7 @@ class Pessoa(Base):
     areas = relationship("Area", secondary=PessoaArea)
 
     colaborador = Column(Boolean, default=False)
-    idealizador = Column(Boolean, default=True)
+    idealizador = Column(Boolean, default=False)
     aliado = Column(Boolean, default=False)
 
 

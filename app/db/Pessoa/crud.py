@@ -7,7 +7,7 @@ from . import schemas
 from app.core.security.passwords import get_password_hash
 
 
-def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaBase:
+def get_pessoa(db: Session, pessoa_id: int) -> schemas.Pessoa:
     pessoa = db.query(models.Pessoa)\
         .filter(models.Pessoa.id == pessoa_id).first()
     if not pessoa:
@@ -15,11 +15,11 @@ def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaBase:
     return pessoa
 
 
-def get_pessoa_by_email(db: Session, email: str) -> schemas.PessoaBase:
+def get_pessoa_by_email(db: Session, email: str) -> schemas.Pessoa:
     return db.query(models.Pessoa).filter(models.Pessoa.email == email).first()
 
 
-def get_pessoa_by_username(db: Session, usuario: str) -> schemas.PessoaBase:
+def get_pessoa_by_username(db: Session, usuario: str) -> schemas.Pessoa:
     return db.query(models.Pessoa).filter(models.Pessoa.usuario == usuario)\
         .first()
 
@@ -30,7 +30,7 @@ def get_pessoas(
     return db.query(models.Pessoa).offset(skip).limit(limit).all()
 
 
-def create_pessoa(db: Session, pessoa: schemas.PessoaCreate):
+def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
     password = get_password_hash(pessoa.senha)
     try:
         db_pessoa = models.Pessoa(
