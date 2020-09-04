@@ -106,12 +106,9 @@ class Pessoa(Base):
             telefone: String
             ativo: Boolean
             superusuario: Boolean
-            colaborador_id: Integer, Foreign Key
-            colaborador_rel: Relationship
-            idealizador_id: Integer, Foreign Key
-            idealizador_rel: Relationship
-            aliado_id: Integer, Foreign Key
-            aliado_rel: Relationship
+            colaborador: Boolean
+            idealizador: Boolean
+            aliado: Boolean
 
     """
 
@@ -135,31 +132,9 @@ class Pessoa(Base):
     projeto_pessoa = relationship("Projeto", secondary=PessoaProjeto)
     areas = relationship("Area", secondary=PessoaArea)
 
-    # Recursive relationships
-
-    colaborador_id = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'))
-    colaborador = relationship("Pessoa", uselist=False, foreign_keys=[colaborador_id])
-
-    idealizador_id = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'))
-    idealizador = relationship("Pessoa", uselist=False, foreign_keys=[idealizador_id])
-
-    aliado_id = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'))
-    aliado = relationship("Pessoa", foreign_keys=[aliado_id], uselist=False)
-
-    # colaborador = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'), nullable=True)
-    # colaborador_rel = relationship(
-    #     "Pessoa", backref=backref("colaborador", remote_side=[id], uselist=False)
-    # )
-
-    # idealizador = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'), nullable=True)
-    # idealizador_rel = relationship(
-    #     "Pessoa", backref=backref("idealizador", remote_side=[id], uselist=False)
-    # )
-
-    # aliado = Column(Integer, ForeignKey("tb_pessoa.id", ondelete='cascade'), nullable=True)
-    # aliado_rel = relationship(
-    #     "Pessoa", backref=backref("aliado", remote_side=[id], uselist=False)
-    # )
+    colaborador = Column(Boolean, default=False)
+    idealizador = Column(Boolean, default=True)
+    aliado = Column(Boolean, default=False)
 
 
 class Projeto(Base):
