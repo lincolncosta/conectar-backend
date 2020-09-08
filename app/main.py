@@ -3,12 +3,15 @@ from starlette.requests import Request
 import uvicorn
 
 from app.api.api_v1.routers.pessoas import pessoas_router
+from app.api.api_v1.routers.experiencia.profissional import (
+    experiencia_prof_router,
+)
+from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
+from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_pessoa
-from app.core.celery_app import celery_app
-from app import tasks
 
 
 app = FastAPI(
@@ -24,18 +27,6 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 
-@app.get("/api/v1")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/api/v1/task")
-async def example_task():
-    celery_app.send_task("app.tasks.example_task", args=["Hello World"])
-
-    return {"message": "success"}
-
-
 # Routers
 app.include_router(
     pessoas_router,
@@ -43,6 +34,28 @@ app.include_router(
     tags=["pessoas"],
     dependencies=[Depends(get_current_active_pessoa)],
 )
+
+app.include_router(
+    experiencia_prof_router,
+    prefix="/api/v1",
+    tags=["experiencia profissional"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
+app.include_router(
+    experiencia_acad_router,
+    prefix="/api/v1",
+    tags=["experiencia academica"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
+app.include_router(
+    experiencia_proj_router,
+    prefix="/api/v1",
+    tags=["experiencia projeto"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 if __name__ == "__main__":

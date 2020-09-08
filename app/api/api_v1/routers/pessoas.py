@@ -1,22 +1,27 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from app.db.session import get_db
-from app.db.Pessoa.crud import (
+from app.db.pessoa.crud import (
     get_pessoas,
     get_pessoa,
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
 )
-from app.db.Pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa, PessoaOut
-from app.core.auth import get_current_active_pessoa, get_current_active_superuser
+from app.db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa
+from app.core.auth import (
+    get_current_active_pessoa,
+    get_current_active_superuser,
+)
 
 pessoas_router = r = APIRouter()
 
 
 @r.get(
-    "/pessoas", response_model=t.List[Pessoa], response_model_exclude_none=True,
+    "/pessoas",
+    response_model=t.List[Pessoa],
+    response_model_exclude_none=True,
 )
 async def pessoas_list(
     response: Response,
@@ -41,13 +46,15 @@ async def pessoa_me(current_pessoa=Depends(get_current_active_pessoa)):
 
 
 @r.get(
-    "/pessoas/{pessoa_id}", response_model=Pessoa, response_model_exclude_none=True,
+    "/pessoas/{pessoa_id}",
+    response_model=Pessoa,
+    response_model_exclude_none=True,
 )
 async def pessoa_details(
     request: Request,
     pessoa_id: int,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_superuser),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get any pessoa details
@@ -64,7 +71,7 @@ async def pessoa_create(
     request: Request,
     pessoa: PessoaCreate,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_superuser),
+    # current_pessoa=Depends(get_current_active_superuser),
 ):
     """
     Create a new pessoa
@@ -73,31 +80,81 @@ async def pessoa_create(
 
 
 @r.put(
-    "/pessoas/{pessoa_id}", response_model=Pessoa, response_model_exclude_none=True
+    "/pessoas",
+    response_model=PessoaEdit,
+    response_model_exclude_none=True,
 )
 async def pessoa_edit(
     request: Request,
-    pessoa_id: int,
     pessoa: PessoaEdit,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Update current logged in pessoa
+    """
+    try:
+        pessoa_id = current_pessoa.id
+    except Exception as e:
+        print(e)
+
+    return edit_pessoa(db, pessoa_id, pessoa)
+
+
+@r.delete(
+    "/pessoas",
+    response_model=Pessoa,
+    response_model_exclude_none=True,
+)
+async def pessoa_delete(
+    request: Request,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Delete current logged pessoa
+    """
+    try:
+        pessoa_id = current_pessoa.id
+    except Exception as e:
+        print(e)
+
+    return delete_pessoa(db, pessoa_id)
+
+
+@r.put(
+    "/admin/pessoas/{pessoa_id}",
+    response_model=Pessoa,
+    response_model_exclude_none=True,
+    tags=["admin"],
+)
+async def pessoa_edit_admin(
+    request: Request,
+    pessoa: PessoaEdit,
+    pessoa_id: int,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_superuser),
 ):
     """
-    Update existing pessoa
+    Update data in pessoa performed by admin user
     """
     return edit_pessoa(db, pessoa_id, pessoa)
 
 
 @r.delete(
-    "/pessoas/{pessoa_id}", response_model=Pessoa, response_model_exclude_none=True
+    "admin/pessoas/{pessoa_id}",
+    response_model=Pessoa,
+    response_model_exclude_none=True,
+    tags=["admin"],
 )
-async def pessoa_delete(
+async def pessoa_delete_admin(
     request: Request,
     pessoa_id: int,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_superuser),
 ):
     """
-    Delete existing user
+    Delete pessoa performed by admin user
     """
+
     return delete_pessoa(db, pessoa_id)

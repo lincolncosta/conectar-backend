@@ -5,14 +5,16 @@ from app.db.session import get_db
 from app.core.security import handle_jwt
 from app.core.auth import authenticate_pessoa, sign_up_new_pessoa
 
-from typing import Optional
+import typing as t
 
 from datetime import timedelta, date
+
+from app.db.pessoa import schemas
 
 auth_router = r = APIRouter()
 
 
-@r.post("/token")
+@r.post("/token", response_model=t.Dict[str, schemas.Pessoa], response_model_exclude_none=True)
 async def login(
     response: Response,
     db=Depends(get_db),
@@ -34,7 +36,7 @@ async def login(
             form_data: dict containing username and password
 
         Returns:
-            A dict with "messsage"
+            A dict in the shape of {"pessoa": schemas.Pessoa}
 
         Raises:
             HTTPException: Invalid credentials
@@ -66,16 +68,78 @@ async def login(
     ).decode('utf-8')
 
     response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
+    return {"pessoa": pessoa}
 
-    return {"detail": "Autenticado"}
+# TODO REFRESH TOKEN
+# @r.post("/refresh_token", response_model=t.Dict[str, schemas.Pessoa], response_model_exclude_none=True)
+# async def refresh_token(
+#     response: Response,
+#     db=Depends(get_db),
+#     form_data: OAuth2PasswordRequestForm = Depends()
+# ):
+#     '''
+#         Logs user in if authentication data is correct.
+
+#         Creates jwt token and append it to response as cookie and can
+#         only be accessed by HTTP.
 
 
-@r.post("/signup")
+#         TODO Set secure=True on response.cookie
+
+
+#         Args:
+#             response: Response to be sent with cookie from fastapi
+#             db: Database local session
+#             form_data: dict containing username and password
+
+#         Returns:
+#             A dict in the shape of {"pessoa": schemas.Pessoa}
+
+#         Raises:
+#             HTTPException: Invalid credentials
+#     '''
+#     pessoa = authenticate_pessoa(db, form_data.username, form_data.password)
+
+#     try:
+#         message = pessoa["message"]
+#     except Exception as e:
+#         message = False
+
+#     if message:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=message,
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+
+#     access_token_expires = timedelta(
+#         minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
+#     )
+#     if pessoa.superusuario:
+#         permissions = "admin"
+#     else:
+#         permissions = "user"
+#     access_token = handle_jwt.create_access_token(
+#         data={"sub": pessoa.email, "permissions": permissions},
+#         expires_delta=access_token_expires,
+#     ).decode('utf-8')
+
+#     response.set_cookie(key="jid", value=f"{access_token}", httponly=True, secure=True)
+
+#     return {"pessoa": pessoa}
+
+
+@r.post("/logout")
+async def logout(response: Response):
+    response.set_cookie(key="jid", value="", httponly=True)
+    return {"message": "deslogado"}
+
+@r.post("/signup", response_model=t.Dict[str, schemas.Pessoa])
 async def signup(
     response: Response,
     db=Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends(),
-    email: str = Form(...), telefone: Optional[str] = Form(None),
-    nome: Optional[str] = Form(None), data_nascimento: Optional[date] = Form(None)
+    email: str = Form(...), telefone: t.Optional[str] = Form(None),
+    nome: t.Optional[str] = Form(None), data_nascimento: t.Optional[date] = Form(None)
 ):
     '''
         Sign up user function
@@ -123,6 +187,6 @@ async def signup(
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    response.set_cookie(key="jid", value=f"Bearer {access_token}", httponly=True, secure=True)
+    response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
 
-    return {"detail": "Autenticado"}
+    return {"pessoa": pessoa}

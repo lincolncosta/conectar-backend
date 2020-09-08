@@ -8,18 +8,18 @@ class PessoaBase(BaseModel):
     data_nascimento: t.Optional[date] = None
     email: str
     ativo: bool = True
-    # superusuario: bool = False
     nome: t.Optional[str] = None
     telefone: t.Optional[str] = None
-    colaborador_id: t.Optional[int] = None
-    idealizador_id: t.Optional[int] = None
-    aliado_id: t.Optional[int] = None
+    colaborador: t.Optional[bool] = None
+    idealizador: t.Optional[bool] = None
+    aliado: t.Optional[bool] = None
 
 class PessoaOut(PessoaBase):
     pass
 
 
 class PessoaCreate(PessoaBase):
+    superusuario: t.Optional[bool] = False
     usuario: str
 
     class Config:
@@ -28,6 +28,7 @@ class PessoaCreate(PessoaBase):
 
 class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
+    email: t.Optional[str] = None
 
     class Config:
         orm_mode = True
