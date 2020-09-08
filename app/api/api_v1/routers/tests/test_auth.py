@@ -1,4 +1,4 @@
-from app.core import security
+from app.core.security import passwords
 
 # Monkey patch function we can use to shave a second off our tests by skipping the password hashing check
 def verify_password_mock(first: str, second: str):
@@ -7,7 +7,7 @@ def verify_password_mock(first: str, second: str):
 
 def test_login(client, test_user, monkeypatch):
     # Patch the test to skip password hashing check for speed
-    monkeypatch.setattr(security, "verify_password", verify_password_mock)
+    monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
     response = client.post(
         "/api/token",
@@ -20,7 +20,7 @@ def test_signup(client, monkeypatch):
     def get_password_hash_mock(first: str, second: str):
         return True
 
-    monkeypatch.setattr(security, "get_password_hash", get_password_hash_mock)
+    monkeypatch.setattr(passwords, "get_password_hash", get_password_hash_mock)
 
     response = client.post(
         "/api/signup",
@@ -31,7 +31,7 @@ def test_signup(client, monkeypatch):
 
 def test_resignup(client, test_user, monkeypatch):
     # Patch the test to skip password hashing check for speed
-    monkeypatch.setattr(security, "verify_password", verify_password_mock)
+    monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
     response = client.post(
         "/api/signup",
@@ -48,7 +48,7 @@ def test_wrong_password(client, test_db, test_user, test_password, monkeypatch):
         return False
 
     monkeypatch.setattr(
-        security, "verify_password", verify_password_failed_mock
+        passwords, "verify_password", verify_password_failed_mock
     )
 
     response = client.post(
