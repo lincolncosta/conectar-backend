@@ -2,13 +2,16 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from jwt import PyJWTError
 
-from app.db import models, schemas, session
-from app.db.crud import (
+from app.db import models, session
+
+from app.db.pessoa import schemas
+
+from app.db.pessoa.crud import (
     get_pessoa_by_email,
     create_pessoa,
     get_pessoa_by_username,
 )
-from app.core import security
+from app.core.security import handle_jwt, passwords
 
 from typing import Optional
 
@@ -16,30 +19,30 @@ from datetime import date
 
 
 async def get_current_pessoa(
-    db=Depends(session.get_db), token: str = Depends(security.oauth2_scheme)
+    db=Depends(session.get_db), token: str = Depends(handle_jwt.oauth2_scheme)
 ):
     """
-        Get the current logged in user.
+    Get the current logged in user.
 
-        Validates the jwt token and returns the user data from database.
+    Validates the jwt token and returns the user data from database.
 
-        Args:
-            db: Database Local Session. sqlalchemy.orm.sessionmaker instance
-            token: The JWT token using the oauth2_scheme from security
+    Args:
+        db: Database Local Session. sqlalchemy.orm.sessionmaker instance
+        token: The JWT token using the oauth2_scheme from security.passwords
 
-        Returns:
-            A Pessoa object from database. Each object is represented as a
-            dict.
-            For example:
-            {
-                id: 1,
-                nome: Lucas,
-                email: lucas@email.com
-            }
+    Returns:
+        A Pessoa object from database. Each object is represented as a
+        dict.
+        For example:
+        {
+            id: 1,
+            nome: Lucas,
+            email: lucas@email.com
+        }
 
-        Raises:
-            credentials_exception: HTTPException status 401. If token is invalid or is not
-            present
+    Raises:
+        credentials_exception: HTTPException status 401. If token is invalid or is not
+        present
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -48,13 +51,17 @@ async def get_current_pessoa(
     )
     try:
         payload = jwt.decode(
-            token, security.SECRET_KEY, algorithms=[security.ALGORITHM]
+            token, passwords.SECRET_KEY, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
         )
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
         permissions: str = payload.get("permissions")
         token_data = schemas.TokenData(email=email, permissions=permissions)
+
+    except jwt.exceptions.ExpiredSignatureError as expired:
+        print("Expired")
+        raise credentials_exception
     except PyJWTError:
         raise credentials_exception
     pessoa = get_pessoa_by_email(db, token_data.email)
@@ -76,7 +83,8 @@ async def get_current_active_superuser(
 ) -> models.Pessoa:
     if not current_pessoa.superusuario:
         raise HTTPException(
-            status_code=403, detail="A pessoa não tem os privilégios necessarios"
+            status_code=403,
+            detail="A pessoa não tem os privilégios necessarios",
         )
     return current_pessoa
 
@@ -90,11 +98,11 @@ def authenticate_pessoa(db, email: str, senha: str):
     if not pessoa:
         if not pessoa_username:
             return username_message
-        if not security.verify_password(senha, pessoa_username.senha):
+        if not passwords.verify_password(senha, pessoa_username.senha):
             return password_message
         else:
             return pessoa_username
-    if not security.verify_password(senha, pessoa.senha):
+    if not passwords.verify_password(senha, pessoa.senha):
         return password_message
     return pessoa
 
@@ -106,7 +114,7 @@ def sign_up_new_pessoa(
     usuario: str,
     telefone: Optional[str] = None,
     nome: Optional[str] = None,
-    data_nascimento: Optional[date] = None
+    data_nascimento: Optional[date] = None,
 ):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, usuario)
@@ -123,7 +131,7 @@ def sign_up_new_pessoa(
             senha=senha,
             usuario=usuario,
             ativo=True,
-            superusuario=False,
+            superusuario=True,
         ),
     )
     return new_pessoa

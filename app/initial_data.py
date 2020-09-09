@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from app.db.session import get_db
-from app.db.crud import create_pessoa
-from app.db.schemas import PessoaCreate
+# from app.db.session import get_db
+from app.db.pessoa.crud import create_pessoa
+from app.db.pessoa.schemas import PessoaCreate
 from app.db.session import SessionLocal
 
 

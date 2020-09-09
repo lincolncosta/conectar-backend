@@ -5,7 +5,8 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 from fastapi.testclient import TestClient
 import typing as t
 
-from app.core import config, security
+from app.core import config
+from app.core.security import passwords
 from app.db.session import Base, get_db
 from app.db import models
 from app.main import app
@@ -106,7 +107,7 @@ def test_user(test_db) -> models.Pessoa:
     user = models.Pessoa(
         email="fake@email.com",
         senha=get_password_hash(),
-        usuario="usuario001"
+        usuario="usuario001",
         ativo=True,
     )
     test_db.add(user)
@@ -138,7 +139,7 @@ def verify_password_mock(first: str, second: str) -> bool:
 def user_token_headers(
     client: TestClient, test_user, test_password, monkeypatch
 ) -> t.Dict[str, str]:
-    monkeypatch.setattr(security, "verify_password", verify_password_mock)
+    monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
     login_data = {
         "usuario": test_user.email,
@@ -155,7 +156,7 @@ def user_token_headers(
 def superuser_token_headers(
     client: TestClient, test_superuser, test_password, monkeypatch
 ) -> t.Dict[str, str]:
-    monkeypatch.setattr(security, "verify_password", verify_password_mock)
+    monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
     login_data = {
         "usuario": test_superuser.email,
