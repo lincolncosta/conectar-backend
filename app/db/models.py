@@ -180,6 +180,7 @@ class ExperienciaProf(Base):
             data_fim: Date
             pessoa_id: Integer, Foreign Key
             cargo: String
+            vinculo: String - PJ, PF, Freelancer, etc.
             areas: Relationship
     """
 
@@ -192,6 +193,7 @@ class ExperienciaProf(Base):
     data_fim = Column(Date)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
     cargo = Column(String)
+    vinculo = Column(String)
     areas = relationship("Area", secondary=ExperienciaProfArea)
 
 
@@ -217,6 +219,8 @@ class ExperienciaAcad(Base):
             data_fim: Date
             pessoa_id: Integer, Foreign Key
             escolaridade: String - education level, e.g. high school or college.
+            curso: String - Specific course, e.g. Software Engineering bachelor
+            situacao: String - Currently doing, finished or canceled.
             areas: Relationship
     """
 
@@ -229,6 +233,8 @@ class ExperienciaAcad(Base):
     data_fim = Column(Date)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
     escolaridade = Column(String)
+    curso = Column(String)
+    situacao = Column(String)
     areas = relationship("Area", secondary=ExperienciaAcadArea)
 
 
@@ -252,6 +258,8 @@ class ExperienciaProj(Base):
             descricao: String
             data_inicio: Date
             data_fim: Date
+            cargo: String
+            situacao: String - Currently doing, finished, canceled
             pessoa_id: Integer, Foreign Key
             areas: Relationship
     """
@@ -263,6 +271,8 @@ class ExperienciaProj(Base):
     descricao = Column(String, nullable=False)
     data_inicio = Column(Date, nullable=False)
     data_fim = Column(Date)
+    cargo = Column(String)
+    situacao = Column(String)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
     areas = relationship("Area", secondary=ExperienciaProjArea)
 
