@@ -14,6 +14,7 @@ def get_experiencia_by_id(
         .filter(models.ExperienciaAcad.id == experiencia_id)
         .first()
     )
+
     if not experiencia:
         raise HTTPException(
             status_code=404, detail="Experiencia Academica não encontrada"
@@ -41,20 +42,22 @@ def create_experiencia(
     db: Session, experiencia: schemas.ExperienciaAcad, pessoa_id: int
 ):
     try:
-        db_experiencia_prof = models.ExperienciaAcad(
+        db_experiencia_acad = models.ExperienciaAcad(
             escolaridade=experiencia.escolaridade,
             data_fim=experiencia.data_fim,
             data_inicio=experiencia.data_inicio,
             descricao=experiencia.descricao,
             instituicao=experiencia.instituicao,
+            curso=experiencia.curso,
+            situacao=experiencia.situacao,
             pessoa_id=pessoa_id,
         )
     except Exception as e:
         print(e)
-    db.add(db_experiencia_prof)
+    db.add(db_experiencia_acad)
     db.commit()
-    db.refresh(db_experiencia_prof)
-    return db_experiencia_prof
+    db.refresh(db_experiencia_acad)
+    return db_experiencia_acad
 
 
 def delete_experiencia(db: Session, experiencia_id: int):

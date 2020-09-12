@@ -18,20 +18,19 @@ class ExperienciaOut(ExperienciaBase):
 class ExperienciaProfCreate(ExperienciaBase):
     cargo: t.Optional[str] = None
     organizacao: t.Optional[str] = None
+    vinculo: t.Optional[str] = None
 
     class Config:
         orm_mode = True
 
 
-class ExperienciaProfEdit(ExperienciaBase):
+class ExperienciaProfEdit(ExperienciaProfCreate):
     class Config:
         orm_mode = True
 
 
-class ExperienciaProf(ExperienciaBase):
+class ExperienciaProf(ExperienciaProfCreate):
     id: int
-    organizacao: t.Optional[str] = None
-    cargo: t.Optional[str] = None
     pessoa_id: int
 
     class Config:
@@ -39,22 +38,22 @@ class ExperienciaProf(ExperienciaBase):
 
 
 class ExperienciaAcadCreate(ExperienciaBase):
-    escolaridade: t.Optional[str] = None
-    instituicao: t.Optional[str] = None
+    escolaridade: str
+    instituicao: str
+    curso: str
+    situacao: t.Optional[str] = None
 
     class Config:
         orm_mode = True
 
 
-class ExperienciaAcadEdit(ExperienciaBase):
+class ExperienciaAcadEdit(ExperienciaAcadCreate):
     class Config:
         orm_mode = True
 
 
-class ExperienciaAcad(ExperienciaBase):
+class ExperienciaAcad(ExperienciaAcadCreate):
     id: int
-    instituicao: t.Optional[str] = None
-    escolaridade: t.Optional[str] = None
     pessoa_id: int
 
     class Config:
@@ -63,7 +62,9 @@ class ExperienciaAcad(ExperienciaBase):
 
 class ExperienciaProjCreate(ExperienciaBase):
     nome: str
-
+    situacao: t.Optional[str] = None
+    cargo: str
+    
     class Config:
         orm_mode = True
 
