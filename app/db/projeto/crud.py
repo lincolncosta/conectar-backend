@@ -29,7 +29,6 @@ def create_projeto(db: Session, projeto: schemas.ProjetoCreate):
         )
     except Exception as e:
         print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
-        print(e)
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)

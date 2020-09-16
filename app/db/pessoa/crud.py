@@ -47,7 +47,6 @@ def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
         )
     except Exception as e:
         print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
-        print(e)
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)
