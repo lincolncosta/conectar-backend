@@ -7,12 +7,13 @@ class ProjetoBase(BaseModel):
     nome: str
     descricao: str
     visibilidade: bool
+    objetivo: str
 
 class ProjetoOut(ProjetoBase):
     pass    
 
 class ProjetoCreate(ProjetoBase):
-    nome : str
+    nome: str
 
     class Config:
         orm_mode = True     

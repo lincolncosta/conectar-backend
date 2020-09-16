@@ -24,9 +24,11 @@ def create_projeto(db: Session, projeto: schemas.ProjetoCreate):
         db_projeto = models.Projeto(
             nome=projeto.nome,
             descricao=projeto.descricao,
-            visibilidade=projeto.visibilidade
+            visibilidade=projeto.visibilidade,
+            objetivo=projeto.objetivo,
         )
     except Exception as e:
+        print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
         print(e)
     db.add(db_projeto)
     db.commit()

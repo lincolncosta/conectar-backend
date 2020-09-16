@@ -50,6 +50,7 @@ def create_experiencia(
             pessoa_id=pessoa_id,
         )
     except Exception as e:
+        print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
         print(e)
     db.add(db_experiencia_prof)
     db.commit()
