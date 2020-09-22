@@ -3,6 +3,7 @@ from starlette.requests import Request
 import uvicorn
 
 from app.api.api_v1.routers.pessoas import pessoas_router
+from app.api.api_v1.routers.projeto import projeto_router
 from app.api.api_v1.routers.experiencia.profissional import (
     experiencia_prof_router,
 )
@@ -34,6 +35,9 @@ app.include_router(
     tags=["pessoas"],
     dependencies=[Depends(get_current_active_pessoa)],
 )
+
+app.include_router(projeto_router, prefix="/api/v1",
+    tags=["projeto"],)
 
 app.include_router(
     experiencia_prof_router,
