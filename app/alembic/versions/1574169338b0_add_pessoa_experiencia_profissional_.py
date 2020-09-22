@@ -69,6 +69,7 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("nome", sa.String(), nullable=True),
         sa.Column("descricao", sa.String(), nullable=True),
+        sa.Column("objetivo", sa.String(), nullable=True),
         sa.Column("visibilidade", sa.Boolean(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )

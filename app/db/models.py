@@ -146,6 +146,7 @@ class Projeto(Base):
             id: Integer, Primary key
             descricao: String
             visibilidade: Boolean
+            objetivo: String
     """
 
     __tablename__ = "tb_projeto"
@@ -154,6 +155,7 @@ class Projeto(Base):
     nome = Column(String)
     descricao = Column(String)
     visibilidade = Column(Boolean, default=True)
+    objetivo = Column(String)
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 
