@@ -36,6 +36,8 @@ class PessoaEdit(PessoaBase):
 
 class Pessoa(PessoaBase):
     id: int
+    data_criacao: date
+    data_atualizacao: t.Optional[date] = None
 
     class Config:
         orm_mode = True

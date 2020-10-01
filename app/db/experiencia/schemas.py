@@ -63,7 +63,7 @@ class ExperienciaAcad(ExperienciaAcadCreate):
 class ExperienciaProjCreate(ExperienciaBase):
     nome: str
     situacao: t.Optional[str] = None
-    cargo: str
+    cargo: t.Optional[str] = None
     
     class Config:
         orm_mode = True

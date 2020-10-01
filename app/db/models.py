@@ -121,6 +121,7 @@ class Pessoa(Base):
     nome = Column(String)
     # data_criacao uses server time with timezone and not user time by default
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     data_nascimento = Column(Date, default=date(year=1990, month=1, day=1))
     telefone = Column(String)
     ativo = Column(Boolean, default=True)
@@ -156,6 +157,8 @@ class Projeto(Base):
     descricao = Column(String)
     visibilidade = Column(Boolean, default=True)
     objetivo = Column(String)
+    data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 
