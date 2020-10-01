@@ -3,6 +3,7 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.experiencia.profissional.crud import (
+    get_experiencias,
     create_experiencia,
     get_experiencia_by_id,
     get_experiencias_from_pessoa,
@@ -21,6 +22,24 @@ from app.core.auth import (
 
 experiencia_prof_router = r = APIRouter()
 
+
+@r.get(
+    "/experiencias/profissional",
+    response_model=t.List[ExperienciaProf],
+    response_model_exclude_none=True,
+)
+async def experiencias_list(
+    response: Response,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get all experiencias
+    """
+    experiencias = get_experiencias(db)
+    # This is necessary for react-admin to work
+    response.headers["Content-Range"] = f"0-9/{len(experiencias)}"
+    return experiencias
 
 @r.get(
     "/experiencias/profissional/me",

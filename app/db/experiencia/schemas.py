@@ -25,6 +25,9 @@ class ExperienciaProfCreate(ExperienciaBase):
 
 
 class ExperienciaProfEdit(ExperienciaProfCreate):
+    descricao: t.Optional[str] = None
+    data_inicio: t.Optional[date] = None
+    
     class Config:
         orm_mode = True
 
@@ -48,6 +51,13 @@ class ExperienciaAcadCreate(ExperienciaBase):
 
 
 class ExperienciaAcadEdit(ExperienciaAcadCreate):
+    descricao: t.Optional[str] = None
+    data_inicio: t.Optional[date] = None
+    escolaridade: t.Optional[str] = None
+    instituicao: t.Optional[str] = None
+    curso: t.Optional[str] = None
+    situacao: t.Optional[str] = None
+
     class Config:
         orm_mode = True
 
@@ -70,6 +80,10 @@ class ExperienciaProjCreate(ExperienciaBase):
 
 
 class ExperienciaProjEdit(ExperienciaProjCreate):
+    descricao: t.Optional[str] = None
+    data_inicio: t.Optional[date] = None
+    nome: t.Optional[str] = None
+
     class Config:
         orm_mode = True
 

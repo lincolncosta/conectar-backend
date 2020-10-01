@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-# import typing as t
+import typing as t
 
 from db import models
 from app.db.experiencia import schemas
@@ -19,6 +19,12 @@ def get_experiencia_by_id(
             status_code=404, detail="Experiencia de projeto não encontrada"
         )
     return experiencia
+
+
+def get_experiencias(
+    db: Session, skip: int = 0, limit: int = 100
+) -> t.List[schemas.ExperienciaProj]:
+    return db.query(models.ExperienciaProj).offset(skip).limit(limit).all()
 
 
 def get_experiencias_from_pessoa(
