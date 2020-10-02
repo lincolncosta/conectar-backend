@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-# import typing as t
+import typing as t
 
 from db import models
 from app.db.experiencia import schemas
@@ -21,6 +21,12 @@ def get_experiencia_by_id(
     return experiencia
 
 
+def get_experiencias(
+    db: Session, skip: int = 0, limit: int = 100
+) -> t.List[schemas.ExperienciaProj]:
+    return db.query(models.ExperienciaProj).offset(skip).limit(limit).all()
+
+
 def get_experiencias_from_pessoa(
     db: Session, pessoa_id: int
 ) -> schemas.ExperienciaProj:
@@ -29,6 +35,7 @@ def get_experiencias_from_pessoa(
         .filter(models.ExperienciaProj.pessoa_id == pessoa_id)
         .all()
     )
+    
     if not experiencias:
         raise HTTPException(
             status_code=404,
@@ -41,7 +48,7 @@ def create_experiencia(
     db: Session, experiencia: schemas.ExperienciaProj, pessoa_id: int
 ):
     try:
-        db_experiencia_prof = models.ExperienciaProj(
+        db_experiencia_proj = models.ExperienciaProj(
             nome=experiencia.nome,
             data_fim=experiencia.data_fim,
             data_inicio=experiencia.data_inicio,
@@ -52,10 +59,10 @@ def create_experiencia(
         )
     except Exception as e:
         print(e)
-    db.add(db_experiencia_prof)
+    db.add(db_experiencia_proj)
     db.commit()
-    db.refresh(db_experiencia_prof)
-    return db_experiencia_prof
+    db.refresh(db_experiencia_proj)
+    return db_experiencia_proj
 
 
 def delete_experiencia(db: Session, experiencia_id: int):
