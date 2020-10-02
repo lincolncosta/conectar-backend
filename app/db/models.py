@@ -15,6 +15,22 @@ from datetime import date
 
 # Tables created from M*N relationships
 
+HabilidadesPessoa = Table(
+    "tb_habilidades_pessoa",
+    Base.metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id")),
+    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
+)
+
+HabilidadesProjeto = Table(
+    "tb_habilidades_projeto",
+    Base.metadata,
+    Column("id", Integer, primary_key=True, index=True),
+    Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
+    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
+)
+
 PessoaProjeto = Table(
     "tb_pessoa_projeto",
     Base.metadata,
@@ -308,6 +324,31 @@ class Area(Base):
         "Area", backref=backref("area_pai", remote_side=[id])
     )
 
+class Habilidades(Base):
+
+    """
+        Represents table "tb_habilidades"
+
+
+        Many to Many Relationship
+        One Habilidade can have many Projetos,
+        one Projeto can have many Habilidades as well.
+
+        Many to Many Relationship
+        One Habilidade can have many Pessoa,
+        one Pessoa can have many Habilidades as well.
+
+        Attributes:
+            id: Integer, Primary key
+            nome: String
+    """
+
+    __tablename__ = "tb_habilidades"
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, unique=True)
+
+    habilidades_projeto = relationship("Projeto", secondary=HabilidadesProjeto)
+    habilidades_pessoa = relationship("Pessoa", secondary=HabilidadesPessoa)
 
 class Papel(Base):
     """
