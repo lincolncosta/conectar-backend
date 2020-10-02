@@ -330,11 +330,11 @@ class Habilidades(Base):
         Represents table "tb_habilidades"
 
 
-        Recursive Many to Many Relationship
+        Many to Many Relationship
         One Habilidade can have many Projetos,
         one Projeto can have many Habilidades as well.
 
-        Recursive Many to Many Relationship
+        Many to Many Relationship
         One Habilidade can have many Pessoa,
         one Pessoa can have many Habilidades as well.
 
