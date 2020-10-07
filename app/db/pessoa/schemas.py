@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-
+from app.db.area.schemas import PessoaAreaCreate
 
 class PessoaBase(BaseModel):
     senha: str
@@ -29,6 +29,7 @@ class PessoaCreate(PessoaBase):
 class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
     email: t.Optional[str] = None
+    areas: t.Optional[t.List[PessoaAreaCreate]] = None
 
     class Config:
         orm_mode = True
@@ -36,7 +37,10 @@ class PessoaEdit(PessoaBase):
 
 class Pessoa(PessoaBase):
     id: int
-
+    data_criacao: date
+    data_atualizacao: t.Optional[date] = None
+    areas: t.Optional[t.List[PessoaAreaCreate]] = None
+    
     class Config:
         orm_mode = True
 

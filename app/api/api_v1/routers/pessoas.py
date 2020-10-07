@@ -98,7 +98,7 @@ async def pessoa_edit(
     except Exception as e:
         print(e)
 
-    return edit_pessoa(db, pessoa_id, pessoa)
+    return await edit_pessoa(db, pessoa_id, pessoa)
 
 
 @r.delete(

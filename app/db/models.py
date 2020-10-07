@@ -1,3 +1,4 @@
+import enum
 from .session import Base
 from sqlalchemy import (
     Boolean,
@@ -8,12 +9,37 @@ from sqlalchemy import (
     Table,
     DateTime,
     Date,
+    # Enum
 )
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
 from datetime import date
 
 # Tables created from M*N relationships
+
+# class SituacaoEnum(enum.Enum):
+#     '''
+#         Enum to handle situacao status on pessoa projeto
+#     '''
+#     PENDENTE_IDEALIZADOR = "pendente_idealizador"
+#     ACEITE_IDEALIZADOR = "aceite_idealizador"
+#     PENDENTE_PESSOA = "pendente_pessoa"
+#     ACEITE_PESSOA = "aceite_pessoa"
+
+HabilidadesPessoa = Table(
+    "tb_habilidades_pessoa",
+    Base.metadata,
+    Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id")),
+    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
+)
+
+HabilidadesProjeto = Table(
+    "tb_habilidades_projeto",
+    Base.metadata,
+    Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
+    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
+)
+
 
 PessoaProjeto = Table(
     "tb_pessoa_projeto",
@@ -24,13 +50,14 @@ PessoaProjeto = Table(
     Column("papel_id", Integer, ForeignKey("tb_papel.id")),
     Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
     Column("tipo_acordo_id", Integer, ForeignKey("tb_tipo_acordo.id")),
+    Column("descricao", String),
+    Column("situacao", String)
 
 )
 
 ExperienciaProfArea = Table(
     "tb_exp_profissional_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column("experiencia_id", ForeignKey("tb_experiencia_profissional.id"), primary_key=True),
 )
@@ -38,7 +65,6 @@ ExperienciaProfArea = Table(
 ExperienciaProjArea = Table(
     "tb_exp_projeto_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column("experiencia_id", ForeignKey("tb_experiencia_projetos.id"), primary_key=True),
 )
@@ -46,7 +72,6 @@ ExperienciaProjArea = Table(
 ExperienciaAcadArea = Table(
     "tb_exp_academica_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column("experiencia_id", ForeignKey("tb_experiencia_academica.id"), primary_key=True),
 )
@@ -54,7 +79,6 @@ ExperienciaAcadArea = Table(
 PessoaArea = Table(
     "tb_pessoa_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("pessoa_id", ForeignKey("tb_pessoa.id"), primary_key=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
 )
@@ -62,7 +86,6 @@ PessoaArea = Table(
 ProjetoArea = Table(
     "tb_projeto_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("projeto_id", ForeignKey("tb_projeto.id"), primary_key=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
 )
@@ -70,7 +93,6 @@ ProjetoArea = Table(
 AreaPessoaProjeto = Table(
     "tb_area_pessoa_projeto",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column(
         "pessoa_projeto_id",
@@ -121,6 +143,7 @@ class Pessoa(Base):
     nome = Column(String)
     # data_criacao uses server time with timezone and not user time by default
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     data_nascimento = Column(Date, default=date(year=1990, month=1, day=1))
     telefone = Column(String)
     ativo = Column(Boolean, default=True)
@@ -156,6 +179,8 @@ class Projeto(Base):
     descricao = Column(String)
     visibilidade = Column(Boolean, default=True)
     objetivo = Column(String)
+    data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 
@@ -182,6 +207,7 @@ class ExperienciaProf(Base):
             data_fim: Date
             pessoa_id: Integer, Foreign Key
             cargo: String
+            vinculo: String - PJ, PF, Freelancer, etc.
             areas: Relationship
     """
 
@@ -194,6 +220,7 @@ class ExperienciaProf(Base):
     data_fim = Column(Date)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
     cargo = Column(String)
+    vinculo = Column(String)
     areas = relationship("Area", secondary=ExperienciaProfArea)
 
 
@@ -219,6 +246,8 @@ class ExperienciaAcad(Base):
             data_fim: Date
             pessoa_id: Integer, Foreign Key
             escolaridade: String - education level, e.g. high school or college.
+            curso: String - Specific course, e.g. Software Engineering bachelor
+            situacao: String - Currently doing, finished or canceled.
             areas: Relationship
     """
 
@@ -231,6 +260,8 @@ class ExperienciaAcad(Base):
     data_fim = Column(Date)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
     escolaridade = Column(String)
+    curso = Column(String)
+    situacao = Column(String)
     areas = relationship("Area", secondary=ExperienciaAcadArea)
 
 
@@ -254,6 +285,8 @@ class ExperienciaProj(Base):
             descricao: String
             data_inicio: Date
             data_fim: Date
+            cargo: String
+            situacao: String - Currently doing, finished, canceled
             pessoa_id: Integer, Foreign Key
             areas: Relationship
     """
@@ -265,6 +298,8 @@ class ExperienciaProj(Base):
     descricao = Column(String, nullable=False)
     data_inicio = Column(Date, nullable=False)
     data_fim = Column(Date)
+    cargo = Column(String)
+    situacao = Column(String)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
     areas = relationship("Area", secondary=ExperienciaProjArea)
 
@@ -295,6 +330,31 @@ class Area(Base):
         "Area", backref=backref("area_pai", remote_side=[id])
     )
 
+class Habilidades(Base):
+
+    """
+        Represents table "tb_habilidades"
+
+
+        Many to Many Relationship
+        One Habilidade can have many Projetos,
+        one Projeto can have many Habilidades as well.
+
+        Many to Many Relationship
+        One Habilidade can have many Pessoa,
+        one Pessoa can have many Habilidades as well.
+
+        Attributes:
+            id: Integer, Primary key
+            nome: String
+    """
+
+    __tablename__ = "tb_habilidades"
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, unique=True)
+
+    habilidades_projeto = relationship("Projeto", secondary=HabilidadesProjeto)
+    habilidades_pessoa = relationship("Pessoa", secondary=HabilidadesPessoa)
 
 class Papel(Base):
     """
