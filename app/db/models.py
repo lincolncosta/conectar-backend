@@ -123,6 +123,7 @@ class Pessoa(Base):
             senha: String
             nome: String
             data_criacao: Datetime - default uses DB function Now()
+            data_atualizacao: Datetime - default uses function Now()
             on the server
             data_nascimento: Date
             telefone: String
@@ -146,6 +147,7 @@ class Pessoa(Base):
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     data_nascimento = Column(Date, default=date(year=1990, month=1, day=1))
     telefone = Column(String)
+    foto_perfil = Column(String)
     ativo = Column(Boolean, default=True)
     superusuario = Column(Boolean, default=False)
 
@@ -168,6 +170,8 @@ class Projeto(Base):
         Attributes:
             id: Integer, Primary key
             descricao: String
+            data_atualizacao: Datetime - default uses function Now()
+            data_criacao: Datetime - default uses DB function Now()
             visibilidade: Boolean
             objetivo: String
     """

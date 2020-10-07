@@ -4,9 +4,11 @@ import typing as t
 
 from db import models
 from db.utils.extract_areas import append_areas
+from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from app.core.security.passwords import get_password_hash
 from app.db.area.crud import get_area_by_id
+from app.db.habilidade.crud import get_habilidades_by_id
 
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.Pessoa:
@@ -36,8 +38,8 @@ def get_pessoas(
 
 def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
     password = get_password_hash(pessoa.senha)
-    try:
-        db_pessoa = models.Pessoa(
+    
+    db_pessoa = models.Pessoa(
             nome=pessoa.nome,
             email=pessoa.email,
             telefone=pessoa.telefone,
@@ -46,9 +48,9 @@ def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
             superusuario=pessoa.superusuario,
             senha=password,
             data_nascimento=pessoa.data_nascimento,
-        )
-    except Exception as e:
-        print(e)
+            foto_perfil=pessoa.foto_perfil,
+    )
+
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)
@@ -106,6 +108,7 @@ async def edit_pessoa(
         del update_data["senha"]
 
     await append_areas(update_data, db)
+    await append_habilidades(update_data, db)
     
     for key, value in update_data.items():
             setattr(db_pessoa, key, value)

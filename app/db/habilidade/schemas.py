@@ -14,14 +14,21 @@ class HabilidadesCreate(HabilidadesBase):
   class Config:
         orm_mode = True
 
+class Habilidades(HabilidadesCreate):
+  id: int
+
+  class Config:
+        orm_mode = True
+        
+class PessoaHabilidadeCreate(Habilidades):
+    nome: t.Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
 class HabilidadesEdit(HabilidadesCreate):
   nome: str
 
   class Config:
         orm_mode = True
 
-class Habilidades(HabilidadesCreate):
-  id: int
-
-  class Config:
-        orm_mode = True

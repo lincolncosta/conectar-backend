@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from starlette.requests import Request
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from app.api.api_v1.routers.pessoas import pessoas_router
@@ -21,6 +22,7 @@ app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
 )
 
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
@@ -75,6 +77,21 @@ app.include_router(
     tags=["habilidade"],
     dependencies=[Depends(get_current_active_pessoa)],
 )
+
+# @app.post("/api/v1/uploadfile/")
+# async def create_upload_file(file: UploadFile = File(...)):
+#     ''' Handles file upload, but files get overwritten
+
+#     Have to create a hashing function to avoid naming colision
+#     and save hash in the DB as image name
+#     '''
+#     try:
+#         contents = await file.read()
+#         path = store_image(contents, file.filename)
+#         print(f"path from created image {path}")
+#         return FileResponse(path)
+#     except Exception as e:
+#         print(e)
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
