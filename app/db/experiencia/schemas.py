@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-
+from app.db.area.schemas import ExperienciaAreaCreate
 
 class ExperienciaBase(BaseModel):
     """Common experiencia base"""
@@ -9,7 +9,7 @@ class ExperienciaBase(BaseModel):
     descricao: str
     data_inicio: date
     data_fim: t.Optional[date] = None
-
+    areas: t.Optional[t.List[ExperienciaAreaCreate]] = None
 
 class ExperienciaOut(ExperienciaBase):
     pass
@@ -74,7 +74,7 @@ class ExperienciaProjCreate(ExperienciaBase):
     nome: str
     situacao: t.Optional[str] = None
     cargo: t.Optional[str] = None
-    
+
     class Config:
         orm_mode = True
 

@@ -89,7 +89,7 @@ async def experiencia_create(
     """
     Create a new experiencia profissional
     """
-    return create_experiencia(db, experiencia, current_pessoa.id)
+    return await create_experiencia(db, experiencia, current_pessoa.id)
 
 
 @r.put(
@@ -107,7 +107,7 @@ async def experiencia_edit(
     """
     Update existing experiencia profissional
     """
-    return edit_experiencia(db, experiencia_id, experiencia)
+    return await edit_experiencia(db, experiencia_id, experiencia)
 
 
 @r.delete(

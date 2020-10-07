@@ -3,8 +3,10 @@ from sqlalchemy.orm import Session
 import typing as t
 
 from db import models
+from db.utils.extract_areas import append_areas
 from . import schemas
 from app.core.security.passwords import get_password_hash
+from app.db.area.crud import get_area_by_id
 
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.Pessoa:
@@ -64,7 +66,7 @@ def delete_pessoa(db: Session, pessoa_id: int):
     return pessoa
 
 
-def edit_pessoa(
+async def edit_pessoa(
     db: Session, pessoa_id: int, pessoa: schemas.PessoaEdit
 ) -> schemas.Pessoa:
     """
@@ -103,9 +105,10 @@ def edit_pessoa(
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
 
+    await append_areas(update_data, db)
+    
     for key, value in update_data.items():
-        setattr(db_pessoa, key, value)
-
+            setattr(db_pessoa, key, value)
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)

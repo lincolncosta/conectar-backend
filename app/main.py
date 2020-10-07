@@ -9,6 +9,7 @@ from app.api.api_v1.routers.experiencia.profissional import (
 )
 from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
 from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
+from app.api.api_v1.routers.area import area_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
 from app.db.session import SessionLocal
@@ -57,6 +58,13 @@ app.include_router(
     experiencia_proj_router,
     prefix="/api/v1",
     tags=["experiencia projeto"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
+app.include_router(
+    area_router,
+    prefix="/api/v1",
+    tags=["area"],
     dependencies=[Depends(get_current_active_pessoa)],
 )
 

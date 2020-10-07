@@ -7,7 +7,20 @@ from . import schemas
 from app.core.security.passwords import get_password_hash
 
 
-def get_area(db: Session, area_id: int) -> schemas.Area:
+async def get_area_by_id(db: Session, area_id: int) -> schemas.Area:
+    '''
+        Get a single instance of area
+
+        Args:
+        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
+        area_id: Integer representing the area id.
+
+        Returns:
+        An Area object.
+
+        Raises:
+            HTTPException: No area corresponds to the area_id.
+    '''
     area = (
         db.query(models.Area).filter(models.Area.id == area_id).first()
     )
@@ -16,13 +29,46 @@ def get_area(db: Session, area_id: int) -> schemas.Area:
     return area
 
 
-def get_areas(
+async def get_area_by_name(db: Session, area_name: int) -> schemas.Area:
+    '''
+        Get a single instance of area from its name
+
+        Args:
+        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
+        area_name: String representing the area description.
+
+        Returns:
+        An Area object.
+
+        Raises:
+            HTTPException: No area corresponds to the area_id.
+    '''
+    area = (
+        db.query(models.Area).filter(models.Area.descricao == area_name).first()
+    )
+    if not area:
+        raise HTTPException(status_code=404, detail="area não encontrada")
+    return area
+
+
+async def get_areas(
     db: Session, skip: int = 0, limit: int = 100
 ) -> t.List[schemas.Area]:
+    '''
+        Get all instances of area
+
+        Returns:
+        A list of Area objects.
+
+    '''
     return db.query(models.Area).offset(skip).limit(limit).all()
 
 
-def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
+async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
+    area_pai = await get_area_by_id(db, area.area_pai_id)
+    if not area_pai:
+        raise HTTPException(status_code=404, detail="area pai não encontrada")
+
     try:
         db_area = models.Area(
           descricao=area.descricao,
@@ -37,7 +83,7 @@ def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
 
 
 def delete_area(db: Session, area_id: int):
-    area = get_area(db, area_id)
+    area = get_area_by_id(db, area_id)
     if not area:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="area não encontrada"
@@ -47,7 +93,7 @@ def delete_area(db: Session, area_id: int):
     return area
 
 
-def edit_area(
+async def edit_area(
     db: Session, area_id: int, area: schemas.AreaEdit
 ) -> schemas.Area:
     """
@@ -81,13 +127,15 @@ def edit_area(
     Raises:
         HTTPException: No person corresponds to area_id in the database.
     """
-    db_area = get_area(db, area_id)
+    db_area = await get_area_by_id(db, area_id)
     if not db_area:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="area não encontrada"
         )
-    update_data = area.dict(exclude_unset=True)
+    print(db_area)
 
+    update_data = area.dict(exclude_unset=True)
+    print(update_data)
     for key, value in update_data.items():
         setattr(db_area, key, value)
 

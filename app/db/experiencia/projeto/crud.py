@@ -4,6 +4,7 @@ import typing as t
 
 from db import models
 from app.db.experiencia import schemas
+from app.db.utils.extract_areas import append_areas
 
 
 def get_experiencia_by_id(
@@ -44,21 +45,24 @@ def get_experiencias_from_pessoa(
     return experiencias
 
 
-def create_experiencia(
+async def create_experiencia(
     db: Session, experiencia: schemas.ExperienciaProj, pessoa_id: int
 ):
-    try:
-        db_experiencia_proj = models.ExperienciaProj(
+    db_experiencia_proj = models.ExperienciaProj(
             nome=experiencia.nome,
             data_fim=experiencia.data_fim,
             data_inicio=experiencia.data_inicio,
             descricao=experiencia.descricao,
             pessoa_id=pessoa_id,
             cargo=experiencia.cargo,
-            situacao=experiencia.situacao
-        )
-    except Exception as e:
-        print(e)
+            situacao=experiencia.situacao,
+    )
+    db_exp = experiencia.dict(exclude_unset=True)
+    await append_areas(db_exp, db)
+
+    for key, value in db_exp.items():
+        setattr(db_experiencia_proj, key, value)
+    
     db.add(db_experiencia_proj)
     db.commit()
     db.refresh(db_experiencia_proj)
@@ -77,7 +81,7 @@ def delete_experiencia(db: Session, experiencia_id: int):
     return experiencia
 
 
-def edit_experiencia(
+async def edit_experiencia(
     db: Session, experiencia_id, experiencia: schemas.ExperienciaProjEdit
 ) -> schemas.ExperienciaProj:
     """
@@ -112,6 +116,8 @@ def edit_experiencia(
             detail="experiencia de projeto não encontrada",
         )
     update_data = experiencia.dict(exclude_unset=True)
+
+    await append_areas(update_data, db)
 
     for key, value in update_data.items():
         setattr(db_experiencia, key, value)

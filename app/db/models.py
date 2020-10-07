@@ -1,3 +1,4 @@
+import enum
 from .session import Base
 from sqlalchemy import (
     Boolean,
@@ -8,6 +9,7 @@ from sqlalchemy import (
     Table,
     DateTime,
     Date,
+    # Enum
 )
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
@@ -15,10 +17,18 @@ from datetime import date
 
 # Tables created from M*N relationships
 
+# class SituacaoEnum(enum.Enum):
+#     '''
+#         Enum to handle situacao status on pessoa projeto
+#     '''
+#     PENDENTE_IDEALIZADOR = "pendente_idealizador"
+#     ACEITE_IDEALIZADOR = "aceite_idealizador"
+#     PENDENTE_PESSOA = "pendente_pessoa"
+#     ACEITE_PESSOA = "aceite_pessoa"
+
 HabilidadesPessoa = Table(
     "tb_habilidades_pessoa",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id")),
     Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
 )
@@ -26,10 +36,10 @@ HabilidadesPessoa = Table(
 HabilidadesProjeto = Table(
     "tb_habilidades_projeto",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
     Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
 )
+
 
 PessoaProjeto = Table(
     "tb_pessoa_projeto",
@@ -40,13 +50,14 @@ PessoaProjeto = Table(
     Column("papel_id", Integer, ForeignKey("tb_papel.id")),
     Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
     Column("tipo_acordo_id", Integer, ForeignKey("tb_tipo_acordo.id")),
+    Column("descricao", String),
+    Column("situacao", String)
 
 )
 
 ExperienciaProfArea = Table(
     "tb_exp_profissional_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column("experiencia_id", ForeignKey("tb_experiencia_profissional.id"), primary_key=True),
 )
@@ -54,7 +65,6 @@ ExperienciaProfArea = Table(
 ExperienciaProjArea = Table(
     "tb_exp_projeto_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column("experiencia_id", ForeignKey("tb_experiencia_projetos.id"), primary_key=True),
 )
@@ -62,7 +72,6 @@ ExperienciaProjArea = Table(
 ExperienciaAcadArea = Table(
     "tb_exp_academica_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column("experiencia_id", ForeignKey("tb_experiencia_academica.id"), primary_key=True),
 )
@@ -70,7 +79,6 @@ ExperienciaAcadArea = Table(
 PessoaArea = Table(
     "tb_pessoa_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("pessoa_id", ForeignKey("tb_pessoa.id"), primary_key=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
 )
@@ -78,7 +86,6 @@ PessoaArea = Table(
 ProjetoArea = Table(
     "tb_projeto_area",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("projeto_id", ForeignKey("tb_projeto.id"), primary_key=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
 )
@@ -86,7 +93,6 @@ ProjetoArea = Table(
 AreaPessoaProjeto = Table(
     "tb_area_pessoa_projeto",
     Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
     Column(
         "pessoa_projeto_id",
