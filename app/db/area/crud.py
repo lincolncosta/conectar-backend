@@ -65,17 +65,17 @@ async def get_areas(
 
 
 async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
-    area_pai = await get_area_by_id(db, area.area_pai_id)
-    if not area_pai:
-        raise HTTPException(status_code=404, detail="area pai não encontrada")
-
     try:
-        db_area = models.Area(
+        if area.area_pai_id:
+            area_pai = await get_area_by_id(db, area.area_pai_id)
+    except HTTPException:
+        raise HTTPException(status_code=400, detail="area pai não encontrada")
+
+    
+    db_area = models.Area(
           descricao=area.descricao,
           area_pai_id=area.area_pai_id
-        )
-    except Exception as e:
-        print(e)
+    )
     db.add(db_area)
     db.commit()
     db.refresh(db_area)
