@@ -7,7 +7,7 @@ from . import schemas
 from app.core.security.passwords import get_password_hash
 
 
-def get_projeto(db: Session, projeto_id: int):
+def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:
     projeto = db.query(models.Projeto)\
         .filter(models.Projeto.id == projeto_id).first()
     if not projeto:
@@ -19,16 +19,20 @@ def get_projetos(
 ) -> t.List[schemas.ProjetoOut]:
     return db.query(models.Projeto).offset(skip).limit(limit).all()
 
-def create_projeto(db: Session, projeto: schemas.ProjetoCreate):
-    try:
-        db_projeto = models.Projeto(
+async def create_projeto(db: Session, projeto: schemas.ProjetoCreate) -> schemas.Projeto:
+    db_projeto = models.Projeto(
             nome=projeto.nome,
             descricao=projeto.descricao,
             visibilidade=projeto.visibilidade,
-            objetivo=projeto.objetivo,
-        )
-    except Exception as e:
-        print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
+            objetivo=projeto.objetivo
+    )
+
+    db_proj = experiencia.dict(exclude_unset=True)
+    await append_areas(db_proj, db)
+
+    for key, value in db_proj.items():
+        setattr(db_projeto, key, value)
+
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
