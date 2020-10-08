@@ -133,4 +133,4 @@ async def area_delete(
     """
     Delete an existing area
     """
-    return delete_area(db, area_id)
+    return await delete_area(db, area_id)

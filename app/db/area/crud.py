@@ -112,8 +112,8 @@ async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
     return db_area
 
 
-def delete_area(db: Session, area_id: int):
-    area = get_area_by_id(db, area_id)
+async def delete_area(db: Session, area_id: int):
+    area = await get_area_by_id(db, area_id)
     if not area:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="area não encontrada"
