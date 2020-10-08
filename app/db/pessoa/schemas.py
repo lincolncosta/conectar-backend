@@ -35,6 +35,7 @@ class PessoaEdit(PessoaBase):
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
 
+
     class Config:
         orm_mode = True
 
@@ -44,7 +45,6 @@ class Pessoa(PessoaBase):
     data_criacao: date
     data_atualizacao: t.Optional[date] = None
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
-    
     
     class Config:
         orm_mode = True

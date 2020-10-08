@@ -50,7 +50,6 @@ def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
             data_nascimento=pessoa.data_nascimento,
             foto_perfil=pessoa.foto_perfil,
     )
-
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)

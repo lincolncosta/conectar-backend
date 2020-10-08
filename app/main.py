@@ -78,21 +78,6 @@ app.include_router(
     dependencies=[Depends(get_current_active_pessoa)],
 )
 
-# @app.post("/api/v1/uploadfile/")
-# async def create_upload_file(file: UploadFile = File(...)):
-#     ''' Handles file upload, but files get overwritten
-
-#     Have to create a hashing function to avoid naming colision
-#     and save hash in the DB as image name
-#     '''
-#     try:
-#         contents = await file.read()
-#         path = store_image(contents, file.filename)
-#         print(f"path from created image {path}")
-#         return FileResponse(path)
-#     except Exception as e:
-#         print(e)
-
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 if __name__ == "__main__":
