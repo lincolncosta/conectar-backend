@@ -116,7 +116,7 @@ async def sign_up_new_pessoa(
     telefone: Optional[str] = None,
     nome: Optional[str] = None,
     data_nascimento: Optional[date] = None,
-    foto_perfil: UploadFile = File(...)
+    foto_perfil: UploadFile = File(None)
 ):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, usuario)
@@ -124,11 +124,11 @@ async def sign_up_new_pessoa(
     if pessoa and pessoa_username:
         return False  # Pessoa already exists
 
-    try:
+    path = None
+    if foto_perfil:
         contents = await foto_perfil.read()
         path = store_image(contents, foto_perfil.filename)
-    except Exception as e:
-        print(e)
+        
     new_pessoa = create_pessoa(
         db,
         schemas.PessoaCreate(
@@ -143,4 +143,5 @@ async def sign_up_new_pessoa(
             foto_perfil=path
         ),
     )
+    
     return new_pessoa
