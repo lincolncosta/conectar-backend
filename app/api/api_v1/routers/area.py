@@ -9,8 +9,9 @@ from app.db.area.crud import (
     get_area_by_id,
     get_area_by_name,
     get_areas,
+    get_area_and_subareas
 )
-from app.db.area.schemas import Area, AreaCreate, AreaEdit
+from app.db.area.schemas import Area, AreaCreate, AreaEdit, AreasAndSubareas
 from app.core.auth import get_current_active_pessoa
 
 area_router = r = APIRouter()
@@ -18,7 +19,7 @@ area_router = r = APIRouter()
 
 @r.get(
     "/areas",
-    response_model=t.List[Area],
+    response_model=t.List[AreasAndSubareas],
     response_model_exclude_none=True,
 )
 async def areas_list(
@@ -33,6 +34,23 @@ async def areas_list(
     # This is necessary for react-admin to work
     response.headers["Content-Range"] = f"0-9/{len(areas)}"
     return areas
+
+# @r.get(
+#     "/areas_subareas",
+#     response_model=t.List[AreasAndSubareas],
+#     response_model_exclude_none=True,
+# )
+# async def areas_list(
+#     area_id: int,
+#     response: Response,
+#     db=Depends(get_db),
+#     current_pessoa=Depends(get_current_active_pessoa),
+# ):
+#     """
+#     Get all areas
+#     """
+#     areas = await get_area_and_subareas(db, area_id)
+#     return [areas]
 
 
 @r.get(

@@ -331,8 +331,19 @@ class Area(Base):
 
     area_pai_id = Column(Integer, ForeignKey("tb_area.id"))
     area_pai_rel = relationship(
-        "Area", backref=backref("area_pai", remote_side=[id])
+        "Area", backref=backref("area_pai", remote_side=[id]),
+        cascade="all, delete-orphan", lazy="joined", join_depth=2,
+        passive_deletes=True
     )
+
+    def __str__(self, level=0):
+        ret = f"{'    ' * level} {repr(self.descricao)} \n"
+        for child in self.area_pai_rel:
+            ret += child.__str__(level + 1)
+        return ret
+
+    def __repr__(self):
+        return self.descricao
 
 class Habilidades(Base):
 

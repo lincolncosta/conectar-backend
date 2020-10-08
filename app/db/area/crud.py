@@ -51,17 +51,48 @@ async def get_area_by_name(db: Session, area_name: int) -> schemas.Area:
     return area
 
 
+async def get_area_and_subareas(
+    db: Session,
+    area_id: int
+):
+
+    areas = db.query(models.Area).filter(models.Area.area_pai_id == area_id).all()
+    parent = await get_area_by_id(db, area_id)
+    parent_and_subareas = {"area": parent, "subareas": areas}
+    return parent_and_subareas
+
 async def get_areas(
-    db: Session, skip: int = 0, limit: int = 100
-) -> t.List[schemas.Area]:
+    db: Session
+):
     '''
-        Get all instances of area
+        Get all instances of areas and its subareas
+
+        Firstly get all areas on top of tree, then creates a list
+        containing all areas and subareas of each node
 
         Returns:
-        A list of Area objects.
+        A list containing objects with area and subareas, for example:
+        [
+            {
+                "area": {
+                    "descricao": "Geografia",
+                    "id": 38
+                },
+                "subareas": [
+                {
+                    "descricao": "Topografia",
+                    "id": 39,
+                    "area_pai_id": 38
+                }
+                ]
+            },
+        ]
 
     '''
-    return db.query(models.Area).offset(skip).limit(limit).all()
+    areas = db.query(models.Area).filter(models.Area.area_pai_id == None).all()
+    areasAndSubareas = [await get_area_and_subareas(db, area.id) for area in areas]
+                
+    return areasAndSubareas
 
 
 async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
