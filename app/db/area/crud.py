@@ -71,7 +71,6 @@ async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
     except HTTPException:
         raise HTTPException(status_code=400, detail="area pai não encontrada")
 
-    
     db_area = models.Area(
           descricao=area.descricao,
           area_pai_id=area.area_pai_id
