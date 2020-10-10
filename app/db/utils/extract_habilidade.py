@@ -8,11 +8,12 @@ async def append_habilidades(update_data: dict, db: Session):
         # if db_pessoa.habilidades:
         #     for area in db_pessoa.habilidades:
         #         habilidades.append({"id": area.id})
-        ids = [area['id'] for area in habilidades]
+        ids = [habilidade['id'] for habilidade in habilidades]
         new_habilidades = []
+        ids
         try:
-            for area_id in ids:
-                new_habilidades.append(await get_habilidades_by_id(db, area_id))  
+            for habilidade_id in ids:
+                new_habilidades.append(await get_habilidades_by_id(db, habilidade_id))  
             update_data['habilidades'] = new_habilidades
         except HTTPException as e:
             if e.detail == "habilidade não encontrada":

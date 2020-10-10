@@ -16,6 +16,7 @@ class PessoaBase(BaseModel):
     aliado: t.Optional[bool] = None
     foto_perfil: t.Optional[str] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
+    areas: t.Optional[t.List[PessoaAreaCreate]] = None
 
 class PessoaOut(PessoaBase):
     pass
@@ -32,8 +33,6 @@ class PessoaCreate(PessoaBase):
 class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
     email: t.Optional[str] = None
-    areas: t.Optional[t.List[PessoaAreaCreate]] = None
-    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
 
 
     class Config:
@@ -44,7 +43,6 @@ class Pessoa(PessoaBase):
     id: int
     data_criacao: date
     data_atualizacao: t.Optional[date] = None
-    areas: t.Optional[t.List[PessoaAreaCreate]] = None
     
     class Config:
         orm_mode = True

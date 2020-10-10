@@ -155,7 +155,9 @@ class Pessoa(Base):
     experiencia_projetos = relationship("ExperienciaProj")
     experiencia_academica = relationship("ExperienciaAcad")
     projeto_pessoa = relationship("Projeto", secondary=PessoaProjeto)
+
     areas = relationship("Area", secondary=PessoaArea)
+    habilidades= relationship("Habilidades", secondary=HabilidadesPessoa)
 
     colaborador = Column(Boolean, default=False)
     idealizador = Column(Boolean, default=False)
@@ -185,6 +187,9 @@ class Projeto(Base):
     objetivo = Column(String)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
+
+    habilidades= relationship("Habilidades", secondary=HabilidadesProjeto)
+
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 
@@ -368,8 +373,8 @@ class Habilidades(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, unique=True)
 
-    habilidades_projeto = relationship("Projeto", secondary=HabilidadesProjeto)
-    habilidades_pessoa = relationship("Pessoa", secondary=HabilidadesPessoa)
+    # habilidades_projeto = relationship("Projeto", secondary=HabilidadesProjeto)
+    # habilidades_pessoa = relationship("Pessoa", secondary=HabilidadesPessoa)
 
 class Papel(Base):
     """

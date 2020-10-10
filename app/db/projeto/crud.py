@@ -24,10 +24,11 @@ async def create_projeto(db: Session, projeto: schemas.ProjetoCreate) -> schemas
             nome=projeto.nome,
             descricao=projeto.descricao,
             visibilidade=projeto.visibilidade,
-            objetivo=projeto.objetivo
+            objetivo=projeto.objetivo,
+            areas=projeto.areas
     )
 
-    db_proj = experiencia.dict(exclude_unset=True)
+    db_proj = projeto.dict(exclude_unset=True)
     await append_areas(db_proj, db)
 
     for key, value in db_proj.items():
@@ -36,7 +37,7 @@ async def create_projeto(db: Session, projeto: schemas.ProjetoCreate) -> schemas
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
-    return db_projeto    
+    return db_projeto
 
 def delete_projeto(db: Session, projeto_id: int):
     projeto = get_projeto(db, projeto_id)
