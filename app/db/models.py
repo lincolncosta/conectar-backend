@@ -8,8 +8,7 @@ from sqlalchemy import (
     ForeignKey,
     Table,
     DateTime,
-    Date,
-    # Enum
+    Date
 )
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
@@ -17,27 +16,18 @@ from datetime import date
 
 # Tables created from M*N relationships
 
-# class SituacaoEnum(enum.Enum):
-#     '''
-#         Enum to handle situacao status on pessoa projeto
-#     '''
-#     PENDENTE_IDEALIZADOR = "pendente_idealizador"
-#     ACEITE_IDEALIZADOR = "aceite_idealizador"
-#     PENDENTE_PESSOA = "pendente_pessoa"
-#     ACEITE_PESSOA = "aceite_pessoa"
-
 HabilidadesPessoa = Table(
     "tb_habilidades_pessoa",
     Base.metadata,
-    Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id")),
-    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
+    Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id"), primary_key=True),
+    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id"), primary_key=True),
 )
 
 HabilidadesProjeto = Table(
     "tb_habilidades_projeto",
     Base.metadata,
-    Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
-    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id")),
+    Column("projeto_id", Integer, ForeignKey("tb_projeto.id"), primary_key=True),
+    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id"), primary_key=True),
 )
 
 
@@ -185,11 +175,12 @@ class Projeto(Base):
     descricao = Column(String)
     visibilidade = Column(Boolean, default=True)
     objetivo = Column(String)
+    habilidades = relationship("Habilidades", secondary=HabilidadesProjeto)
+    areas = relationship("Area", secondary=ProjetoArea)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
-    habilidades= relationship("Habilidades", secondary=HabilidadesProjeto)
-
+    
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 
@@ -341,14 +332,14 @@ class Area(Base):
         passive_deletes=True
     )
 
-    def __str__(self, level=0):
-        ret = f"{'    ' * level} {repr(self.descricao)} \n"
-        for child in self.area_pai_rel:
-            ret += child.__str__(level + 1)
-        return ret
+    # def __str__(self, level=0):
+    #     ret = f"{'    ' * level} {repr(self.descricao)} \n"
+    #     for child in self.area_pai_rel:
+    #         ret += child.__str__(level + 1)
+    #     return ret
 
     def __repr__(self):
-        return self.descricao
+        return f"<Area {self.id}>"
 
 class Habilidades(Base):
 
@@ -373,8 +364,8 @@ class Habilidades(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, unique=True)
 
-    # habilidades_projeto = relationship("Projeto", secondary=HabilidadesProjeto)
-    # habilidades_pessoa = relationship("Pessoa", secondary=HabilidadesPessoa)
+    def __repr__(self):
+        return f"<{self.__tablename__} {self.id}>"
 
 class Papel(Base):
     """

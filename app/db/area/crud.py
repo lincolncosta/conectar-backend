@@ -55,7 +55,31 @@ async def get_area_and_subareas(
     db: Session,
     area_id: int
 ):
+    '''
+        Get the area and all its subareas from an id.
 
+        Gets all subareas by filtering all Areas where area_pai_id are
+        equal to the passed id. Then it gets the area object from the id itself
+        and map it on required format.
+
+        Args:
+        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
+        area_id: Integer representing the area id.
+
+        Returns:
+        A dict on this format:
+        {
+            "area": {
+                "descricao": "Geografia",
+                "id": 38
+            },
+            "subareas": [{
+                "descricao": "Topografia",
+                "id": 39,
+                "area_pai_id": 38
+            }]
+        }
+    '''
     areas = db.query(models.Area).filter(models.Area.area_pai_id == area_id).all()
     parent = await get_area_by_id(db, area_id)
     parent_and_subareas = {"area": parent, "subareas": areas}
@@ -78,13 +102,11 @@ async def get_areas(
                     "descricao": "Geografia",
                     "id": 38
                 },
-                "subareas": [
-                {
+                "subareas": [{
                     "descricao": "Topografia",
                     "id": 39,
                     "area_pai_id": 38
-                }
-                ]
+                }]
             },
         ]
 

@@ -7,8 +7,6 @@ from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from app.core.security.passwords import get_password_hash
-from app.db.area.crud import get_area_by_id
-from app.db.habilidade.crud import get_habilidades_by_id
 
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.Pessoa:

@@ -5,16 +5,12 @@ from datetime import date
 class HabilidadesBase(BaseModel):
   nome: str
 
-class HabilidadesOut(HabilidadesBase):
-    pass
-
 class HabilidadesCreate(HabilidadesBase):
-  nome: str
 
   class Config:
         orm_mode = True
 
-class Habilidades(HabilidadesCreate):
+class Habilidades(HabilidadesBase):
   id: int
 
   class Config:
@@ -26,8 +22,7 @@ class PessoaHabilidadeCreate(Habilidades):
     class Config:
         orm_mode = True
 
-class HabilidadesEdit(HabilidadesCreate):
-  nome: str
+class HabilidadesEdit(HabilidadesBase):
 
   class Config:
         orm_mode = True
