@@ -7,9 +7,10 @@ from app.db.projeto.crud import (
     get_projetos,
     get_projeto,
     delete_projeto,
+    edit_projeto
 )
-from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut
-from app.core.auth import get_current_active_pessoa, get_current_active_superuser
+from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
+from app.core.auth import get_current_active_pessoa
 
 projeto_router = r = APIRouter()
 
@@ -37,16 +38,13 @@ async def projeto_details(
     request: Request,
     projeto_id: int,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_superuser),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get any pessoa details
     """
     projeto = get_projeto(db, projeto_id)
     return projeto
-    # return encoders.jsonable_encoder(
-    #     pessoa, skip_defaults=True, exclude_none=True,
-    # )
 
 
 
@@ -55,12 +53,29 @@ async def projeto_create(
     request: Request,
     projeto: ProjetoCreate,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_superuser),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Create a new projeto
     """
-    return create_projeto(db, projeto)
+    return await create_projeto(db, projeto)
+
+
+@r.put(
+    "/projeto",
+    response_model=ProjetoEdit,
+    response_model_exclude_none=True,
+)
+async def projeto_edit(
+    request: Request,
+    projeto: ProjetoEdit,
+    projeto_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+
+    return await edit_projeto(db, projeto_id, projeto, current_pessoa.id)
+
 
 @r.delete(
     "/projeto/{projeto_id}", response_model=Projeto, response_model_exclude_none=True
@@ -69,7 +84,7 @@ async def projeto_delete(
     request: Request,
     projeto_id: int,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_superuser),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Delete existing user

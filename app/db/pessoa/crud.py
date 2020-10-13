@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 import typing as t
 
 from db import models
+from db.utils.extract_areas import append_areas
+from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from app.core.security.passwords import get_password_hash
 
@@ -34,8 +36,8 @@ def get_pessoas(
 
 def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
     password = get_password_hash(pessoa.senha)
-    try:
-        db_pessoa = models.Pessoa(
+    
+    db_pessoa = models.Pessoa(
             nome=pessoa.nome,
             email=pessoa.email,
             telefone=pessoa.telefone,
@@ -44,9 +46,8 @@ def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
             superusuario=pessoa.superusuario,
             senha=password,
             data_nascimento=pessoa.data_nascimento,
-        )
-    except Exception as e:
-        print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
+            foto_perfil=pessoa.foto_perfil,
+    )
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)
@@ -64,7 +65,7 @@ def delete_pessoa(db: Session, pessoa_id: int):
     return pessoa
 
 
-def edit_pessoa(
+async def edit_pessoa(
     db: Session, pessoa_id: int, pessoa: schemas.PessoaEdit
 ) -> schemas.Pessoa:
     """
@@ -103,9 +104,11 @@ def edit_pessoa(
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
 
+    await append_areas(update_data, db)
+    await append_habilidades(update_data, db)
+    
     for key, value in update_data.items():
-        setattr(db_pessoa, key, value)
-
+            setattr(db_pessoa, key, value)
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)

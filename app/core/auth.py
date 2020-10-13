@@ -1,7 +1,8 @@
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, File, UploadFile
 from jwt import PyJWTError
 
+from app.db.utils.salvar_imagem import store_image
 from app.db import models, session
 
 from app.db.pessoa import schemas
@@ -107,7 +108,7 @@ def authenticate_pessoa(db, email: str, senha: str):
     return pessoa
 
 
-def sign_up_new_pessoa(
+async def sign_up_new_pessoa(
     db,
     email: str,
     senha: str,
@@ -115,12 +116,19 @@ def sign_up_new_pessoa(
     telefone: Optional[str] = None,
     nome: Optional[str] = None,
     data_nascimento: Optional[date] = None,
+    foto_perfil: UploadFile = File(None)
 ):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, usuario)
-
+    
     if pessoa and pessoa_username:
         return False  # Pessoa already exists
+
+    path = None
+    if foto_perfil:
+        contents = await foto_perfil.read()
+        path = store_image(contents, foto_perfil.filename)
+        
     new_pessoa = create_pessoa(
         db,
         schemas.PessoaCreate(
@@ -131,7 +139,9 @@ def sign_up_new_pessoa(
             senha=senha,
             usuario=usuario,
             ativo=True,
-            superusuario=True,
+            superusuario=False,
+            foto_perfil=path
         ),
     )
+    
     return new_pessoa

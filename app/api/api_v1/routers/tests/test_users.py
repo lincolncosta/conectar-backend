@@ -32,10 +32,10 @@ def test_delete_pessoa_not_found(client, superuser_token_headers):
 def test_edit_pessoa(client, test_superuser, superuser_token_headers):
     new_pessoa = {
         "email": "newemail@email.com",
-        "is_active": False,
-        "is_superuser": True,
-        "name": "Joe Smith",
-        "password": "new_password",
+        "ativo": False,
+        "superusuario": True,
+        "nome": "Joe Smith",
+        "senha": "new_password",
     }
 
     response = client.put(
@@ -45,16 +45,16 @@ def test_edit_pessoa(client, test_superuser, superuser_token_headers):
     )
     assert response.status_code == 200
     new_pessoa["id"] = test_superuser.id
-    new_pessoa.pop("password")
+    new_pessoa.pop("senha")
     assert response.json() == new_pessoa
 
 
 def test_edit_pessoa_not_found(client, test_db, superuser_token_headers):
     new_pessoa = {
         "email": "newemail@email.com",
-        "is_active": False,
-        "is_superuser": False,
-        "password": "new_password",
+        "ativo": False,
+        "superusuario": False,
+        "senha": "new_password",
     }
     response = client.put(
         "/api/v1/pessoas/1234", json=new_pessoa, headers=superuser_token_headers
@@ -72,8 +72,8 @@ def test_get_pessoa(
     assert response.json() == {
         "id": test_pessoa.id,
         "email": test_pessoa.email,
-        "is_active": bool(test_pessoa.is_active),
-        "is_superuser": test_pessoa.is_superuser,
+        "ativo": bool(test_pessoa.ativo),
+        "superusuario": test_pessoa.superusuario,
     }
 
 

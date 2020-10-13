@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from starlette.requests import Request
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from app.api.api_v1.routers.pessoas import pessoas_router
@@ -9,6 +10,8 @@ from app.api.api_v1.routers.experiencia.profissional import (
 )
 from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
 from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
+from app.api.api_v1.routers.habilidade import habilidades_router
+from app.api.api_v1.routers.area import area_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
 from app.db.session import SessionLocal
@@ -19,6 +22,7 @@ app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
 )
 
+app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
@@ -57,6 +61,20 @@ app.include_router(
     experiencia_proj_router,
     prefix="/api/v1",
     tags=["experiencia projeto"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
+app.include_router(
+    area_router,
+    prefix="/api/v1",
+    tags=["area"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
+app.include_router(
+    habilidades_router,
+    prefix="/api/v1",
+    tags=["habilidade"],
     dependencies=[Depends(get_current_active_pessoa)],
 )
 

@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-
+from app.db.area.schemas import PessoaAreaCreate
+from app.db.habilidade.schemas import PessoaHabilidadeCreate 
 
 class PessoaBase(BaseModel):
     senha: str
@@ -13,6 +14,9 @@ class PessoaBase(BaseModel):
     colaborador: t.Optional[bool] = None
     idealizador: t.Optional[bool] = None
     aliado: t.Optional[bool] = None
+    foto_perfil: t.Optional[str] = None
+    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
+    areas: t.Optional[t.List[PessoaAreaCreate]] = None
 
 class PessoaOut(PessoaBase):
     pass
@@ -30,13 +34,16 @@ class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
     email: t.Optional[str] = None
 
+
     class Config:
         orm_mode = True
 
 
 class Pessoa(PessoaBase):
     id: int
-
+    data_criacao: date
+    data_atualizacao: t.Optional[date] = None
+    
     class Config:
         orm_mode = True
 

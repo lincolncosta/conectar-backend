@@ -1,5 +1,5 @@
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, File, UploadFile
 
 from app.db.session import get_db
 from app.core.security import handle_jwt
@@ -139,7 +139,8 @@ async def signup(
     response: Response,
     db=Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends(),
     email: str = Form(...), telefone: t.Optional[str] = Form(None),
-    nome: t.Optional[str] = Form(None), data_nascimento: t.Optional[date] = Form(None)
+    nome: t.Optional[str] = Form(None), data_nascimento: t.Optional[date] = Form(None),
+    foto_perfil: t.Optional[UploadFile] = File(None)
 ):
     '''
         Sign up user function
@@ -164,10 +165,11 @@ async def signup(
             HTTPException: status 409 - Account already exists
     '''
 
-    pessoa = sign_up_new_pessoa(db, usuario=form_data.username,
+    pessoa = await sign_up_new_pessoa(db, usuario=form_data.username,
                                 senha=form_data.password, telefone=telefone,
                                 nome=nome, email=email,
-                                data_nascimento=data_nascimento)
+                                data_nascimento=data_nascimento,
+                                foto_perfil=foto_perfil)
     if not pessoa:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

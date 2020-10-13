@@ -1,19 +1,30 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-
+from app.db.habilidade.schemas import PessoaHabilidadeCreate
+from app.db.area.schemas import ProjetoAreaCreate
 
 class ProjetoBase(BaseModel):
     nome: str
     descricao: str
     visibilidade: bool
     objetivo: str
+    areas: t.Optional[t.List[ProjetoAreaCreate]] = None
+    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
 
 class ProjetoOut(ProjetoBase):
     pass    
 
 class ProjetoCreate(ProjetoBase):
-    nome: str
+
+    class Config:
+        orm_mode = True
+
+class ProjetoEdit(ProjetoBase):
+    nome: t.Optional[str] = None
+    descricao: t.Optional[str] = None
+    visibilidade: t.Optional[bool] = None
+    objetivo: t.Optional[str] = None
 
     class Config:
         orm_mode = True     
