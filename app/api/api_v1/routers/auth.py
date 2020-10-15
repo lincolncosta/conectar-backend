@@ -41,8 +41,7 @@ async def login(
         Raises:
             HTTPException: Invalid credentials
     '''
-    pessoa = authenticate_pessoa(db, form_data.username, form_data.password)
-
+    pessoa = await authenticate_pessoa(db, form_data.username, form_data.password)
     try:
         message = pessoa["message"]
     except Exception as e:

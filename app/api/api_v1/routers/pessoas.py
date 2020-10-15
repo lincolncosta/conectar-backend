@@ -138,11 +138,11 @@ async def pessoa_edit_admin(
     """
     Update data in pessoa performed by admin user
     """
-    return edit_pessoa(db, pessoa_id, pessoa)
+    return await edit_pessoa(db, pessoa_id, pessoa)
 
 
 @r.delete(
-    "admin/pessoas/{pessoa_id}",
+    "/admin/pessoas/{pessoa_id}",
     response_model=Pessoa,
     response_model_exclude_none=True,
     tags=["admin"],

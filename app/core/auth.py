@@ -74,6 +74,7 @@ async def get_current_pessoa(
 async def get_current_active_pessoa(
     current_pessoa: models.Pessoa = Depends(get_current_pessoa),
 ):
+    print(f'GET CURRENT ACTIVE{current_pessoa}')
     if not current_pessoa.ativo:
         raise HTTPException(status_code=400, detail="Pessoa Inativa")
     return current_pessoa
@@ -90,12 +91,13 @@ async def get_current_active_superuser(
     return current_pessoa
 
 
-def authenticate_pessoa(db, email: str, senha: str):
+async def authenticate_pessoa(db, email: str, senha: str):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, email)
 
     username_message = {"message": "Nome de usuário incorreto"}
     password_message = {"message": "Senha incorreta"}
+
     if not pessoa:
         if not pessoa_username:
             return username_message
@@ -121,7 +123,7 @@ async def sign_up_new_pessoa(
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, usuario)
     
-    if pessoa and pessoa_username:
+    if pessoa or pessoa_username:
         return False  # Pessoa already exists
 
     path = None

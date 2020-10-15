@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from db import models
+from app.db import models
 from . import schemas
 from app.core.security.passwords import get_password_hash
 
