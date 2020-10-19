@@ -177,6 +177,7 @@ class Projeto(Base):
     descricao = Column(String)
     visibilidade = Column(Boolean, default=True)
     objetivo = Column(String)
+    foto_capa = Column(String)
     habilidades = relationship("Habilidades", secondary=HabilidadesProjeto)
     areas = relationship("Area", secondary=ProjetoArea)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
