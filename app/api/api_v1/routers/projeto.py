@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from fastapi import APIRouter, Request, Depends, Response, encoders, File, UploadFile, Form
 import typing as t
+from app.db.habilidade.schemas import PessoaHabilidadeCreate
+from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.session import get_db
 from app.db.projeto.crud import (
@@ -31,6 +33,7 @@ async def projetos_list(
     response.headers["Content-Range"] = f"0-9/{len(projetos)}"
     return projetos
 
+
 @r.get(
     "/projeto/{projeto_id}", response_model=Projeto, response_model_exclude_none=True,
 )
@@ -47,18 +50,23 @@ async def projeto_details(
     return projeto
 
 
-
-@r.post("/projeto", response_model=Projeto, response_model_exclude_none=True)
+@r.post("/projeto", response_model_exclude_none=True)
 async def projeto_create(
     request: Request,
-    projeto: ProjetoCreate,
     db=Depends(get_db),
+    nome: str = Form(...),
+    descricao: str = Form(...),
+    visibilidade: bool = Form(...),
+    objetivo: str = Form(...),
+    foto_capa: t.Optional[UploadFile] = File(None),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Create a new projeto
     """
-    return await create_projeto(db, projeto)
+    return await create_projeto(db, nome=nome,
+                                descricao=descricao, visibilidade=visibilidade,
+                                objetivo=objetivo, foto_capa=foto_capa)
 
 
 @r.put(

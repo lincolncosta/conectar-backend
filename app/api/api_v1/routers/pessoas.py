@@ -142,7 +142,7 @@ async def pessoa_edit_admin(
 
 
 @r.delete(
-    "admin/pessoas/{pessoa_id}",
+    "/admin/pessoas/{pessoa_id}",
     response_model=Pessoa,
     response_model_exclude_none=True,
     tags=["admin"],

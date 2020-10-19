@@ -177,6 +177,7 @@ class Projeto(Base):
     objetivo = Column(String)
     habilidades = relationship("Habilidades", secondary=HabilidadesProjeto)
     areas = relationship("Area", secondary=ProjetoArea)
+    foto_capa = Column(String)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 

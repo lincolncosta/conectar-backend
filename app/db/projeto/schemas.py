@@ -1,3 +1,4 @@
+from fastapi import File, UploadFile
 from pydantic import BaseModel
 import typing as t
 from datetime import date
@@ -9,6 +10,7 @@ class ProjetoBase(BaseModel):
     descricao: str
     visibilidade: bool
     objetivo: str
+    foto_capa: t.Optional[str] = None
     areas: t.Optional[t.List[ProjetoAreaCreate]] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
 
