@@ -52,7 +52,7 @@ async def get_current_pessoa(
     )
     try:
         payload = jwt.decode(
-            token, passwords.SECRET_KEY, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
+            token, passwords.ACCESS_TOKEN, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
         )
         email: str = payload.get("sub")
         if email is None:
@@ -71,10 +71,30 @@ async def get_current_pessoa(
     return pessoa
 
 
+async def get_current_token(
+    token: str = Depends(handle_jwt.oauth2_scheme)
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Não foi possível validar as credenciais",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(
+            token, passwords.ACCESS_TOKEN, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
+        )
+        return token
+        # email: str = payload.get("sub")
+        # if email is None:
+        #     raise credentials_exception
+        # permissions: str = payload.get("permissions")
+        # token_data = schemas.TokenData(email=email, permissions=permissions)
+    except PyJWTError:
+        raise credentials_exception
+
 async def get_current_active_pessoa(
     current_pessoa: models.Pessoa = Depends(get_current_pessoa),
 ):
-    print(f'GET CURRENT ACTIVE{current_pessoa}')
     if not current_pessoa.ativo:
         raise HTTPException(status_code=400, detail="Pessoa Inativa")
     return current_pessoa

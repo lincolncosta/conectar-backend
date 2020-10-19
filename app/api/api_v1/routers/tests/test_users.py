@@ -141,11 +141,3 @@ def test_unauthenticated_routes(client):
     assert response.status_code == 403
     response = client.delete("/api/v1/pessoas")
     assert response.status_code == 403
-
-
-# def test_unauthorized_routes(client):
-#     fake_login(client)
-#     response = client.get("/api/v1/pessoas")
-#     assert response.status_code == 403
-#     response = client.get("/api/v1/pessoas/123")
-#     assert response.status_code == 403
