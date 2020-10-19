@@ -138,7 +138,7 @@ async def pessoa_edit_admin(
     """
     Update data in pessoa performed by admin user
     """
-    return edit_pessoa(db, pessoa_id, pessoa)
+    return await edit_pessoa(db, pessoa_id, pessoa)
 
 
 @r.delete(

@@ -4,9 +4,9 @@ from fastapi import HTTPException, Request
 
 from datetime import datetime, timedelta
 
-from .passwords import ALGORITHM, SECRET_KEY
+from .passwords import ALGORITHM, ACCESS_TOKEN, REFRESH_TOKEN
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 43200
 
 class OAuth2PasswordCookie(OAuth2PasswordBearer):
     """OAuth2 password flow with token in a httpOnly cookie.
@@ -43,5 +43,11 @@ def create_access_token(*, data: dict, expires_delta: timedelta = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, ACCESS_TOKEN, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def create_refresh_token(*, data: dict):
+    to_encode = data.copy()
+    encoded_jwt = jwt.encode(to_encode, REFRESH_TOKEN, algorithm=ALGORITHM)
     return encoded_jwt

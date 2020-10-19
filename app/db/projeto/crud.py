@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from fastapi import HTTPException, status, File, UploadFile
+=======
+from fastapi import HTTPException, status, UploadFile
+>>>>>>> upstream/master
 from sqlalchemy.orm import Session
 import typing as t
 from app.db.habilidade.schemas import PessoaHabilidadeCreate
@@ -6,9 +10,10 @@ from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.utils.salvar_imagem import store_image
 
-from db import models
-from db.utils.extract_areas import append_areas
-from db.utils.extract_habilidade import append_habilidades
+from app.db import models
+from app.db.utils.extract_areas import append_areas
+from app.db.utils.extract_habilidade import append_habilidades
+from app.db.utils.salvar_imagem import store_image
 from . import schemas
 from app.core.security.passwords import get_password_hash
 
@@ -55,13 +60,13 @@ async def create_projeto(db: Session,
                          descricao: str,
                          visibilidade: bool,
                          objetivo: str,
-                         foto_capa: t.Optional[UploadFile]):
+                         foto_capa: t.Optional[UploadFile] = None):
 
     path = None
     if foto_capa:
         contents = await foto_capa.read()
         path = store_image(contents, foto_capa.filename)
-    
+
     db_projeto = models.Projeto(
         nome=nome,
         descricao=descricao,
@@ -70,18 +75,34 @@ async def create_projeto(db: Session,
         foto_capa=path
     )
 
-    # db_proj = {"areas": areas, "habilidades": habilidades}
-
-    # await append_areas(db_proj, db)
-    # await append_habilidades(db_proj, db)
-
-    # for key, value in db_proj.items():
-    #     setattr(db_projeto, key, value)
-
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
-    return {"ok":True}
+    
+    db_proj = db_projeto.__dict__
+    return {"id": db_proj["id"]}
+
+# async def create_projeto(db: Session, projeto: schemas.ProjetoCreate) -> schemas.Projeto:
+#     db_projeto = models.Projeto(
+#             nome=projeto.nome,
+#             descricao=projeto.descricao,
+#             visibilidade=projeto.visibilidade,
+#             objetivo=projeto.objetivo
+#     )
+
+#     db_proj = projeto.dict(exclude_unset=True)
+    
+#     await append_areas(db_proj, db)
+#     await append_habilidades(db_proj, db)
+
+#     for key, value in db_proj.items():
+#         setattr(db_projeto, key, value)
+
+#     db.add(db_projeto)
+#     db.commit()
+#     db.refresh(db_projeto)
+#     return db_projeto
+
 
 def delete_projeto(db: Session, projeto_id: int):
     projeto = get_projeto(db, projeto_id)

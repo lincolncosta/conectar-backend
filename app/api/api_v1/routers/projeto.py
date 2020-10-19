@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders, File, UploadFile, Form
+from fastapi import (APIRouter, Request, Depends, Response,
+                     encoders, UploadFile, File, Form)
 import typing as t
 from app.db.habilidade.schemas import PessoaHabilidadeCreate
 from app.db.area.schemas import ProjetoAreaCreate
@@ -64,9 +65,26 @@ async def projeto_create(
     """
     Create a new projeto
     """
-    return await create_projeto(db, nome=nome,
-                                descricao=descricao, visibilidade=visibilidade,
-                                objetivo=objetivo, foto_capa=foto_capa)
+    try:
+        projeto = await create_projeto(db, nome=nome,
+                                       descricao=descricao, visibilidade=visibilidade,
+                                       objetivo=objetivo, foto_capa=foto_capa)
+        return projeto
+    except Exception as e:
+        raise e
+        
+
+# @r.post("/projeto", response_model=Projeto, response_model_exclude_none=True)
+# async def projeto_create(
+#     request: Request,
+#     projeto: ProjetoCreate,
+#     db=Depends(get_db),
+#     current_pessoa=Depends(get_current_active_pessoa),
+# ):
+#     """
+#     Create a new projeto
+#     """
+#     return await create_projeto(db, projeto)
 
 
 @r.put(

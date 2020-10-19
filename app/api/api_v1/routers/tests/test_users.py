@@ -1,107 +1,138 @@
 from app.db import models
+from app.core.security import passwords
+from datetime import date
 
 
-def test_get_pessoas(client, test_superuser, superuser_token_headers):
-    response = client.get("/api/v1/pessoas", headers=superuser_token_headers)
+def fake_login(client, user, monkeypatch):
+
+    monkeypatch.setattr(passwords, "verify_password", lambda a, b: True)
+
+    user = client.post(
+        "/api/token",
+        data={"username": user.email,
+              "password": "nottheactualpass", "email": "asd"},
+    )
+
+
+def test_get_pessoas(client, test_superuser, monkeypatch):
+    fake_login(client, test_superuser, monkeypatch)
+    response = client.get("/api/v1/pessoas")
     assert response.status_code == 200
     assert response.json() == [
         {
             "id": test_superuser.id,
             "email": test_superuser.email,
-            "is_active": test_superuser.is_active,
-            "is_superuser": test_superuser.is_superuser,
+            "ativo": test_superuser.ativo,
+            "colaborador": test_superuser.colaborador,
+            "aliado": test_superuser.aliado,
+            "data_nascimento": date(year=1990, month=1, day=1).isoformat(),
+            "data_criacao": date.today().isoformat(),
+            "areas": test_superuser.areas,
+            "habilidades": test_superuser.habilidades,
+            "idealizador": test_superuser.idealizador
         }
     ]
 
 
-def test_delete_pessoa(client, test_superuser, test_db, superuser_token_headers):
+def test_delete_pessoa(client, test_superuser, test_db, monkeypatch):
+    fake_login(client, test_superuser, monkeypatch)
     response = client.delete(
-        f"/api/v1/pessoas/{test_superuser.id}", headers=superuser_token_headers
+        f"/api/v1/pessoas"
     )
     assert response.status_code == 200
-    assert test_db.query(models.User).all() == []
+    assert test_db.query(models.Pessoa).all() == []
 
 
-def test_delete_pessoa_not_found(client, superuser_token_headers):
+def test_delete_pessoa_not_found(client, test_superuser, monkeypatch):
+    fake_login(client, test_superuser, monkeypatch)
     response = client.delete(
-        "/api/v1/pessoas/4321", headers=superuser_token_headers
+        "/api/v1/admin/pessoas/4321"
     )
     assert response.status_code == 404
 
 
-def test_edit_pessoa(client, test_superuser, superuser_token_headers):
+def test_edit_pessoa(client, test_superuser, monkeypatch):
+    fake_login(client, test_superuser, monkeypatch)
     new_pessoa = {
         "email": "newemail@email.com",
         "ativo": False,
-        "superusuario": True,
         "nome": "Joe Smith",
-        "senha": "new_password",
     }
 
     response = client.put(
-        f"/api/v1/pessoas/{test_superuser.id}",
+        f"/api/v1/admin/pessoas/{test_superuser.id}",
         json=new_pessoa,
-        headers=superuser_token_headers,
     )
     assert response.status_code == 200
     new_pessoa["id"] = test_superuser.id
-    new_pessoa.pop("senha")
+    new_pessoa["aliado"] = test_superuser.aliado
+    new_pessoa["areas"] = test_superuser.areas
+    new_pessoa["data_criacao"] = date.today().isoformat()
+    new_pessoa["data_atualizacao"] = date.today().isoformat()
+    new_pessoa["data_nascimento"] = date(year=1990, month=1, day=1).isoformat()
+    new_pessoa["habilidades"] = test_superuser.habilidades
+    new_pessoa["idealizador"] = test_superuser.idealizador
+    new_pessoa["colaborador"] = test_superuser.colaborador
+
+
     assert response.json() == new_pessoa
 
 
-def test_edit_pessoa_not_found(client, test_db, superuser_token_headers):
+def test_edit_pessoa_not_found(client, test_superuser, test_db, monkeypatch):
+    fake_login(client, test_superuser, monkeypatch)
     new_pessoa = {
         "email": "newemail@email.com",
         "ativo": False,
-        "superusuario": False,
         "senha": "new_password",
     }
     response = client.put(
-        "/api/v1/pessoas/1234", json=new_pessoa, headers=superuser_token_headers
+        "/api/v1/admin/pessoas/1234", json=new_pessoa
     )
     assert response.status_code == 404
 
 
 def test_get_pessoa(
-    client, test_pessoa, superuser_token_headers,
+    client, test_pessoa, monkeypatch
 ):
+    fake_login(client, test_pessoa, monkeypatch)
     response = client.get(
-        f"/api/v1/pessoas/{test_pessoa.id}", headers=superuser_token_headers
+        f"/api/v1/pessoas/{test_pessoa.id}"
     )
     assert response.status_code == 200
     assert response.json() == {
         "id": test_pessoa.id,
         "email": test_pessoa.email,
         "ativo": bool(test_pessoa.ativo),
-        "superusuario": test_pessoa.superusuario,
+        "colaborador": test_pessoa.colaborador,
+        "aliado": test_pessoa.aliado,
+        "data_nascimento": date(year=1990, month=1, day=1).isoformat(),
+        "data_criacao": date.today().isoformat(),
+        "areas": test_pessoa.areas,
+        "habilidades": test_pessoa.habilidades,
+        "idealizador": test_pessoa.idealizador
     }
 
 
-def test_pessoa_not_found(client, superuser_token_headers):
-    response = client.get("/api/v1/pessoas/123", headers=superuser_token_headers)
+def test_pessoa_not_found(client, test_superuser, monkeypatch):
+    fake_login(client, test_superuser, monkeypatch)
+    response = client.get("/api/v1/pessoas/123")
     assert response.status_code == 404
 
 
-def test_authenticated_pessoa_me(client, pessoa_token_headers):
-    response = client.get("/api/v1/pessoas/me", headers=pessoa_token_headers)
+def test_authenticated_pessoa_me(client, test_pessoa, monkeypatch):
+    fake_login(client, test_pessoa, monkeypatch)
+    response = client.get("/api/v1/pessoas/me")
     assert response.status_code == 200
 
 
 def test_unauthenticated_routes(client):
     response = client.get("/api/v1/pessoas/me")
-    assert response.status_code == 401
-    response = client.get("/api/v1/pessoas")
-    assert response.status_code == 401
-    response = client.get("/api/v1/pessoas/123")
-    assert response.status_code == 401
-    response = client.put("/api/v1/pessoas/123")
-    assert response.status_code == 401
-    response = client.delete("/api/v1/pessoas/123")
-    assert response.status_code == 401
-
-
-def test_unauthorized_routes(client, pessoa_token_headers):
-    response = client.get("/api/v1/pessoas", headers=pessoa_token_headers)
     assert response.status_code == 403
-    response = client.get("/api/v1/pessoas/123", headers=pessoa_token_headers)
+    response = client.get("/api/v1/pessoas")
+    assert response.status_code == 403
+    response = client.get("/api/v1/pessoas/123")
+    assert response.status_code == 403
+    response = client.put("/api/v1/pessoas")
+    assert response.status_code == 403
+    response = client.delete("/api/v1/pessoas")
     assert response.status_code == 403
