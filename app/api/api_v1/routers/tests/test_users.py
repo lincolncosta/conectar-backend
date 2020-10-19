@@ -13,8 +13,6 @@ def fake_login(client, user, monkeypatch):
               "password": "nottheactualpass", "email": "asd"},
     )
 
-    print(f'Fake_login response {user}')
-
 
 def test_get_pessoas(client, test_superuser, monkeypatch):
     fake_login(client, test_superuser, monkeypatch)
@@ -31,8 +29,7 @@ def test_get_pessoas(client, test_superuser, monkeypatch):
             "data_criacao": date.today().isoformat(),
             "areas": test_superuser.areas,
             "habilidades": test_superuser.habilidades,
-            "idealizador": test_superuser.idealizador,
-            "senha": test_superuser.senha
+            "idealizador": test_superuser.idealizador
         }
     ]
 
@@ -76,7 +73,6 @@ def test_edit_pessoa(client, test_superuser, monkeypatch):
     new_pessoa["habilidades"] = test_superuser.habilidades
     new_pessoa["idealizador"] = test_superuser.idealizador
     new_pessoa["colaborador"] = test_superuser.colaborador
-    new_pessoa["senha"] = test_superuser.senha
 
 
     assert response.json() == new_pessoa
@@ -113,8 +109,7 @@ def test_get_pessoa(
         "data_criacao": date.today().isoformat(),
         "areas": test_pessoa.areas,
         "habilidades": test_pessoa.habilidades,
-        "idealizador": test_pessoa.idealizador,
-        "senha": test_pessoa.senha
+        "idealizador": test_pessoa.idealizador
     }
 
 
