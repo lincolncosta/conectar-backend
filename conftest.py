@@ -10,7 +10,7 @@ from app.core.security import passwords
 from app.db.session import Base, get_db
 from app.db import models
 from app.main import app
-
+from app.api.api_v1.routers.auth import login
 
 def get_test_db_url() -> str:
     return f"{config.SQLALCHEMY_DATABASE_URI}_test"
@@ -99,16 +99,15 @@ def get_password_hash() -> str:
 
 
 @pytest.fixture
-def test_user(test_db) -> models.Pessoa:
+def test_pessoa(test_db) -> models.Pessoa:
     """
     Make a test user in the database
     """
 
     user = models.Pessoa(
-        email="fake@email.com",
-        senha=get_password_hash(),
-        usuario="usuario001",
-        ativo=True,
+        email="admin",
+        senha="admin",
+        usuario="admin"
     )
     test_db.add(user)
     test_db.commit()
@@ -122,8 +121,9 @@ def test_superuser(test_db) -> models.Pessoa:
     """
 
     user = models.Pessoa(
-        email="fakeadmin@email.com",
-        senha=get_password_hash(),
+        email="myman",
+        senha="myman",
+        usuario="myman",
         superusuario=True,
     )
     test_db.add(user)
@@ -134,36 +134,35 @@ def test_superuser(test_db) -> models.Pessoa:
 def verify_password_mock(first: str, second: str) -> bool:
     return True
 
+# @pytest.fixture
+# def user_token_headers(
+#     client: TestClient, test_user, test_password, monkeypatch
+# ) -> t.Dict[str, str]:
+#     monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
-@pytest.fixture
-def user_token_headers(
-    client: TestClient, test_user, test_password, monkeypatch
-) -> t.Dict[str, str]:
-    monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
-
-    login_data = {
-        "usuario": test_user.email,
-        "senha": test_password,
-    }
-    r = client.post("/api/token", data=login_data)
-    tokens = r.json()
-    a_token = tokens["access_token"]
-    headers = {"Authorization": f"Bearer {a_token}"}
-    return headers
+#     login_data = {
+#         "usuario": test_user.email,
+#         "senha": test_password,
+#     }
+#     r = client.post("/api/token", data=login_data, withCredentials)
+#     tokens = r.json()
+#     a_token = tokens["access_token"]
+#     headers = {"Authorization": f"Bearer {a_token}"}
+#     return headers
 
 
-@pytest.fixture
-def superuser_token_headers(
-    client: TestClient, test_superuser, test_password, monkeypatch
-) -> t.Dict[str, str]:
-    monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
+# @pytest.fixture
+# def superuser_token_headers(
+#     client: TestClient, test_superuser, test_password, monkeypatch
+# ) -> t.Dict[str, str]:
+#     monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
-    login_data = {
-        "usuario": test_superuser.email,
-        "senha": test_password,
-    }
-    r = client.post("/api/token", data=login_data)
-    tokens = r.json()
-    a_token = tokens["access_token"]
-    headers = {"Authorization": f"Bearer {a_token}"}
-    return headers
+#     login_data = {
+#         "usuario": test_superuser.email,
+#         "senha": test_password,
+#     }
+#     r = client.post("/api/token", data=login_data)
+#     tokens = r.json()
+#     a_token = tokens["access_token"]
+#     headers = {"Authorization": f"Bearer {a_token}"}
+#     return headers

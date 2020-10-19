@@ -5,7 +5,6 @@ from app.db.area.schemas import PessoaAreaCreate
 from app.db.habilidade.schemas import PessoaHabilidadeCreate 
 
 class PessoaBase(BaseModel):
-    senha: str
     data_nascimento: t.Optional[date] = None
     email: str
     ativo: bool = True
@@ -23,6 +22,7 @@ class PessoaOut(PessoaBase):
 
 
 class PessoaCreate(PessoaBase):
+    senha: str
     superusuario: t.Optional[bool] = False
     usuario: str
 
@@ -43,7 +43,7 @@ class Pessoa(PessoaBase):
     id: int
     data_criacao: date
     data_atualizacao: t.Optional[date] = None
-    
+
     class Config:
         orm_mode = True
 

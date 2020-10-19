@@ -52,7 +52,7 @@ async def get_current_pessoa(
     )
     try:
         payload = jwt.decode(
-            token, passwords.SECRET_KEY, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
+            token, passwords.ACCESS_TOKEN, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
         )
         email: str = payload.get("sub")
         if email is None:
@@ -70,6 +70,27 @@ async def get_current_pessoa(
         raise credentials_exception
     return pessoa
 
+
+async def get_current_token(
+    token: str = Depends(handle_jwt.oauth2_scheme)
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Não foi possível validar as credenciais",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(
+            token, passwords.ACCESS_TOKEN, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
+        )
+        return token
+        # email: str = payload.get("sub")
+        # if email is None:
+        #     raise credentials_exception
+        # permissions: str = payload.get("permissions")
+        # token_data = schemas.TokenData(email=email, permissions=permissions)
+    except PyJWTError:
+        raise credentials_exception
 
 async def get_current_active_pessoa(
     current_pessoa: models.Pessoa = Depends(get_current_pessoa),
@@ -90,12 +111,13 @@ async def get_current_active_superuser(
     return current_pessoa
 
 
-def authenticate_pessoa(db, email: str, senha: str):
+async def authenticate_pessoa(db, email: str, senha: str):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, email)
 
     username_message = {"message": "Nome de usuário incorreto"}
     password_message = {"message": "Senha incorreta"}
+
     if not pessoa:
         if not pessoa_username:
             return username_message
@@ -121,7 +143,7 @@ async def sign_up_new_pessoa(
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, usuario)
     
-    if pessoa and pessoa_username:
+    if pessoa or pessoa_username:
         return False  # Pessoa already exists
 
     path = None

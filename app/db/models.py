@@ -153,6 +153,8 @@ class Pessoa(Base):
     idealizador = Column(Boolean, default=False)
     aliado = Column(Boolean, default=False)
 
+    def __repr__(self):
+        return f"<Pessoa {self.id}, {self.email}, {self.superusuario}>"
 
 class Projeto(Base):
     """
@@ -180,7 +182,6 @@ class Projeto(Base):
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
-    
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 

@@ -3,13 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, F
 
 from app.db.session import get_db
 from app.core.security import handle_jwt
-from app.core.auth import authenticate_pessoa, sign_up_new_pessoa
+from app.core.auth import authenticate_pessoa, sign_up_new_pessoa, get_current_token
 
 import typing as t
 
 from datetime import timedelta, date
 
 from app.db.pessoa import schemas
+
+# from app.tasks import append_refresh_token, check_refresh_token
 
 auth_router = r = APIRouter()
 
@@ -41,8 +43,7 @@ async def login(
         Raises:
             HTTPException: Invalid credentials
     '''
-    pessoa = authenticate_pessoa(db, form_data.username, form_data.password)
-
+    pessoa = await authenticate_pessoa(db, form_data.username, form_data.password)
     try:
         message = pessoa["message"]
     except Exception as e:
@@ -66,67 +67,32 @@ async def login(
         data={"sub": pessoa.email, "permissions": permissions},
         expires_delta=access_token_expires,
     ).decode('utf-8')
+    
+    # _refresh_token = handle_jwt.create_refresh_token(
+    #     data={"sub": pessoa.email, "permissions": permissions},
+    # ).decode('utf-8')
 
+    # append_refresh_token(_refresh_token)
     response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
+    # response.set_cookie(key="rjid", value=f"{_refresh_token}", httponly=True)
     return {"pessoa": pessoa}
 
-# TODO REFRESH TOKEN
-# @r.post("/refresh_token", response_model=t.Dict[str, schemas.Pessoa], response_model_exclude_none=True)
-# async def refresh_token(
-#     response: Response,
-#     db=Depends(get_db),
-#     form_data: OAuth2PasswordRequestForm = Depends()
-# ):
-#     '''
-#         Logs user in if authentication data is correct.
 
-#         Creates jwt token and append it to response as cookie and can
-#         only be accessed by HTTP.
-
-
-#         TODO Set secure=True on response.cookie
-
-
-#         Args:
-#             response: Response to be sent with cookie from fastapi
-#             db: Database local session
-#             form_data: dict containing username and password
-
-#         Returns:
-#             A dict in the shape of {"pessoa": schemas.Pessoa}
-
-#         Raises:
-#             HTTPException: Invalid credentials
-#     '''
-#     pessoa = authenticate_pessoa(db, form_data.username, form_data.password)
-
-#     try:
-#         message = pessoa["message"]
-#     except Exception as e:
-#         message = False
-
-#     if message:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail=message,
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-
-#     access_token_expires = timedelta(
-#         minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
-#     )
-#     if pessoa.superusuario:
-#         permissions = "admin"
-#     else:
-#         permissions = "user"
-#     access_token = handle_jwt.create_access_token(
-#         data={"sub": pessoa.email, "permissions": permissions},
-#         expires_delta=access_token_expires,
-#     ).decode('utf-8')
-
-#     response.set_cookie(key="jid", value=f"{access_token}", httponly=True, secure=True)
-
-#     return {"pessoa": pessoa}
+@r.post("/refresh_token")
+async def refresh_token(
+    response: Response,
+    token=Depends(get_current_token),
+    db=Depends(get_db),
+):
+    credentialsException = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="",
+            headers={"WWW-Authenticate": "Bearer"},
+    )
+    if token:
+        return {"access_token":token}
+    
+    raise credentialsException
 
 
 @r.post("/logout")

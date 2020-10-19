@@ -5,14 +5,15 @@ def verify_password_mock(first: str, second: str):
     return True
 
 
-def test_login(client, test_user, monkeypatch):
+def test_login(client, test_pessoa, monkeypatch):
     # Patch the test to skip password hashing check for speed
     monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
     response = client.post(
         "/api/token",
-        data={"username": test_user.email, "password": "nottheactualpass"},
+        data={"username": test_pessoa.email, "password": "nottheactualpass", "email": "asd"},
     )
+    assert "jid" in response.headers['set-cookie']
     assert response.status_code == 200
 
 
@@ -24,26 +25,28 @@ def test_signup(client, monkeypatch):
 
     response = client.post(
         "/api/signup",
-        data={"username": "some@email.com", "password": "randompassword"},
+        data={"username": "someusername", "password": "randompassword", "email": "somemail@email.com"},
     )
+    assert "jid" in response.headers['set-cookie']
     assert response.status_code == 200
 
 
-def test_resignup(client, test_user, monkeypatch):
+def test_resignup(client, test_pessoa, monkeypatch):
     # Patch the test to skip password hashing check for speed
     monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
 
     response = client.post(
         "/api/signup",
         data={
-            "username": test_user.email,
+            "username": test_pessoa.email,
             "password": "password_hashing_is_skipped_via_monkey_patch",
+            "email": "email"
         },
     )
     assert response.status_code == 409
 
 
-def test_wrong_password(client, test_db, test_user, test_password, monkeypatch):
+def test_wrong_password(client, test_db, test_pessoa, test_password, monkeypatch):
     def verify_password_failed_mock(first: str, second: str):
         return False
 
@@ -52,12 +55,12 @@ def test_wrong_password(client, test_db, test_user, test_password, monkeypatch):
     )
 
     response = client.post(
-        "/api/token", data={"username": test_user.email, "password": "wrong"}
+        "/api/token", data={"username": test_pessoa.email, "password": "wrong"}
     )
     assert response.status_code == 401
 
 
-def test_wrong_login(client, test_db, test_user, test_password):
+def test_wrong_login(client, test_db, test_pessoa, test_password):
     response = client.post(
         "/api/token", data={"username": "fakeuser", "password": test_password}
     )

@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from db import models
+from app.db import models
 from app.db.experiencia import schemas
 from app.db.utils.extract_areas import append_areas
 
