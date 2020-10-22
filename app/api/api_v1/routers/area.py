@@ -71,7 +71,7 @@ async def area_details_id(
     return area
 
 @r.get(
-    "/area/name/{area_name}",
+    "/areas/name/{area_name}",
     response_model=Area,
     response_model_exclude_none=True,
 )

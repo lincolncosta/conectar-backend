@@ -28,7 +28,7 @@ class ProjetoEdit(ProjetoBase):
     objetivo: t.Optional[str] = None
 
     class Config:
-        orm_mode = True     
+        orm_mode = True
 
 class Projeto(ProjetoBase):
     id: int

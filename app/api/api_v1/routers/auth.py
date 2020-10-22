@@ -86,7 +86,7 @@ async def refresh_token(
 ):
     credentialsException = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="",
+            detail="Não autenticado",
             headers={"WWW-Authenticate": "Bearer"},
     )
     if token:
