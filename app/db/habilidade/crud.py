@@ -5,7 +5,7 @@ import typing as t
 from app.db import models
 from app.db.habilidade import schemas
 
-async  def get_habilidades_by_id(
+def get_habilidades_by_id(
     db: Session, habilidades_id: int
 ) -> schemas.Habilidades:
     habilidades = (
@@ -112,5 +112,3 @@ def edit_habilidades(
     db.commit()
     db.refresh(db_habilidades)
     return db_habilidades
-
-

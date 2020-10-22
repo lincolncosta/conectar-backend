@@ -184,10 +184,9 @@ async def edit_area(
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="area não encontrada"
         )
-    print(db_area)
 
     update_data = area.dict(exclude_unset=True)
-    print(update_data)
+    
     for key, value in update_data.items():
         setattr(db_area, key, value)
 

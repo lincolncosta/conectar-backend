@@ -119,7 +119,7 @@ def test_edit_area(client, fake_login_superuser, test_area):
     }
 
     response = client.put(
-        f"/api/v1/areas?area_id={test_area.id}",
+        f"/api/v1/areas/{test_area.id}",
         json=new_area
     )
 
@@ -133,7 +133,7 @@ def test_edit_area_not_found(client, fake_login_superuser):
     }
 
     response = client.put(
-        f"/api/v1/areas?area_id=123123",
+        f"/api/v1/areas/123123",
         json=new_area
     )
 
@@ -143,7 +143,7 @@ def test_edit_area_not_found(client, fake_login_superuser):
 
 def test_delete_area(client, fake_login_superuser, test_area):
     response = client.delete(
-        f"/api/v1/areas?area_id={test_area.id}"
+        f"/api/v1/areas/{test_area.id}"
     )
 
     assert response.status_code == 200
@@ -151,7 +151,7 @@ def test_delete_area(client, fake_login_superuser, test_area):
 
 def test_delete_area_not_found(client, fake_login_superuser):
     response = client.delete(
-        f"/api/v1/areas?area_id=12311"
+        f"/api/v1/areas/12311"
     )
 
     assert response.status_code == 404

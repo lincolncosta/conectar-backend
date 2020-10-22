@@ -35,23 +35,6 @@ async def areas_list(
     response.headers["Content-Range"] = f"0-9/{len(areas)}"
     return areas
 
-# @r.get(
-#     "/areas_subareas",
-#     response_model=t.List[AreasAndSubareas],
-#     response_model_exclude_none=True,
-# )
-# async def areas_list(
-#     area_id: int,
-#     response: Response,
-#     db=Depends(get_db),
-#     current_pessoa=Depends(get_current_active_pessoa),
-# ):
-#     """
-#     Get all areas
-#     """
-#     areas = await get_area_and_subareas(db, area_id)
-#     return [areas]
-
 
 @r.get(
     "/areas/id/{area_id}",
@@ -101,7 +84,7 @@ async def area_create(
 
 
 @r.put(
-    "/areas",
+    "/areas/{area_id}",
     response_model=AreaEdit,
     response_model_exclude_none=True,
 )
@@ -119,7 +102,7 @@ async def area_edit(
 
 
 @r.delete(
-    "/areas",
+    "/areas/{area_id}",
     response_model=Area,
     response_model_exclude_none=True,
 )

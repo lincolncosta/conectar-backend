@@ -15,6 +15,8 @@ def test_area(test_db) -> models.Area:
     return area
 
 
+
+
 @pytest.fixture
 def test_area_with_parent(test_db, test_area) -> models.Area:
     """
@@ -29,5 +31,15 @@ def test_area_with_parent(test_db, test_area) -> models.Area:
     return area
 
 
-def verify_password_mock(first: str, second: str) -> bool:
-    return True
+@pytest.fixture
+def test_habilidade(test_db) -> models.Habilidades:
+    """
+    Habilidade for testing
+    """
+
+    habilidade = models.Habilidades(
+        nome="Desenvolvimento web"
+    )
+    test_db.add(habilidade)
+    test_db.commit()
+    return habilidade

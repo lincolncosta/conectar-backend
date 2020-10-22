@@ -80,15 +80,15 @@ async def habilidades_create(
 )
 async def habilidade_edit(
     request: Request,
-    habilidades_id: int,
-    habilidades: Habilidades,
+    habilidade_id: int,
+    habilidades: HabilidadesEdit,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Update existing habilidade
     """
-    return edit_habilidades(db, habilidades_id, habilidades)
+    return edit_habilidades(db, habilidade_id, habilidades)
 
 @r.delete(
     "/habilidade/pessoa/{habilidade_id}",
