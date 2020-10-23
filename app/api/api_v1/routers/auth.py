@@ -1,5 +1,6 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, File, UploadFile
+from fastapi.encoders import jsonable_encoder
 
 from app.db.session import get_db
 from app.core.security import handle_jwt
@@ -63,8 +64,17 @@ async def login(
         permissions = "admin"
     else:
         permissions = "user"
+
+    serialized_pessoa = {
+        "id": pessoa.id, 
+        "idealizador": pessoa.idealizador, 
+        "aliado": pessoa.aliado, 
+        "colaborador": pessoa.colaborador,
+        "sub": pessoa.email,
+        "permissions": permissions
+    }
     access_token = handle_jwt.create_access_token(
-        data={"sub": pessoa.email, "permissions": permissions},
+        data=serialized_pessoa,
         expires_delta=access_token_expires,
     ).decode('utf-8')
     
@@ -150,8 +160,18 @@ async def signup(
         permissions = "admin"
     else:
         permissions = "user"
+
+    serialized_pessoa = {
+        "id": pessoa.id, 
+        "idealizador": pessoa.idealizador, 
+        "aliado": pessoa.aliado, 
+        "colaborador": pessoa.colaborador,
+        "sub": pessoa.email,
+        "permissions": permissions
+    }
+
     access_token = handle_jwt.create_access_token(
-        data={"sub": pessoa.email, "permissions": permissions},
+        data=serialized_pessoa,
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
