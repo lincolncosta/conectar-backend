@@ -43,3 +43,19 @@ def test_habilidade(test_db) -> models.Habilidades:
     test_db.add(habilidade)
     test_db.commit()
     return habilidade
+
+
+@pytest.fixture
+def test_projeto(test_db) -> models.Projeto:
+    """
+    Habilidade for testing
+    """
+
+    projeto = models.Projeto(
+        nome="Conectar",
+        descricao="Vamos conectar",
+        objetivo="Conectar pessoas"
+    )
+    test_db.add(projeto)
+    test_db.commit()
+    return projeto

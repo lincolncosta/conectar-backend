@@ -87,7 +87,7 @@ async def projeto_create(
 
 @r.put(
     "/projeto/{projeto_id}",
-    response_model=ProjetoEdit,
+    response_model=Projeto,
     response_model_exclude_none=True,
 )
 async def projeto_edit(

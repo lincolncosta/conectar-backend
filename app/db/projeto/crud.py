@@ -14,7 +14,7 @@ def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:
     projeto = db.query(models.Projeto)\
         .filter(models.Projeto.id == projeto_id).first()
     if not projeto:
-        raise HTTPException(status_code=404, detail="projeto não encontrada")
+        raise HTTPException(status_code=404, detail="projeto não encontrado")
     return projeto
 
 def get_projetos(
@@ -30,7 +30,7 @@ async def edit_projeto(
     db_projeto = get_projeto(db, projeto_id)
     if not db_projeto:
         raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="projeto não encontrada"
+            status.HTTP_404_NOT_FOUND, detail="projeto não encontrado"
         )
     update_data = projeto.dict(exclude_unset=True)
 
@@ -100,7 +100,7 @@ def delete_projeto(db: Session, projeto_id: int):
     projeto = get_projeto(db, projeto_id)
     if not projeto:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
-                            detail="projeto não encontrada")
+                            detail="projeto não encontrado")
     db.delete(projeto)
     db.commit()
     return projeto
