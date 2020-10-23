@@ -21,10 +21,10 @@ async def append_habilidades(update_data: dict, db: Session):
         try:
             if ids:
                 for habilidade_id in ids:
-                    new_habilidades.append(await get_habilidades_by_id(db, habilidade_id))
+                    new_habilidades.append(get_habilidades_by_id(db, habilidade_id))
             else:
                 for habilidade_name in names:
-                    new_habilidades.append(await get_habilidade_by_name(db, habilidade_name))
+                    new_habilidades.append(get_habilidade_by_name(db, habilidade_name))
 
             update_data['habilidades'] = new_habilidades
         except HTTPException as e:

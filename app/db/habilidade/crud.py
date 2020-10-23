@@ -25,7 +25,7 @@ def get_habilidades(
 ) -> t.List[schemas.Habilidades]:
     return db.query(models.Habilidades).offset(skip).limit(limit).all()
 
-async def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habilidades:
+def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habilidades:
     '''
         Get a single instance of habilidades from its name
 
