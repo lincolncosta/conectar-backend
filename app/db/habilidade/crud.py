@@ -5,7 +5,9 @@ import typing as t
 from app.db import models
 from app.db.habilidade import schemas
 
-def get_habilidades_by_id(
+
+def get_habilidades_by_id( 
+
     db: Session, habilidades_id: int
 ) -> schemas.Habilidades:
     habilidades = (
