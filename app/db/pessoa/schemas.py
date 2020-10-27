@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-from app.db.area.schemas import PessoaAreaCreate
-from app.db.habilidade.schemas import PessoaHabilidadeCreate 
+from db.area.schemas import PessoaAreaCreate
+from db.habilidade.schemas import PessoaHabilidadeCreate 
 
 class PessoaBase(BaseModel):
     data_nascimento: t.Optional[date] = None

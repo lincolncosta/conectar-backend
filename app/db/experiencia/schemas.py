@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-from app.db.area.schemas import ExperienciaAreaCreate
+from db.area.schemas import ExperienciaAreaCreate
 
 class ExperienciaBase(BaseModel):
     """Common experiencia base"""

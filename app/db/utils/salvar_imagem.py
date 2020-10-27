@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 
-from app.core.security.passwords import get_password_hash
+from core.security.passwords import get_password_hash
 
 path = Path("uploads/")
 

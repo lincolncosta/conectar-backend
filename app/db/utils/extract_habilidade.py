@@ -1,4 +1,4 @@
-from app.db.habilidade.crud import get_habilidades_by_id, get_habilidade_by_name
+from db.habilidade.crud import get_habilidades_by_id, get_habilidade_by_name
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 

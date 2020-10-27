@@ -2,17 +2,17 @@ import jwt
 from fastapi import Depends, HTTPException, status, File, UploadFile
 from jwt import PyJWTError
 
-from app.db.utils.salvar_imagem import store_image
-from app.db import models, session
+from db.utils.salvar_imagem import store_image
+from db import models, session
 
-from app.db.pessoa import schemas
+from db.pessoa import schemas
 
-from app.db.pessoa.crud import (
+from db.pessoa.crud import (
     get_pessoa_by_email,
     create_pessoa,
     get_pessoa_by_username,
 )
-from app.core.security import handle_jwt, passwords
+from core.security import handle_jwt, passwords
 
 from typing import Optional
 

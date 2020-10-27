@@ -2,16 +2,16 @@ from fastapi import (APIRouter, Request, Depends, Response,
                      encoders, UploadFile, File, Form)
 import typing as t
 
-from app.db.session import get_db
-from app.db.projeto.crud import (
+from db.session import get_db
+from db.projeto.crud import (
     create_projeto,
     get_projetos,
     get_projeto,
     delete_projeto,
     edit_projeto
 )
-from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
-from app.core.auth import get_current_active_pessoa
+from db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
+from core.auth import get_current_active_pessoa
 
 projeto_router = r = APIRouter()
 

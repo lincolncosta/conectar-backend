@@ -1,5 +1,5 @@
 import pytest
-from app.db import models 
+from db import models 
 
 @pytest.fixture
 def test_area(test_db) -> models.Area:

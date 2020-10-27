@@ -2,11 +2,11 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
-from app.db.utils.extract_areas import append_areas
-from app.db.utils.extract_habilidade import append_habilidades
+from db import models
+from db.utils.extract_areas import append_areas
+from db.utils.extract_habilidade import append_habilidades
 from . import schemas
-from app.core.security.passwords import get_password_hash
+from core.security.passwords import get_password_hash
 
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.Pessoa:

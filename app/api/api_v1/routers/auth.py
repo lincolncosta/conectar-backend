@@ -2,17 +2,17 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 
-from app.db.session import get_db
-from app.core.security import handle_jwt
-from app.core.auth import authenticate_pessoa, sign_up_new_pessoa, get_current_token
+from db.session import get_db
+from core.security import handle_jwt
+from core.auth import authenticate_pessoa, sign_up_new_pessoa, get_current_token
 
 import typing as t
 
 from datetime import timedelta, date
 
-from app.db.pessoa import schemas
+from db.pessoa import schemas
 
-# from app.tasks import append_refresh_token, check_refresh_token
+# from tasks import append_refresh_token, check_refresh_token
 
 auth_router = r = APIRouter()
 

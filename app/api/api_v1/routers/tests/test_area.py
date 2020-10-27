@@ -1,4 +1,4 @@
-from app.db import models
+from db import models
 
 
 def test_get_area_by_id(client, test_area, fake_login_superuser):

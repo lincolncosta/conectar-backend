@@ -2,12 +2,12 @@ from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
-from app.db.utils.extract_areas import append_areas
-from app.db.utils.extract_habilidade import append_habilidades
-from app.db.utils.salvar_imagem import store_image
+from db import models
+from db.utils.extract_areas import append_areas
+from db.utils.extract_habilidade import append_habilidades
+from db.utils.salvar_imagem import store_image
 from . import schemas
-from app.core.security.passwords import get_password_hash
+from core.security.passwords import get_password_hash
 
 
 def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:

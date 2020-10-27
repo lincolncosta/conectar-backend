@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
+from db.habilidade.schemas import PessoaHabilidadeCreate
+from db.area.schemas import ProjetoAreaCreate
 
 class ProjetoBase(BaseModel):
     nome: str

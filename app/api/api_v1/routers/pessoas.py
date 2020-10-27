@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-from app.db.session import get_db
-from app.db.pessoa.crud import (
+from db.session import get_db
+from db.pessoa.crud import (
     get_pessoas,
     get_pessoa,
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
 )
-from app.db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa
-from app.core.auth import (
+from db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa
+from core.auth import (
     get_current_active_pessoa,
     get_current_active_superuser,
 )

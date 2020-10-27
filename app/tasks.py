@@ -1,4 +1,4 @@
-from app.core.celery_app import celery_app
+from core.celery_app import celery_app
 
 # refresh_token_list = []
 
