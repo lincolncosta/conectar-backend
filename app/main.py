@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.requests import Request
 from fastapi.staticfiles import StaticFiles
 import uvicorn
@@ -27,6 +29,9 @@ app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 # Go to localhost:8000/api/coverage/index.html to see coverage report
 # app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
 
+# Use HTTPS in production
+# app.add_middleware(HTTPSRedirectMiddleware)
+
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
     request.state.db = SessionLocal()
@@ -34,6 +39,17 @@ async def db_session_middleware(request: Request, call_next):
     request.state.db.close()
     return response
 
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 # Routers
 app.include_router(
