@@ -33,6 +33,7 @@ PyJWT = "==1.7.1"
 Pillow = "*"
 pydantic = ">=1.2.0,<2.0.0"
 psycopg2-binary = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
