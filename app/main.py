@@ -40,7 +40,8 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 origins = [
-    "*"
+    "https://conectar-frontend.vercel.app",
+    "https://boraconectar.com"
 ]
 
 app.add_middleware(
@@ -48,7 +49,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=[]
 )
 
 # Routers
