@@ -83,7 +83,7 @@ async def login(
     # ).decode('utf-8')
 
     # append_refresh_token(_refresh_token)
-    response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
+    response.set_cookie(key="jid", value=f"{access_token}", httponly=True, samesite="none")
     # response.set_cookie(key="rjid", value=f"{_refresh_token}", httponly=True)
     return {"pessoa": pessoa}
 
@@ -107,7 +107,7 @@ async def refresh_token(
 
 @r.post("/logout")
 async def logout(response: Response):
-    response.set_cookie(key="jid", value="", httponly=True)
+    response.delete_cookie(key="jid", path="/", domain=None)
     return {"message": "deslogado"}
 
 @r.post("/signup", response_model=t.Dict[str, schemas.Pessoa])
@@ -175,6 +175,6 @@ async def signup(
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
+    response.set_cookie(key="jid", value=f"{access_token}", httponly=True, samesite="none")
 
     return {"pessoa": pessoa}
