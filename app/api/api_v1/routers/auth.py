@@ -83,7 +83,7 @@ async def login(
     # ).decode('utf-8')
 
     # append_refresh_token(_refresh_token)
-    response.set_cookie(key="jid", value=f"{access_token}", httponly=True, samesite="none")
+    response.set_cookie(key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
     # response.set_cookie(key="rjid", value=f"{_refresh_token}", httponly=True)
     return {"pessoa": pessoa}
 
@@ -175,6 +175,6 @@ async def signup(
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    response.set_cookie(key="jid", value=f"{access_token}", httponly=True, samesite="none")
+    response.set_cookie(key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
 
     return {"pessoa": pessoa}
