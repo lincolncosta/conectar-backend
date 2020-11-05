@@ -34,6 +34,7 @@ Pillow = "*"
 pydantic = ">=1.2.0,<2.0.0"
 psycopg2-binary = "*"
 gunicorn = "*"
+google-auth = "*"
 
 [requires]
 python_version = "3.8"

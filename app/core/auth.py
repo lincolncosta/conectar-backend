@@ -18,6 +18,16 @@ from typing import Optional
 
 from datetime import date
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+env = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env)
+
 
 async def get_current_pessoa(
     db=Depends(session.get_db), token: str = Depends(handle_jwt.oauth2_scheme)
@@ -52,7 +62,8 @@ async def get_current_pessoa(
     )
     try:
         payload = jwt.decode(
-            token, passwords.ACCESS_TOKEN, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
+            token, passwords.ACCESS_TOKEN, algorithms=[
+                passwords.ALGORITHM], options={"verify_exp": True}
         )
         email: str = payload.get("sub")
         if email is None:
@@ -81,7 +92,8 @@ async def get_current_token(
     )
     try:
         payload = jwt.decode(
-            token, passwords.ACCESS_TOKEN, algorithms=[passwords.ALGORITHM], options={"verify_exp": True}
+            token, passwords.ACCESS_TOKEN, algorithms=[
+                passwords.ALGORITHM], options={"verify_exp": True}
         )
         return token
         # email: str = payload.get("sub")
@@ -91,6 +103,7 @@ async def get_current_token(
         # token_data = schemas.TokenData(email=email, permissions=permissions)
     except PyJWTError:
         raise credentials_exception
+
 
 async def get_current_active_pessoa(
     current_pessoa: models.Pessoa = Depends(get_current_pessoa),
@@ -142,7 +155,7 @@ async def sign_up_new_pessoa(
 ):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, usuario)
-    
+
     if pessoa or pessoa_username:
         return False  # Pessoa already exists
 
@@ -150,7 +163,7 @@ async def sign_up_new_pessoa(
     if foto_perfil:
         contents = await foto_perfil.read()
         path = store_image(contents, foto_perfil.filename)
-        
+
     new_pessoa = create_pessoa(
         db,
         schemas.PessoaCreate(
@@ -165,5 +178,47 @@ async def sign_up_new_pessoa(
             foto_perfil=path
         ),
     )
-    
+
     return new_pessoa
+
+
+def authenticate_google(db, token: str):
+    try:
+        credentialsException = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Não foi possível validar as credenciais",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+        GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(
+            token, requests.Request(), GOOGLE_CLIENT_ID)
+        issuers = ['accounts.google.com', 'https://accounts.google.com']
+        if idinfo['iss'] not in issuers:
+            raise ValueError('Wrong issuer.')
+        # Get user info
+        email, name, picture = idinfo['email'], idinfo['name'], idinfo['picture']
+        # Checking if the user is already in the system
+        pessoa = get_pessoa_by_email(db, email)
+        pessoa = get_pessoa_by_username(db, name)
+        if pessoa is None:
+            # User not registered, creating a new account
+            new_pessoa = create_pessoa(
+                db,
+                schemas.PessoaCreate(
+                    email=email,
+                    nome=name,
+                    usuario=name,
+                    senha="supersecretpasswordweshallremove",
+                    ativo=True,
+                    superusuario=False,
+                )
+            )
+            return new_pessoa
+        else:
+            # User is already registered, returning
+            return pessoa
+    except ValueError:
+        raise credentialsException
