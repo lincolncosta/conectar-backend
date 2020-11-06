@@ -191,10 +191,10 @@ async def signup(
 @r.post("/login", response_model=t.Dict[str, schemas.Pessoa])
 async def authenticate_from_provider(
     provider: str,
-    token: t.Optional[str] = None,
     pessoa: schemas.PessoaCreateFacebook,
     response: Response,
     db=Depends(get_db),
+    token: t.Optional[str] = None,
 ):
     # credentialsException = HTTPException(
     #     status_code=status.HTTP_401_UNAUTHORIZED,
