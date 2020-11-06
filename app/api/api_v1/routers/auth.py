@@ -214,7 +214,10 @@ async def authenticate_from_provider(
             pessoa = authenticate_facebook(db, token)
         else:
             raise HTTPException(status_code=422)
-
+        if pessoa.superusuario:
+            permissions = "admin"
+        else:
+            permissions = "user"
         serialized_pessoa = {
             "id": pessoa.id,
             "idealizador": pessoa.idealizador,
@@ -223,7 +226,7 @@ async def authenticate_from_provider(
             "sub": pessoa.email,
             "permissions": permissions
         }
-        
+
         access_token = handle_jwt.create_access_token(
             data=serialized_pessoa,
             expires_delta=access_token_expires,
