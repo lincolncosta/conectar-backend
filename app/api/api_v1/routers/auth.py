@@ -5,7 +5,8 @@ from fastapi.encoders import jsonable_encoder
 from db.session import get_db
 from core.security import handle_jwt
 from core.auth import (authenticate_pessoa, sign_up_new_pessoa,
-                       get_current_token, authenticate_google)
+                       get_current_token, authenticate_google,
+                       authenticate_facebook)
 
 import typing as t
 
