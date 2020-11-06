@@ -24,7 +24,8 @@ def get_pessoa_by_email(db: Session, email: str) -> schemas.Pessoa:
 
 def get_pessoa_by_username(db: Session, usuario: str) -> schemas.Pessoa:
     return (
-        db.query(models.Pessoa).filter(models.Pessoa.usuario == usuario).first()
+        db.query(models.Pessoa).filter(
+            models.Pessoa.usuario == usuario).first()
     )
 
 
@@ -36,17 +37,17 @@ def get_pessoas(
 
 def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
     password = get_password_hash(pessoa.senha)
-    
+
     db_pessoa = models.Pessoa(
-            nome=pessoa.nome,
-            email=pessoa.email,
-            telefone=pessoa.telefone,
-            usuario=pessoa.usuario,
-            ativo=pessoa.ativo,
-            superusuario=pessoa.superusuario,
-            senha=password,
-            data_nascimento=pessoa.data_nascimento,
-            foto_perfil=pessoa.foto_perfil,
+        nome=pessoa.nome,
+        email=pessoa.email,
+        telefone=pessoa.telefone,
+        usuario=pessoa.usuario,
+        ativo=pessoa.ativo,
+        superusuario=pessoa.superusuario,
+        senha=password,
+        data_nascimento=pessoa.data_nascimento,
+        foto_perfil=pessoa.foto_perfil,
     )
     db.add(db_pessoa)
     db.commit()
@@ -111,9 +112,9 @@ async def edit_pessoa(
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
-    
+
     for key, value in update_data.items():
-            setattr(db_pessoa, key, value)
+        setattr(db_pessoa, key, value)
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)

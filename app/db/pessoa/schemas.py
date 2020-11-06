@@ -30,6 +30,12 @@ class PessoaCreate(PessoaBase):
         orm_mode = True
 
 
+class PessoaCreateFacebook(PessoaBase):
+
+    class Config:
+        orm_mode = True
+
+
 class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
     email: t.Optional[str] = None

@@ -191,7 +191,8 @@ async def signup(
 @r.post("/login", response_model=t.Dict[str, schemas.Pessoa])
 async def authenticate_from_provider(
     provider: str,
-    token: str,
+    token: t.Optional[str] = None,
+    pessoa: schemas.PessoaCreateFacebook,
     response: Response,
     db=Depends(get_db),
 ):
@@ -207,23 +208,25 @@ async def authenticate_from_provider(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        pessoa = {}
+        new_pessoa = {}
         if provider == "google":
-            pessoa = authenticate_google(db, token)
+            new_pessoa = authenticate_google(db, token)
         elif provider == "facebook":
-            pessoa = authenticate_facebook(db, token)
+            new_pessoa = authenticate_facebook(db, pessoa)
         else:
             raise HTTPException(status_code=422)
-        if pessoa.superusuario:
+
+        if new_pessoa.superusuario:
             permissions = "admin"
         else:
             permissions = "user"
+
         serialized_pessoa = {
-            "id": pessoa.id,
-            "idealizador": pessoa.idealizador,
-            "aliado": pessoa.aliado,
-            "colaborador": pessoa.colaborador,
-            "sub": pessoa.email,
+            "id": new_pessoa.id,
+            "idealizador": new_pessoa.idealizador,
+            "aliado": new_pessoa.aliado,
+            "colaborador": new_pessoa.colaborador,
+            "sub": new_pessoa.email,
             "permissions": permissions
         }
         access_token_expires = timedelta(
@@ -242,4 +245,4 @@ async def authenticate_from_provider(
         if e.status_code == 422:
             raise providerExeption
         raise credentialsException
-    return {"pessoa": pessoa}
+    return {"pessoa": new_pessoa}

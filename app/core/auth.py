@@ -222,3 +222,37 @@ def authenticate_google(db, token: str):
             return pessoa
     except ValueError:
         raise credentialsException
+
+
+def authenticate_facebook(
+    db,
+    pessoa: schemas.PessoaCreateFacebook
+):
+    try:
+        credentialsException = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Não foi possível validar as credenciais",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        
+        db_pessoa = get_pessoa_by_email(db, pessoa.email)
+        db_pessoa = get_pessoa_by_username(db, pessoa.nome)
+        if db_pessoa is None:
+            # User not registered, creating a new account
+            new_pessoa = create_pessoa(
+                db,
+                schemas.PessoaCreate(
+                    email=pessoa.email,
+                    nome=pessoa.nome,
+                    usuario=pessoa.nome,
+                    senha="supersecretpasswordweshallremove",
+                    ativo=True,
+                    superusuario=False,
+                )
+            )
+            return new_pessoa
+        else:
+            # User is already registered, returning
+            return db_pessoa
+    except ValueError:
+        raise credentialsException
