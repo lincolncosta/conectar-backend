@@ -103,6 +103,11 @@ async def edit_pessoa(
     if "senha" in update_data:
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
+    if "email" in update_data:
+        if update_data['email'] != db_pessoa.email:
+            raise HTTPException(
+                status_code=409, detail="Email já cadastrado"
+            )
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
