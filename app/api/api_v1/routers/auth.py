@@ -226,6 +226,9 @@ async def authenticate_from_provider(
             "sub": pessoa.email,
             "permissions": permissions
         }
+        access_token_expires = timedelta(
+            minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
 
         access_token = handle_jwt.create_access_token(
             data=serialized_pessoa,
@@ -233,7 +236,7 @@ async def authenticate_from_provider(
         ).decode('utf-8')
 
         response.set_cookie(
-        key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
+            key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
 
     except HTTPException as e:
         if e.status_code == 422:
