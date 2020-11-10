@@ -203,6 +203,7 @@ def authenticate_google(db, token: str):
         # Checking if the user is already in the system
         pessoa = get_pessoa_by_email(db, email)
         pessoa = get_pessoa_by_username(db, name)
+        password = passwords.get_password_hash(passwords.get_random_string())
         if pessoa is None:
             # User not registered, creating a new account
             new_pessoa = create_pessoa(
@@ -211,7 +212,7 @@ def authenticate_google(db, token: str):
                     email=email,
                     nome=name,
                     usuario=name,
-                    senha="supersecretpasswordweshallremove",
+                    senha=password,
                     ativo=True,
                     superusuario=False,
                 )
@@ -237,6 +238,7 @@ def authenticate_facebook(
         
         db_pessoa = get_pessoa_by_email(db, pessoa.email)
         db_pessoa = get_pessoa_by_username(db, pessoa.nome)
+        password = passwords.get_password_hash(passwords.get_random_string())
         if db_pessoa is None:
             # User not registered, creating a new account
             new_pessoa = create_pessoa(
@@ -245,7 +247,7 @@ def authenticate_facebook(
                     email=pessoa.email,
                     nome=pessoa.nome,
                     usuario=pessoa.nome,
-                    senha="supersecretpasswordweshallremove",
+                    senha=password,
                     ativo=True,
                     superusuario=False,
                 )

@@ -1,6 +1,8 @@
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 import os
+import random
+import string
 
 load_dotenv()
 
@@ -16,3 +18,8 @@ def get_password_hash(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+def get_random_string(length: int = 64):
+    letters = string.ascii_letters
+    result = ''.join(random.choice(letters) for i in range(length))
+    return result
