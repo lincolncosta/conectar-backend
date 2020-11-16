@@ -1,8 +1,6 @@
 from passlib.context import CryptContext
 from dotenv import load_dotenv
-import os
-import random
-import string
+import os, random, string
 
 load_dotenv()
 

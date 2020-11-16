@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pytest-cov = "*"
 pytest = "*"
+black = "*"
 
 [packages]
 alembic = "==1.4.2"
@@ -38,3 +39,6 @@ google-auth = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

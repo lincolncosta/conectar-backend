@@ -19,7 +19,9 @@ from core import config
 from db.session import SessionLocal
 from core.auth import get_current_active_pessoa
 
+import os
 
+DEV_ENV = os.getenv("DEV_ENV")
 app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
 )
@@ -30,7 +32,21 @@ app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 # app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
 
 # Use HTTPS in production
-app.add_middleware(HTTPSRedirectMiddleware)
+if not DEV_ENV:
+    app.add_middleware(HTTPSRedirectMiddleware)
+    origins = [
+    "https://conectar-frontend.vercel.app",
+    "conectar-frontend.vercel.app",
+    "https://boraconectar.com"
+    ]
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["Content-Type", "Accept", "authorization"]
+    )
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
@@ -39,19 +55,7 @@ async def db_session_middleware(request: Request, call_next):
     request.state.db.close()
     return response
 
-origins = [
-    "https://conectar-frontend.vercel.app",
-    "conectar-frontend.vercel.app",
-    "https://boraconectar.com"
-]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["Content-Type", "Accept", "authorization"]
-)
 
 # Routers
 app.include_router(

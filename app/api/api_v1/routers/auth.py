@@ -13,6 +13,7 @@ import typing as t
 from datetime import timedelta, date
 
 from db.pessoa import schemas
+from os import getenv
 
 # from tasks import append_refresh_token, check_refresh_token
 
@@ -86,13 +87,13 @@ async def login(
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    # _refresh_token = handle_jwt.create_refresh_token(
-    #     data={"sub": pessoa.email, "permissions": permissions},
-    # ).decode('utf-8')
-
-    # append_refresh_token(_refresh_token)
+    
+    DEV_ENV = getenv("DEV_ENV")
     response.set_cookie(
-        key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
+        key="jid", value=f"{access_token}", httponly=True)
+    if not DEV_ENV:
+        response.set_cookie(
+            key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
     # response.set_cookie(key="rjid", value=f"{_refresh_token}", httponly=True)
     return {"pessoa": pessoa}
 
@@ -112,7 +113,7 @@ async def refresh_token(
 
 @r.post("/logout")
 async def logout(response: Response):
-    response.delete_cookie(key="jid", path="/", domain=None)
+    response.delete_cookie(key="jid", httponly=True, samesite="none", secure=True)
     return {"message": "deslogado"}
 
 
