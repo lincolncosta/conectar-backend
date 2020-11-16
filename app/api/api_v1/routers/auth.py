@@ -113,7 +113,8 @@ async def refresh_token(
 
 @r.post("/logout")
 async def logout(response: Response):
-    response.delete_cookie(key="jid", httponly=True, samesite="none", secure=True)
+    # response.delete_cookie(key="jid", path="/", domain=None)
+    response.set_cookie(key="jid", key="jid", value="", httponly=True, samesite="none", secure=True)
     return {"message": "deslogado"}
 
 
