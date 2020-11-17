@@ -194,9 +194,9 @@ async def signup(
 @r.post("/login", response_model=t.Dict[str, schemas.Pessoa])
 async def authenticate_from_provider(
     provider: str,
-    pessoa: t.Optional[schemas.PessoaCreateFacebook] = None,
     response: Response,
     db=Depends(get_db),
+    pessoa: t.Optional[schemas.PessoaCreateFacebook] = None,
     token: t.Optional[str] = None,
 ):
     # credentialsException = HTTPException(
