@@ -1,13 +1,15 @@
 from passlib.context import CryptContext
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
-load_dotenv()
+# load_dotenv()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-REFRESH_TOKEN = os.getenv("REFRESH_TOKEN")
+ACCESS_TOKEN = ""
+# os.getenv("ACCESS_TOKEN")
+REFRESH_TOKEN = ""
+# os.getenv("REFRESH_TOKEN")
 ALGORITHM = "HS256"
 
 def get_password_hash(password: str) -> str:

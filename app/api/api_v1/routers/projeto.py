@@ -1,6 +1,8 @@
 from fastapi import (APIRouter, Request, Depends, Response,
                      encoders, UploadFile, File, Form)
 import typing as t
+from app.db.habilidade.schemas import PessoaHabilidadeCreate
+from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.session import get_db
 from app.db.projeto.crud import (
@@ -8,7 +10,7 @@ from app.db.projeto.crud import (
     get_projetos,
     get_projeto,
     delete_projeto,
-    edit_projeto
+    edit_projeto,
 )
 from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
 from app.core.auth import get_current_active_pessoa
@@ -49,6 +51,7 @@ async def projeto_details(
     return projeto
 
 
+
 @r.post("/projeto", response_model_exclude_none=True)
 async def projeto_create(
     request: Request,
@@ -70,7 +73,7 @@ async def projeto_create(
         return projeto
     except Exception as e:
         raise e
-        
+
 
 # @r.post("/projeto", response_model=Projeto, response_model_exclude_none=True)
 # async def projeto_create(
