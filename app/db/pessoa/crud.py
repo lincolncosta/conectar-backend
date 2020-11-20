@@ -28,6 +28,30 @@ def get_pessoa_by_username(db: Session, usuario: str) -> schemas.Pessoa:
             models.Pessoa.usuario == usuario).first()
     )
 
+def get_pessoa_by_name(db: Session, pessoa_name: str) -> schemas.Pessoa:
+    pessoa = db.query(models.Pessoa)\
+        .filter(models.Pessoa.nome.ilike(f'{pessoa_name}%')).all()
+    if not pessoa:
+        raise HTTPException(status_code=404, detail="pessoa não encontrado")
+    return pessoa
+
+def get_pessoa_by_area(db: Session, pessoa_area: str) -> schemas.Pessoa:
+    pessoa = db.query(models.Pessoa)\
+        .join(models.Area, models.Pessoa.areas)\
+            .filter(models.Area.descricao.ilike(f'{pessoa_area}%')).all()
+    
+    if not pessoa:
+        raise HTTPException(status_code=404, detail="pessoa não encontrado")
+    return pessoa
+
+def get_pessoa_by_habilidade(db: Session, pessoa_habilidade: str) -> schemas.Pessoa:
+    pessoa = db.query(models.Pessoa)\
+        .join(models.Habilidades, models.Pessoa.habilidades)\
+            .filter(models.habilidades.descricao.ilike(f'{pessoa_habilidade}%')).all()
+    
+    if not pessoa:
+        raise HTTPException(status_code=404, detail="pessoa não encontrado")
+    return pessoa
 
 def get_pessoas(
     db: Session, skip: int = 0, limit: int = 100

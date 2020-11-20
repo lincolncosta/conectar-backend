@@ -103,6 +103,24 @@ app.include_router(
     dependencies=[Depends(get_current_active_pessoa)],
 )
 
+app.include_router(
+    pesquisa_projeto_router,
+    prefix="/api/v1",
+    tags=["pesquisa_projeto"],
+)
+
+app.include_router(
+    pesquisa_pessoa_router,
+    prefix="/api/v1",
+    tags=["pesquisa_pessoa"],
+)
+
+app.include_router(
+    pessoa_projeto_router,
+    prefix="/api/v1",
+    tags=["pessoa_projeto"],
+)
+
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 # if __name__ == "__main__":

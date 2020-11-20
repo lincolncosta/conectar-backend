@@ -31,20 +31,6 @@ HabilidadesProjeto = Table(
 )
 
 
-PessoaProjeto = Table(
-    "tb_pessoa_projeto",
-    Base.metadata,
-    Column("id", Integer, primary_key=True, index=True),
-    Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id")),
-    Column("area_id", Integer, ForeignKey("tb_area.id")),
-    Column("papel_id", Integer, ForeignKey("tb_papel.id")),
-    Column("projeto_id", Integer, ForeignKey("tb_projeto.id")),
-    Column("tipo_acordo_id", Integer, ForeignKey("tb_tipo_acordo.id")),
-    Column("descricao", String),
-    Column("situacao", String)
-
-)
-
 ExperienciaProfArea = Table(
     "tb_exp_profissional_area",
     Base.metadata,
@@ -80,10 +66,21 @@ ProjetoArea = Table(
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
 )
 
-AreaPessoaProjeto = Table(
+PessoaAreaProjeto = Table(
     "tb_area_pessoa_projeto",
     Base.metadata,
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
+    Column(
+        "pessoa_projeto_id",
+        ForeignKey("tb_pessoa_projeto.id"),
+        primary_key=True,
+    ),
+)
+
+PessoaHabilidadesProjeto = Table(
+    "tb_habilidades_pessoa_projeto",
+    Base.metadata,
+    Column("habilidade_id", ForeignKey("tb_habilidades.id"), primary_key=True),
     Column(
         "pessoa_projeto_id",
         ForeignKey("tb_pessoa_projeto.id"),
@@ -144,7 +141,7 @@ class Pessoa(Base):
     experiencia_profissional = relationship("ExperienciaProf")
     experiencia_projetos = relationship("ExperienciaProj")
     experiencia_academica = relationship("ExperienciaAcad")
-    projeto_pessoa = relationship("Projeto", secondary=PessoaProjeto)
+    pessoa_projeto = relationship("PessoaProjeto", back_populates="pessoa")
 
     areas = relationship("Area", secondary=PessoaArea)
     habilidades= relationship("Habilidades", secondary=HabilidadesPessoa)
@@ -182,9 +179,28 @@ class Projeto(Base):
     areas = relationship("Area", secondary=ProjetoArea)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
-
+    projeto_pessoa = relationship("PessoaProjeto", back_populates="projeto")
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
+
+
+class PessoaProjeto(Base):
+    
+    __tablename__ = "tb_pessoa_projeto"
+
+    id = Column(Integer, primary_key=True, index=True)
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
+    papel_id = Column(Integer, ForeignKey("tb_papel.id"))
+    tipo_acordo_id = Column(Integer, ForeignKey("tb_tipo_acordo.id"))
+    pessoa = relationship("Pessoa", back_populates="pessoa_projeto")
+    projeto = relationship("Projeto", back_populates="projeto_pessoa")
+    areas = relationship("Area", secondary=PessoaAreaProjeto)
+    habilidades = relationship("Habilidades", secondary=PessoaHabilidadesProjeto)
+    descricao = Column(String)
+    situacao = Column(String)
+    data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_atualizacao = Column(DateTime(timezone=True))
 
 
 class ExperienciaProf(Base):

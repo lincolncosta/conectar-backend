@@ -23,7 +23,7 @@ from core.auth import (
 habilidades_router = r = APIRouter()
 
 @r.get(
-    "/habilidades/",
+    "/habilidades",
     response_model=t.List[Habilidades],
     response_model_exclude_none=True,
 )
@@ -41,7 +41,7 @@ async def habilidades_list(
     return habilidades
 
 @r.get(
-    "/habilidade/name/{habilidades_name}",
+    "/habilidades/name/{habilidades_name}",
     response_model=Habilidades,
     response_model_exclude_none=True,
 )
@@ -54,11 +54,14 @@ async def habilidades_details_name(
     """
     Get any habilidades details by its name
     """
+
     habilidades = get_habilidade_by_name(db, habilidades_name)
+
     return habilidades 
 
 @r.post(
-    "/habilidade/pessoa",
+    "/habilidades",
+
     response_model=Habilidades,
     response_model_exclude_none=True,
 )
@@ -69,12 +72,12 @@ async def habilidades_create(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-    Create a new habilidade 
+    Create a new habilidades
     """
     return create_habilidades(db, habilidades, current_pessoa.id)
 
 @r.put(
-    "/habilidades/pessoa/{habilidade_id}",
+    "/habilidades/{habilidade_id}",
     response_model=Habilidades,
     response_model_exclude_none=True,
 )
@@ -86,12 +89,12 @@ async def habilidade_edit(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-    Update existing habilidade
+    Update existing habilidades
     """
     return edit_habilidades(db, habilidade_id, habilidades)
 
 @r.delete(
-    "/habilidade/pessoa/{habilidade_id}",
+    "/habilidade/{habilidade_id}",
     response_model=Habilidades,
     response_model_exclude_none=True,
 )
@@ -102,7 +105,7 @@ async def habilidade_pessoa_delete(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-        Delete existing habilidade
+        Delete existing habilidades
     """
     return delete_habilidades(db, habilidade_id)
 
