@@ -39,7 +39,7 @@ async def pessoa_projeto_create(
     return pessoa_projeto
 
 
-@r.get("/pessoa_projeto/{projeto_id}",
+@r.get("/pessoa_projeto/projeto/{projeto_id}",
     response_model=PessoaProjeto, 
     response_model_exclude_none=True)
 
@@ -54,7 +54,6 @@ async def get_all_pessoa_projeto_by_projeto(
     pessoa_projeto = get_pessoa_projeto_by_projeto(db, projeto_id)
     return pessoa_projeto
 
-'''
 
 @r.get(
     "/pessoa_projeto/{pessoa_projeto_id}",
@@ -72,7 +71,7 @@ async def pessoa_projeto_get(
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     return pessoa_projeto
 
-'''
+
 
 @r.put("/pessoa_projeto", response_model=PessoaProjetoEdit, response_model_exclude_none=True)
 
