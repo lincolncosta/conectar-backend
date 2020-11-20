@@ -15,6 +15,10 @@ from api.api_v1.routers.experiencia.projeto import experiencia_proj_router
 from api.api_v1.routers.habilidade import habilidades_router
 from api.api_v1.routers.area import area_router
 from api.api_v1.routers.auth import auth_router
+
+from api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
+from api.api_v1.routers.pesquisa.projeto import pesquisa_projeto_router
+from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
 from core import config
 from db.session import SessionLocal
 from core.auth import get_current_active_pessoa
@@ -123,5 +127,5 @@ app.include_router(
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
-# if __name__ == "__main__":
-#     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=80)
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", reload=True, port=80)
