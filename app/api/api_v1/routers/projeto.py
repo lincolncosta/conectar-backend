@@ -1,5 +1,13 @@
-from fastapi import (APIRouter, Request, Depends, Response,
-                     encoders, UploadFile, File, Form)
+from fastapi import (
+    APIRouter,
+    Request,
+    Depends,
+    Response,
+    encoders,
+    UploadFile,
+    File,
+    Form,
+)
 import typing as t
 from app.db.habilidade.schemas import PessoaHabilidadeCreate
 from app.db.area.schemas import ProjetoAreaCreate
@@ -19,7 +27,9 @@ projeto_router = r = APIRouter()
 
 
 @r.get(
-    "/projetos", response_model=t.List[Projeto], response_model_exclude_none=True,
+    "/projetos",
+    response_model=t.List[Projeto],
+    response_model_exclude_none=True,
 )
 async def projetos_list(
     response: Response,
@@ -36,7 +46,9 @@ async def projetos_list(
 
 
 @r.get(
-    "/projeto/{projeto_id}", response_model=Projeto, response_model_exclude_none=True,
+    "/projeto/{projeto_id}",
+    response_model=Projeto,
+    response_model_exclude_none=True,
 )
 async def projeto_details(
     request: Request,
@@ -49,7 +61,6 @@ async def projeto_details(
     """
     projeto = get_projeto(db, projeto_id)
     return projeto
-
 
 
 @r.post("/projeto", response_model_exclude_none=True)
@@ -67,9 +78,14 @@ async def projeto_create(
     Create a new projeto
     """
     try:
-        projeto = await create_projeto(db, nome=nome,
-                                       descricao=descricao, visibilidade=visibilidade,
-                                       objetivo=objetivo, foto_capa=foto_capa)
+        projeto = await create_projeto(
+            db,
+            nome=nome,
+            descricao=descricao,
+            visibilidade=visibilidade,
+            objetivo=objetivo,
+            foto_capa=foto_capa,
+        )
         return projeto
     except Exception as e:
         raise e
@@ -105,7 +121,9 @@ async def projeto_edit(
 
 
 @r.delete(
-    "/projeto/{projeto_id}", response_model=Projeto, response_model_exclude_none=True
+    "/projeto/{projeto_id}",
+    response_model=Projeto,
+    response_model_exclude_none=True,
 )
 async def projeto_delete(
     request: Request,
@@ -114,6 +132,6 @@ async def projeto_delete(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-    Delete existing user
+    Delete existing projeto
     """
     return delete_projeto(db, projeto_id)
