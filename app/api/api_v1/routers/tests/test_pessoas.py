@@ -1,21 +1,8 @@
-from app.db import models
-from app.core.security import passwords
+from db import models
+from core.security import passwords
 from datetime import date
 
-
-def fake_login(client, user, monkeypatch):
-
-    monkeypatch.setattr(passwords, "verify_password", lambda a, b: True)
-
-    user = client.post(
-        "/api/token",
-        data={"username": user.email,
-              "password": "nottheactualpass", "email": "asd"},
-    )
-
-
-def test_get_pessoas(client, test_superuser, monkeypatch):
-    fake_login(client, test_superuser, monkeypatch)
+def test_get_pessoas(client, test_superuser, fake_login_superuser):
     response = client.get("/api/v1/pessoas")
     assert response.status_code == 200
     assert response.json() == [
@@ -34,8 +21,7 @@ def test_get_pessoas(client, test_superuser, monkeypatch):
     ]
 
 
-def test_delete_pessoa(client, test_superuser, test_db, monkeypatch):
-    fake_login(client, test_superuser, monkeypatch)
+def test_delete_pessoa(client, test_db, fake_login_superuser):
     response = client.delete(
         f"/api/v1/pessoas"
     )
@@ -43,16 +29,14 @@ def test_delete_pessoa(client, test_superuser, test_db, monkeypatch):
     assert test_db.query(models.Pessoa).all() == []
 
 
-def test_delete_pessoa_not_found(client, test_superuser, monkeypatch):
-    fake_login(client, test_superuser, monkeypatch)
+def test_delete_pessoa_not_found(client, fake_login_superuser):
     response = client.delete(
         "/api/v1/admin/pessoas/4321"
     )
     assert response.status_code == 404
 
 
-def test_edit_pessoa(client, test_superuser, monkeypatch):
-    fake_login(client, test_superuser, monkeypatch)
+def test_edit_pessoa(client, test_superuser, fake_login_superuser):
     new_pessoa = {
         "email": "newemail@email.com",
         "ativo": False,
@@ -78,8 +62,7 @@ def test_edit_pessoa(client, test_superuser, monkeypatch):
     assert response.json() == new_pessoa
 
 
-def test_edit_pessoa_not_found(client, test_superuser, test_db, monkeypatch):
-    fake_login(client, test_superuser, monkeypatch)
+def test_edit_pessoa_not_found(client, fake_login_superuser):
     new_pessoa = {
         "email": "newemail@email.com",
         "ativo": False,
@@ -92,9 +75,8 @@ def test_edit_pessoa_not_found(client, test_superuser, test_db, monkeypatch):
 
 
 def test_get_pessoa(
-    client, test_pessoa, monkeypatch
+    client, test_pessoa, fake_login_superuser
 ):
-    fake_login(client, test_pessoa, monkeypatch)
     response = client.get(
         f"/api/v1/pessoas/{test_pessoa.id}"
     )
@@ -113,14 +95,12 @@ def test_get_pessoa(
     }
 
 
-def test_pessoa_not_found(client, test_superuser, monkeypatch):
-    fake_login(client, test_superuser, monkeypatch)
+def test_pessoa_not_found(client, fake_login_superuser):
     response = client.get("/api/v1/pessoas/123")
     assert response.status_code == 404
 
 
-def test_authenticated_pessoa_me(client, test_pessoa, monkeypatch):
-    fake_login(client, test_pessoa, monkeypatch)
+def test_authenticated_pessoa_me(client, fake_login_superuser):
     response = client.get("/api/v1/pessoas/me")
     assert response.status_code == 200
 

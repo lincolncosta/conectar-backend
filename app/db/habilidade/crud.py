@@ -2,10 +2,12 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
-from app.db.habilidade import schemas
+from db import models
+from db.habilidade import schemas
 
-async  def get_habilidades_by_id(
+
+def get_habilidades_by_id( 
+
     db: Session, habilidades_id: int
 ) -> schemas.Habilidades:
     habilidades = (
@@ -23,7 +25,7 @@ async  def get_habilidades_by_id(
 def get_habilidades(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.Habilidades]:
     return db.query(models.Habilidades).offset(skip).limit(limit).all()
 
-async def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habilidades:
+def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habilidades:
     '''
         Get a single instance of habilidades from its name
 
@@ -110,5 +112,3 @@ def edit_habilidades(
     db.commit()
     db.refresh(db_habilidades)
     return db_habilidades
-
-

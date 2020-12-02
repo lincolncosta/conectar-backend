@@ -1,4 +1,4 @@
-from app.core.security import passwords
+from core.security import passwords
 
 # Monkey patch function we can use to shave a second off our tests by skipping the password hashing check
 def verify_password_mock(first: str, second: str):
