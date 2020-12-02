@@ -83,7 +83,7 @@ async def edit_pessoa_projeto(db: Session, pessoa_projeto_id: int,
     return db_pessoa_projeto
 
 
-def delete_projeto(db: Session, pessoa_projeto_id: int):
+def delete_pessoa_projeto(db: Session, pessoa_projeto_id: int):
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not pessoa_projeto:
         raise HTTPException(status.HTTP_404_NOT_FOUND,

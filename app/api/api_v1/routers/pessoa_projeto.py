@@ -20,6 +20,7 @@ from app.db.pessoa_projeto.crud import (
     get_pessoa_projeto,
     get_pessoa_projeto_by_projeto,
     edit_pessoa_projeto,
+    delete_pessoa_projeto
 )
 from app.db.pessoa_projeto.schemas import (
     PessoaProjeto,
@@ -28,6 +29,8 @@ from app.db.pessoa_projeto.schemas import (
     PessoaProjetoOut,
     PessoaProjetoCreate,
 )
+
+from core.auth import get_current_active_pessoa
 
 pessoa_projeto_router = r = APIRouter()
 
@@ -100,7 +103,7 @@ async def pessoa_projeto_edit(
 
 @r.delete(
     "/pessoa_projeto/{pessoa_projeto}",
-    response_model=Projeto,
+    response_model=PessoaProjeto,
     response_model_exclude_none=True,
 )
 async def pessoa_projeto_delete(
