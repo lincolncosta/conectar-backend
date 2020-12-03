@@ -21,7 +21,7 @@ class PessoaProjetoOut(PessoaProjetoBase):
 
 
 class PessoaProjetoCreate(PessoaProjetoBase):
-    
+    pessoa: t.Optional[int] = None
     class Config:
         orm_mode = True
 
