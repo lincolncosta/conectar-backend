@@ -37,7 +37,7 @@ async def create_pessoa_projeto(
     try:
         projeto = get_projeto(db, pessoa_projeto.projeto)
         if pessoa_projeto.pessoa:
-            pessoa = get_pessoa(db, pessoa_projeto.pessoa.id)
+            pessoa = get_pessoa(db, pessoa_projeto.pessoa)
 
             db_pessoa_projeto = models.PessoaProjeto(
             pessoa=pessoa,
