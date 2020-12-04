@@ -10,6 +10,19 @@ from api.api_v1.routers.projeto import projeto_router
 from api.api_v1.routers.experiencia.profissional import (
     experiencia_prof_router,
 )
+
+from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
+from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
+from app.api.api_v1.routers.habilidade import habilidades_router
+from app.api.api_v1.routers.papel import papel_router
+from app.api.api_v1.routers.pesquisa.projeto import pesquisa_projeto_router
+from app.api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
+from app.api.api_v1.routers.area import area_router
+from app.api.api_v1.routers.auth import auth_router
+from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
+from app.core import config
+from app.db.session import SessionLocal
+from app.core.auth import get_current_active_pessoa
 from api.api_v1.routers.experiencia.academica import experiencia_acad_router
 from api.api_v1.routers.experiencia.projeto import experiencia_proj_router
 from api.api_v1.routers.habilidade import habilidades_router
@@ -108,6 +121,14 @@ app.include_router(
 )
 
 app.include_router(
+    papel_router,
+    prefix="/api/v1",
+    tags=["papel"],
+    dependencies=[Depends(get_current_active_pessoa)],
+)
+
+app.include_router(
+
     pesquisa_projeto_router,
     prefix="/api/v1",
     tags=["pesquisa_projeto"],
