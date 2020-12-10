@@ -9,7 +9,7 @@ from app.db.projeto.schemas import Projeto
 class PessoaProjetoBase(BaseModel):
 
     projeto: Projeto
-    pessoa: t.Optional[Pessoa] = None
+    pessoa: Pessoa
     habilidades: t.Optional[t.List[Habilidades]] = None
     areas: t.Optional[t.List[Area]] = None
     #papel_id: t.Optional[int]

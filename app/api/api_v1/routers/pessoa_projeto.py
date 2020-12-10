@@ -51,7 +51,7 @@ async def get_all_pessoa_projeto_by_projeto(
     """
     Get all pessoa_projeto on projeto
     """
-    pessoa_projeto = get_pessoa_projeto_by_projeto(db, projeto_id)
+    pessoa_projeto = await get_pessoa_projeto_by_projeto(db, projeto_id)
     return pessoa_projeto
 
 '''

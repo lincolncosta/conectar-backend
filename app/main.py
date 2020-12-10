@@ -5,9 +5,7 @@ import uvicorn
 
 from app.api.api_v1.routers.pessoas import pessoas_router
 from app.api.api_v1.routers.projeto import projeto_router
-from app.api.api_v1.routers.experiencia.profissional import (
-    experiencia_prof_router,
-)
+from app.api.api_v1.routers.experiencia.profissional import experiencia_prof_router
 from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
 from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
 from app.api.api_v1.routers.habilidade import habilidades_router
@@ -16,6 +14,8 @@ from app.api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
 from app.api.api_v1.routers.area import area_router
 from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
+from app.api.api_v1.routers.papel import papel_router
+from app.api.api_v1.routers.tipo_acordo import tipo_acordo_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_pessoa
@@ -28,7 +28,7 @@ app = FastAPI(
 app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Go to localhost:8000/api/coverage/index.html to see coverage report
-app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
+#app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
@@ -100,6 +100,18 @@ app.include_router(
     pessoa_projeto_router,
     prefix="/api/v1",
     tags=["pessoa_projeto"],
+)
+
+app.include_router(
+    papel_router,
+    prefix="/api/v1",
+    tags=["papel"],
+)
+
+app.include_router(
+    tipo_acordo_router,
+    prefix="/api/v1",
+    tags=["tipo_acordo"],
 )
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
