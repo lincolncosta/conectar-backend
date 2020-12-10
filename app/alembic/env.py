@@ -5,10 +5,9 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from sqlalchemy.ext.declarative import declarative_base
+from db.models import Base
 
 from pathlib import Path
-Base = declarative_base()
 
 from dotenv import load_dotenv
 
