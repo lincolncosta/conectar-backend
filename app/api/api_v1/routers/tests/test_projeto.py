@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from app.db import models
-=======
 from db import models
->>>>>>> master
 
 
 def test_get_projeto_by_id(client, test_projeto, fake_login_superuser):

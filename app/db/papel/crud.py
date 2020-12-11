@@ -52,12 +52,15 @@ def edit_papel(
 ) -> schemas.Papel:
     """
     Edits experiencia on database.
+
     Tries to find the experience in the database, if it finds, updates each field
     that was send with new information to the database.
+
     Args:
         db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
         experiencia_id: Integer representing the experiencia id. Integer.
         experiencia: New data to use on update of experienciaAcad. Schema from ExperienciaAcadEdit.
+
     Returns:
         A dict of experiencia with the updated values. For example:
         old_experiencia: {
@@ -68,6 +71,7 @@ def edit_papel(
             id: 1,
             descricao: "Uma nova descrição"
         }
+
     Raises:
         HTTPException: No experience corresponds to experiencia_id in the database.
     """

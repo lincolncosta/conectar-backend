@@ -6,11 +6,6 @@ from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.utils.salvar_imagem import store_image
 
-from app.db import models
-from app.db.utils.extract_areas import append_areas
-from app.db.utils.extract_habilidade import append_habilidades
-from app.db.utils.salvar_imagem import store_image
-
 from db import models
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades

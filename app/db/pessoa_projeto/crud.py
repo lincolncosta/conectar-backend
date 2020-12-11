@@ -2,10 +2,10 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
+from db import models
 from . import schemas
-from app.db.pessoa.crud import get_pessoa
-from app.db.projeto.crud import get_projeto
+from db.pessoa.crud import get_pessoa
+from db.projeto.crud import get_projeto
 
 def get_pessoa_projeto(db: Session, pessoa_projeto_id: int) -> schemas.PessoaProjeto:
     
@@ -21,7 +21,7 @@ def get_pessoa_projeto(db: Session, pessoa_projeto_id: int) -> schemas.PessoaPro
 
 async def get_pessoa_projeto_by_projeto(db: Session, id_projeto: int) -> schemas.PessoaProjeto:
     pessoa_projeto = db.query(models.PessoaProjeto)\
-        .filter(models.PessoaProjeto.projeto_id == id_projeto).all()
+        .filter(models.Projeto.id == id_projeto).all()
     
 
     if not pessoa_projeto:
@@ -35,19 +35,21 @@ async def create_pessoa_projeto(
     ) -> schemas.PessoaProjeto:
 
     try:
-        projeto = get_projeto(db, pessoa_projeto.projeto.id)
+        projeto = get_projeto(db, pessoa_projeto.projeto)
         if pessoa_projeto.pessoa:
-            pessoa = get_pessoa(db, pessoa_projeto.pessoa.id)
+            pessoa = get_pessoa(db, pessoa_projeto.pessoa)
 
             db_pessoa_projeto = models.PessoaProjeto(
             pessoa=pessoa,
             projeto=projeto,
             descricao=pessoa_projeto.descricao,
+            situacao=pessoa_projeto.situacao
     )
         else:
             db_pessoa_projeto = models.PessoaProjeto(
             projeto=projeto,
             descricao=pessoa_projeto.descricao,
+            situacao=pessoa_projeto.situacao,
         )
     
     except HTTPException as e:
@@ -56,11 +58,9 @@ async def create_pessoa_projeto(
     
     db.add(db_pessoa_projeto)
     db.commit()
-    print(db_pessoa_projeto)
     db.refresh(db_pessoa_projeto)
 
     db_vaga = db_pessoa_projeto.__dict__
-    print(db_vaga)
     return {"id": db_vaga["id"]}
 
 
@@ -81,3 +81,13 @@ async def edit_pessoa_projeto(db: Session, pessoa_projeto_id: int,
     db.commit()
     db.refresh(db_pessoa_projeto)
     return db_pessoa_projeto
+
+
+def delete_pessoa_projeto(db: Session, pessoa_projeto_id: int):
+    pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
+    if not pessoa_projeto:
+        raise HTTPException(status.HTTP_404_NOT_FOUND,
+                            detail="pessoa_projeto não encontrada")
+    db.delete(pessoa_projeto)
+    db.commit()
+    return pessoa_projeto

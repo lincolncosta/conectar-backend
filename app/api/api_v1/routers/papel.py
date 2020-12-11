@@ -42,6 +42,7 @@ async def papel_list(
 
 @r.post(
     "/papel",
+
     response_model=Papel,
     response_model_exclude_none=True,
 )
@@ -88,3 +89,6 @@ async def papel_delete(
         Delete existing papel
     """
     return delete_papel(db, papel_id)
+
+
+    

@@ -1,4 +1,4 @@
-from app.db import models
+from db import models
 
 
 def test_get_habilidade_by_name(client, test_habilidade, fake_login_superuser):

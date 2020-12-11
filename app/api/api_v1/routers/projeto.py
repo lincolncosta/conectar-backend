@@ -63,7 +63,6 @@ async def projeto_details(
     return projeto
 
 
-
 @r.post("/projeto", response_model_exclude_none=True)
 async def projeto_create(
     request: Request,

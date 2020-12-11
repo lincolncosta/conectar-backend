@@ -20,3 +20,4 @@ class PapelEdit(PapelBase):
 
   class Config:
         orm_mode = True
+

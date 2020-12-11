@@ -75,9 +75,9 @@ async def login(
         permissions = "user"
 
     serialized_pessoa = {
-        "id": pessoa.id, 
-        "idealizador": pessoa.idealizador, 
-        "aliado": pessoa.aliado, 
+        "id": pessoa.id,
+        "idealizador": pessoa.idealizador,
+        "aliado": pessoa.aliado,
         "colaborador": pessoa.colaborador,
         "sub": pessoa.email,
         "permissions": permissions
@@ -104,11 +104,7 @@ async def refresh_token(
     token=Depends(get_current_token),
     db=Depends(get_db),
 ):
-    credentialsException = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Não autenticado",
-            headers={"WWW-Authenticate": "Bearer"},
-    )
+
     if token:
         return {"access_token": token}
 
@@ -174,9 +170,9 @@ async def signup(
         permissions = "user"
 
     serialized_pessoa = {
-        "id": pessoa.id, 
-        "idealizador": pessoa.idealizador, 
-        "aliado": pessoa.aliado, 
+        "id": pessoa.id,
+        "idealizador": pessoa.idealizador,
+        "aliado": pessoa.aliado,
         "colaborador": pessoa.colaborador,
         "sub": pessoa.email,
         "permissions": permissions

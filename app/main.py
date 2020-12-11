@@ -5,12 +5,16 @@ from starlette.requests import Request
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
-from app.api.api_v1.routers.pessoas import pessoas_router
-from app.api.api_v1.routers.projeto import projeto_router
-from app.api.api_v1.routers.experiencia.profissional import experiencia_prof_router
+from api.api_v1.routers.pessoas import pessoas_router
+from api.api_v1.routers.projeto import projeto_router
+from api.api_v1.routers.experiencia.profissional import (
+    experiencia_prof_router,
+)
+
 from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
 from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
 from app.api.api_v1.routers.habilidade import habilidades_router
+from app.api.api_v1.routers.papel import papel_router
 from app.api.api_v1.routers.pesquisa.projeto import pesquisa_projeto_router
 from app.api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
 from app.api.api_v1.routers.area import area_router
@@ -46,7 +50,7 @@ app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 DEV_ENV=True
 
 # Go to localhost:8000/api/coverage/index.html to see coverage report
-app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
+# app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
 
 # Use HTTPS in production
 if not DEV_ENV:

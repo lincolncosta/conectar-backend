@@ -141,3 +141,4 @@ cython_debug/
 
 app/alembic/versions/*
 uploads/*
+.vscode/settings.json

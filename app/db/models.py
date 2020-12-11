@@ -210,18 +210,24 @@ class Projeto(Base):
 
 
 class PessoaProjeto(Base):
-    
+
     __tablename__ = "tb_pessoa_projeto"
 
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
-    papel_id = Column(Integer, ForeignKey("tb_papel.id"))
-    tipo_acordo_id = Column(Integer, ForeignKey("tb_tipo_acordo.id"))
+    papel = relationship(
+        "Papel", uselist=False, back_populates="pessoa_projeto"
+    )
+    tipo_acordo = relationship(
+        "TipoAcordo", uselist=False, back_populates="pessoa_projeto"
+    )
     pessoa = relationship("Pessoa", back_populates="pessoa_projeto")
     projeto = relationship("Projeto", back_populates="projeto_pessoa")
     areas = relationship("Area", secondary=PessoaAreaProjeto)
-    habilidades = relationship("Habilidades", secondary=PessoaHabilidadesProjeto)
+    habilidades = relationship(
+        "Habilidades", secondary=PessoaHabilidadesProjeto
+    )
     descricao = Column(String)
     situacao = Column(String)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
