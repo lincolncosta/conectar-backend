@@ -8,7 +8,7 @@ from sqlalchemy import (
     ForeignKey,
     Table,
     DateTime,
-    Date
+    Date,
 )
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
@@ -20,14 +20,26 @@ HabilidadesPessoa = Table(
     "tb_habilidades_pessoa",
     Base.metadata,
     Column("pessoa_id", Integer, ForeignKey("tb_pessoa.id"), primary_key=True),
-    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id"), primary_key=True),
+    Column(
+        "habilidade_id",
+        Integer,
+        ForeignKey("tb_habilidades.id"),
+        primary_key=True,
+    ),
 )
 
 HabilidadesProjeto = Table(
     "tb_habilidades_projeto",
     Base.metadata,
-    Column("projeto_id", Integer, ForeignKey("tb_projeto.id"), primary_key=True),
-    Column("habilidade_id", Integer, ForeignKey("tb_habilidades.id"), primary_key=True),
+    Column(
+        "projeto_id", Integer, ForeignKey("tb_projeto.id"), primary_key=True
+    ),
+    Column(
+        "habilidade_id",
+        Integer,
+        ForeignKey("tb_habilidades.id"),
+        primary_key=True,
+    ),
 )
 
 
@@ -35,21 +47,33 @@ ExperienciaProfArea = Table(
     "tb_exp_profissional_area",
     Base.metadata,
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
-    Column("experiencia_id", ForeignKey("tb_experiencia_profissional.id"), primary_key=True),
+    Column(
+        "experiencia_id",
+        ForeignKey("tb_experiencia_profissional.id"),
+        primary_key=True,
+    ),
 )
 
 ExperienciaProjArea = Table(
     "tb_exp_projeto_area",
     Base.metadata,
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
-    Column("experiencia_id", ForeignKey("tb_experiencia_projetos.id"), primary_key=True),
+    Column(
+        "experiencia_id",
+        ForeignKey("tb_experiencia_projetos.id"),
+        primary_key=True,
+    ),
 )
 
 ExperienciaAcadArea = Table(
     "tb_exp_academica_area",
     Base.metadata,
     Column("area_id", ForeignKey("tb_area.id"), primary_key=True),
-    Column("experiencia_id", ForeignKey("tb_experiencia_academica.id"), primary_key=True),
+    Column(
+        "experiencia_id",
+        ForeignKey("tb_experiencia_academica.id"),
+        primary_key=True,
+    ),
 )
 
 PessoaArea = Table(
@@ -91,34 +115,34 @@ PessoaHabilidadesProjeto = Table(
 
 class Pessoa(Base):
     """
-        Represents table "tb_pessoa"
+    Represents table "tb_pessoa"
 
 
-        1. Recursive One to One relationship - colaborador
-        One Pessoa can only be one colaborador
+    1. Recursive One to One relationship - colaborador
+    One Pessoa can only be one colaborador
 
-        2. Recursive One to One relationship - idealizador
-        One Pessoa can only be one idealizador
+    2. Recursive One to One relationship - idealizador
+    One Pessoa can only be one idealizador
 
-        3. Recursive One to One relationship - aliado
-        One Pessoa can only be one aliado
+    3. Recursive One to One relationship - aliado
+    One Pessoa can only be one aliado
 
 
-        Attributes:
-            id: Integer, Primary key
-            usuario: String
-            senha: String
-            nome: String
-            data_criacao: Datetime - default uses DB function Now()
-            data_atualizacao: Datetime - default uses function Now()
-            on the server
-            data_nascimento: Date
-            telefone: String
-            ativo: Boolean
-            superusuario: Boolean
-            colaborador: Boolean
-            idealizador: Boolean
-            aliado: Boolean
+    Attributes:
+        id: Integer, Primary key
+        usuario: String
+        senha: String
+        nome: String
+        data_criacao: Datetime - default uses DB function Now()
+        data_atualizacao: Datetime - default uses function Now()
+        on the server
+        data_nascimento: Date
+        telefone: String
+        ativo: Boolean
+        superusuario: Boolean
+        colaborador: Boolean
+        idealizador: Boolean
+        aliado: Boolean
 
     """
 
@@ -144,7 +168,7 @@ class Pessoa(Base):
     pessoa_projeto = relationship("PessoaProjeto", back_populates="pessoa")
 
     areas = relationship("Area", secondary=PessoaArea)
-    habilidades= relationship("Habilidades", secondary=HabilidadesPessoa)
+    habilidades = relationship("Habilidades", secondary=HabilidadesPessoa)
 
     colaborador = Column(Boolean, default=False)
     idealizador = Column(Boolean, default=False)
@@ -153,18 +177,19 @@ class Pessoa(Base):
     def __repr__(self):
         return f"<Pessoa {self.id}, {self.email}, {self.superusuario}>"
 
+
 class Projeto(Base):
     """
-        Represents table "tb_projeto"
+    Represents table "tb_projeto"
 
 
-        Attributes:
-            id: Integer, Primary key
-            descricao: String
-            data_atualizacao: Datetime - default uses function Now()
-            data_criacao: Datetime - default uses DB function Now()
-            visibilidade: Boolean
-            objetivo: String
+    Attributes:
+        id: Integer, Primary key
+        descricao: String
+        data_atualizacao: Datetime - default uses function Now()
+        data_criacao: Datetime - default uses DB function Now()
+        visibilidade: Boolean
+        objetivo: String
     """
 
     __tablename__ = "tb_projeto"
@@ -205,28 +230,28 @@ class PessoaProjeto(Base):
 
 class ExperienciaProf(Base):
     """
-        Represents table "tb_experiencia_profissional"
+    Represents table "tb_experiencia_profissional"
 
 
-        1. Many to Many relationship - Area
-        Many experiencias may be in may Areas
-        Many Areas may have many experiences
+    1. Many to Many relationship - Area
+    Many experiencias may be in may Areas
+    Many Areas may have many experiences
 
-        2. One to Many relationship - Pessoa
-        One Pessoa can have many Experience
-        One experience can only have one Pessoa
+    2. One to Many relationship - Pessoa
+    One Pessoa can have many Experience
+    One experience can only have one Pessoa
 
 
-        Attributes:
-            id: Integer, Primary key
-            descricao: String
-            organizacao: String - Organization name the person worked
-            data_inicio: Date
-            data_fim: Date
-            pessoa_id: Integer, Foreign Key
-            cargo: String
-            vinculo: String - PJ, PF, Freelancer, etc.
-            areas: Relationship
+    Attributes:
+        id: Integer, Primary key
+        descricao: String
+        organizacao: String - Organization name the person worked
+        data_inicio: Date
+        data_fim: Date
+        pessoa_id: Integer, Foreign Key
+        cargo: String
+        vinculo: String - PJ, PF, Freelancer, etc.
+        areas: Relationship
     """
 
     __tablename__ = "tb_experiencia_profissional"
@@ -244,29 +269,29 @@ class ExperienciaProf(Base):
 
 class ExperienciaAcad(Base):
     """
-        Represents table "tb_experiencia_academica"
+    Represents table "tb_experiencia_academica"
 
 
-        1. Many to Many relationship - Area
-        Many experiencias may be in may Areas
-        Many Areas may have many experiences
+    1. Many to Many relationship - Area
+    Many experiencias may be in may Areas
+    Many Areas may have many experiences
 
-        2. One to Many relationship - Pessoa
-        One Pessoa can have many Experience
-        One experience can only have one Pessoa
+    2. One to Many relationship - Pessoa
+    One Pessoa can have many Experience
+    One experience can only have one Pessoa
 
 
-        Attributes:
-            id: Integer, Primary key
-            descricao: String
-            instituicao: String - Institution name the person studied
-            data_inicio: Date
-            data_fim: Date
-            pessoa_id: Integer, Foreign Key
-            escolaridade: String - education level, e.g. high school or college.
-            curso: String - Specific course, e.g. Software Engineering bachelor
-            situacao: String - Currently doing, finished or canceled.
-            areas: Relationship
+    Attributes:
+        id: Integer, Primary key
+        descricao: String
+        instituicao: String - Institution name the person studied
+        data_inicio: Date
+        data_fim: Date
+        pessoa_id: Integer, Foreign Key
+        escolaridade: String - education level, e.g. high school or college.
+        curso: String - Specific course, e.g. Software Engineering bachelor
+        situacao: String - Currently doing, finished or canceled.
+        areas: Relationship
     """
 
     __tablename__ = "tb_experiencia_academica"
@@ -285,28 +310,28 @@ class ExperienciaAcad(Base):
 
 class ExperienciaProj(Base):
     """
-        Represents table "tb_experiencia_projetos"
+    Represents table "tb_experiencia_projetos"
 
 
-        1. Many to Many relationship - Area
-        Many experiencias may be in may Areas
-        Many Areas may have many experiences
+    1. Many to Many relationship - Area
+    Many experiencias may be in may Areas
+    Many Areas may have many experiences
 
-        2. One to Many relationship - Pessoa
-        One Pessoa can have many Experience
-        One experience can only have one Pessoa
+    2. One to Many relationship - Pessoa
+    One Pessoa can have many Experience
+    One experience can only have one Pessoa
 
 
-        Attributes:
-            id: Integer, Primary key
-            nome: String
-            descricao: String
-            data_inicio: Date
-            data_fim: Date
-            cargo: String
-            situacao: String - Currently doing, finished, canceled
-            pessoa_id: Integer, Foreign Key
-            areas: Relationship
+    Attributes:
+        id: Integer, Primary key
+        nome: String
+        descricao: String
+        data_inicio: Date
+        data_fim: Date
+        cargo: String
+        situacao: String - Currently doing, finished, canceled
+        pessoa_id: Integer, Foreign Key
+        areas: Relationship
     """
 
     __tablename__ = "tb_experiencia_projetos"
@@ -324,18 +349,18 @@ class ExperienciaProj(Base):
 
 class Area(Base):
     """
-        Represents table "tb_area"
+    Represents table "tb_area"
 
 
-        Recursive Many To Many Relationship
-        One Area can have many subareas,
-        And subarea can have many
+    Recursive Many To Many Relationship
+    One Area can have many subareas,
+    And subarea can have many
 
-        Attributes:
-            id: Integer, Primary key
-            descricao: String
-            area_pai_id: Integer, Foreign Key
-            area_pai_rel: Relationship
+    Attributes:
+        id: Integer, Primary key
+        descricao: String
+        area_pai_id: Integer, Foreign Key
+        area_pai_rel: Relationship
     """
 
     __tablename__ = "tb_area"
@@ -345,9 +370,12 @@ class Area(Base):
 
     area_pai_id = Column(Integer, ForeignKey("tb_area.id"))
     area_pai_rel = relationship(
-        "Area", backref=backref("area_pai", remote_side=[id]),
-        cascade="all, delete-orphan", lazy="joined", join_depth=2,
-        passive_deletes=True
+        "Area",
+        backref=backref("area_pai", remote_side=[id]),
+        cascade="all, delete-orphan",
+        lazy="joined",
+        join_depth=2,
+        passive_deletes=True,
     )
 
     # def __str__(self, level=0):
@@ -359,23 +387,23 @@ class Area(Base):
     def __repr__(self):
         return f"<Area {self.id}>"
 
+
 class Habilidades(Base):
-
     """
-        Represents table "tb_habilidades"
+    Represents table "tb_habilidades"
 
 
-        Many to Many Relationship
-        One Habilidade can have many Projetos,
-        one Projeto can have many Habilidades as well.
+    Many to Many Relationship
+    One Habilidade can have many Projetos,
+    one Projeto can have many Habilidades as well.
 
-        Many to Many Relationship
-        One Habilidade can have many Pessoa,
-        one Pessoa can have many Habilidades as well.
+    Many to Many Relationship
+    One Habilidade can have many Pessoa,
+    one Pessoa can have many Habilidades as well.
 
-        Attributes:
-            id: Integer, Primary key
-            nome: String
+    Attributes:
+        id: Integer, Primary key
+        nome: String
     """
 
     __tablename__ = "tb_habilidades"
@@ -385,51 +413,52 @@ class Habilidades(Base):
     def __repr__(self):
         return f"<{self.__tablename__} {self.id}>"
 
+
 class Papel(Base):
     """
-        Represents table "tb_papel"
+    Represents table "tb_papel"
 
 
-        Many to One relationship
-        One pessoa_projeto has one Papel, meanwhile
-        One Papel may be in may PessoaProjeto
+    Many to One relationship
+    One pessoa_projeto has one Papel, meanwhile
+    One Papel may be in may PessoaProjeto
 
 
-        Attributes:
-            id: Integer, Primary key
-            descricao: String
-            pessoa_projeto_id: Integer, Foreign Key
-            pessoa_projeto_rel: Relationship
+    Attributes:
+        id: Integer, Primary key
+        descricao: String
+        pessoa_projeto_id: Integer, Foreign Key
+        pessoa_projeto: Relationship
     """
 
     __tablename__ = "tb_papel"
 
     id = Column(Integer, primary_key=True, index=True)
     descricao = Column(String)
-    # pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
-    # pessoa_projeto_rel = relationship("PessoaProjeto")
+    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
+    pessoa_projeto = relationship("PessoaProjeto", back_populates="papel")
 
 
 class TipoAcordo(Base):
     """
-        Represents table "tb_tipo_acordo"
+    Represents table "tb_tipo_acordo"
 
 
-        Many to One relationship
-        One pessoa_projeto has one TipoAcordo, meanwhile
-        One TipoAcordo may be in may PessoaProjeto
+    Many to One relationship
+    One pessoa_projeto has one TipoAcordo, meanwhile
+    One TipoAcordo may be in may PessoaProjeto
 
 
-        Attributes:
-            id: Integer, Primary key
-            descricao: String
-            pessoa_projeto_id: Integer, Foreign Key
-            pessoa_projeto_rel: Relationship
+    Attributes:
+        id: Integer, Primary key
+        descricao: String
+        pessoa_projeto_id: Integer, Foreign Key
+        pessoa_projeto: Relationship
     """
 
     __tablename__ = "tb_tipo_acordo"
 
     id = Column(Integer, primary_key=True, index=True)
     descricao = Column(String)
-    # pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
-    # pessoa_projeto_rel = relationship("PessoaProjeto")
+    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
+    pessoa_projeto = relationship("PessoaProjeto", back_populates="tipo_acordo")

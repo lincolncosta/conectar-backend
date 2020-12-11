@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-from app.db.session import get_db
-from app.db.experiencia.profissional.crud import (
+from db.session import get_db
+from db.experiencia.profissional.crud import (
     get_experiencias,
     create_experiencia,
     get_experiencia_by_id,
@@ -10,12 +10,12 @@ from app.db.experiencia.profissional.crud import (
     edit_experiencia,
     delete_experiencia
 )
-from app.db.experiencia.schemas import (
+from db.experiencia.schemas import (
     ExperienciaProfCreate,
     ExperienciaProf,
     ExperienciaProfEdit,
 )
-from app.core.auth import (
+from core.auth import (
     get_current_active_pessoa,
     get_current_active_superuser,
 )

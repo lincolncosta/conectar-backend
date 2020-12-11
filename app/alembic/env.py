@@ -5,7 +5,15 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app.db.models import Base
+from sqlalchemy.ext.declarative import declarative_base
+
+from pathlib import Path
+Base = declarative_base()
+
+from dotenv import load_dotenv
+
+env = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

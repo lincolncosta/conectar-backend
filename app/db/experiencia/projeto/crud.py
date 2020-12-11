@@ -2,9 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
-from app.db.experiencia import schemas
-from app.db.utils.extract_areas import append_areas
+from db import models
+from db.experiencia import schemas
+from db.utils.extract_areas import append_areas
 
 
 def get_experiencia_by_id(

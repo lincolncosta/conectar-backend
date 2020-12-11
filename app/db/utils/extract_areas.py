@@ -1,4 +1,4 @@
-from app.db.area.crud import get_area_by_id, get_area_by_name
+from db.area.crud import get_area_by_id, get_area_by_name
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 

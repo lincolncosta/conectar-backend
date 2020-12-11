@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-from app.db.session import get_db
-from app.db.area.crud import (
+from db.session import get_db
+from db.area.crud import (
     create_area,
     delete_area,
     edit_area,
@@ -11,8 +11,8 @@ from app.db.area.crud import (
     get_areas,
     get_area_and_subareas
 )
-from app.db.area.schemas import Area, AreaCreate, AreaEdit, AreasAndSubareas
-from app.core.auth import get_current_active_pessoa
+from db.area.schemas import Area, AreaCreate, AreaEdit, AreasAndSubareas
+from core.auth import get_current_active_pessoa
 
 area_router = r = APIRouter()
 

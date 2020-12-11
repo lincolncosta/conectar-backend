@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-# from app.db.session import get_db
-from app.db.pessoa.crud import create_pessoa
-from app.db.pessoa.schemas import PessoaCreate
-from app.db.session import SessionLocal
+# from db.session import get_db
+from db.pessoa.crud import create_pessoa
+from db.pessoa.schemas import PessoaCreate
+from db.session import SessionLocal
 
 
 def init() -> None:

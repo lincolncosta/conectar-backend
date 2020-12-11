@@ -2,8 +2,8 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
-from app.db.habilidade import schemas
+from db import models
+from db.habilidade import schemas
 
 
 def get_habilidades_by_id( 

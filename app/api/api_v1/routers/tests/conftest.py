@@ -1,3 +1,4 @@
+    projeto = models.Projeto(
 import pytest
 from app.db import models 
 

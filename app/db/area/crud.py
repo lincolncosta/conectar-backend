@@ -2,9 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
-from app.db import models
+from db import models
 from . import schemas
-from app.core.security.passwords import get_password_hash
+from core.security.passwords import get_password_hash
 
 
 async def get_area_by_id(db: Session, area_id: int) -> schemas.Area:

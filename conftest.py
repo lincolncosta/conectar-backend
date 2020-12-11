@@ -5,12 +5,12 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 from fastapi.testclient import TestClient
 import typing as t
 
-from app.core import config
-from app.core.security import passwords
-from app.db.session import Base, get_db
-from app.db import models
-from app.main import app
-from app.api.api_v1.routers.auth import login
+from core import config
+from core.security import passwords
+from db.session import Base, get_db
+from db import models
+from main import app
+from api.api_v1.routers.auth import login
 
 def get_test_db_url() -> str:
     return f"{config.SQLALCHEMY_DATABASE_URI}_test"

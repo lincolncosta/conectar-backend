@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-from app.db.session import get_db
-from app.db.habilidade.crud import (
+from db.session import get_db
+from db.habilidade.crud import (
     get_habilidades,
     create_habilidades,
     get_habilidades_by_id,
@@ -10,12 +10,12 @@ from app.db.habilidade.crud import (
     delete_habilidades,
     get_habilidade_by_name
 )
-from app.db.habilidade.schemas import (
+from db.habilidade.schemas import (
     HabilidadesCreate,
     Habilidades,
     HabilidadesEdit
 )
-from app.core.auth import (
+from core.auth import (
     get_current_active_pessoa,
     get_current_active_superuser,
 )
