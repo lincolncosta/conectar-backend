@@ -74,7 +74,8 @@ async def get_current_pessoa(
     except jwt.exceptions.ExpiredSignatureError as expired:
         print("Expired")
         raise credentials_exception
-    except PyJWTError:
+    except PyJWTError as e:
+        print(f'PYJWTERROR {e}')
         raise credentials_exception
     pessoa = get_pessoa_by_email(db, token_data.email)
     if pessoa is None:
