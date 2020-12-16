@@ -19,7 +19,7 @@ def get_pessoa_projeto(db: Session, pessoa_projeto_id: int) -> schemas.PessoaPro
     return pessoa_projeto
 
 
-def get_pessoa_projeto_by_projeto(db: Session, id_projeto: int) -> schemas.PessoaProjeto:
+async def get_pessoa_projeto_by_projeto(db: Session, id_projeto: int) -> schemas.PessoaProjeto:
     pessoa_projeto = db.query(models.PessoaProjeto)\
         .filter(models.Projeto.id == id_projeto).all()
     

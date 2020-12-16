@@ -20,6 +20,8 @@ from app.api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
 from app.api.api_v1.routers.area import area_router
 from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
+from app.api.api_v1.routers.papel import papel_router
+from app.api.api_v1.routers.tipo_acordo import tipo_acordo_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_pessoa
@@ -44,6 +46,8 @@ app = FastAPI(
 )
 
 app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+DEV_ENV=True
 
 # Go to localhost:8000/api/coverage/index.html to see coverage report
 # app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
@@ -145,6 +149,13 @@ app.include_router(
     prefix="/api/v1",
     tags=["pessoa_projeto"],
 )
+
+app.include_router(
+    tipo_acordo_router,
+    prefix="/api/v1",
+    tags=["tipo_acordo"],
+)
+
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
