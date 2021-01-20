@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 
-from app.core.security.passwords import get_password_hash
+from core.security.passwords import get_password_hash
 
 path = Path("uploads/")
 
@@ -13,7 +13,8 @@ path = Path("uploads/")
 path.mkdir(parents=True, exist_ok=True)
 
 def store_image(image, image_id):
-    image_name = get_password_hash(image_id) + ".jpeg"
+    name = get_password_hash(image_id) + ".png"
+    image_name = name.replace('/', '')
     try:
         pil_image = np.array(Image.open(BytesIO(image)))
         Image.fromarray(pil_image).save(path / f"{image_name}")

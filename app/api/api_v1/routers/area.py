@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-from app.db.session import get_db
-from app.db.area.crud import (
+from db.session import get_db
+from db.area.crud import (
     create_area,
     delete_area,
     edit_area,
@@ -11,8 +11,8 @@ from app.db.area.crud import (
     get_areas,
     get_area_and_subareas
 )
-from app.db.area.schemas import Area, AreaCreate, AreaEdit, AreasAndSubareas
-from app.core.auth import get_current_active_pessoa
+from db.area.schemas import Area, AreaCreate, AreaEdit, AreasAndSubareas
+from core.auth import get_current_active_pessoa
 
 area_router = r = APIRouter()
 
@@ -35,23 +35,6 @@ async def areas_list(
     response.headers["Content-Range"] = f"0-9/{len(areas)}"
     return areas
 
-# @r.get(
-#     "/areas_subareas",
-#     response_model=t.List[AreasAndSubareas],
-#     response_model_exclude_none=True,
-# )
-# async def areas_list(
-#     area_id: int,
-#     response: Response,
-#     db=Depends(get_db),
-#     current_pessoa=Depends(get_current_active_pessoa),
-# ):
-#     """
-#     Get all areas
-#     """
-#     areas = await get_area_and_subareas(db, area_id)
-#     return [areas]
-
 
 @r.get(
     "/areas/id/{area_id}",
@@ -71,7 +54,7 @@ async def area_details_id(
     return area
 
 @r.get(
-    "/area/name/{area_name}",
+    "/areas/name/{area_name}",
     response_model=Area,
     response_model_exclude_none=True,
 )
@@ -101,7 +84,7 @@ async def area_create(
 
 
 @r.put(
-    "/areas",
+    "/areas/{area_id}",
     response_model=AreaEdit,
     response_model_exclude_none=True,
 )
@@ -119,7 +102,7 @@ async def area_edit(
 
 
 @r.delete(
-    "/areas",
+    "/areas/{area_id}",
     response_model=Area,
     response_model_exclude_none=True,
 )

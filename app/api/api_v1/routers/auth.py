@@ -1,19 +1,29 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, File, UploadFile
+from fastapi.encoders import jsonable_encoder
 
-from app.db.session import get_db
-from app.core.security import handle_jwt
-from app.core.auth import authenticate_pessoa, sign_up_new_pessoa, get_current_token
+from db.session import get_db
+from core.security import handle_jwt
+from core.auth import (authenticate_pessoa, sign_up_new_pessoa,
+                       get_current_token, authenticate_google,
+                       authenticate_facebook)
 
 import typing as t
 
 from datetime import timedelta, date
 
-from app.db.pessoa import schemas
+from db.pessoa import schemas
+from os import getenv
 
-# from app.tasks import append_refresh_token, check_refresh_token
+# from tasks import append_refresh_token, check_refresh_token
 
 auth_router = r = APIRouter()
+
+credentialsException = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Não autenticado",
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
 
 @r.post("/token", response_model=t.Dict[str, schemas.Pessoa], response_model_exclude_none=True)
@@ -63,17 +73,27 @@ async def login(
         permissions = "admin"
     else:
         permissions = "user"
+
+    serialized_pessoa = {
+        "id": pessoa.id,
+        "idealizador": pessoa.idealizador,
+        "aliado": pessoa.aliado,
+        "colaborador": pessoa.colaborador,
+        "sub": pessoa.email,
+        "permissions": permissions
+    }
     access_token = handle_jwt.create_access_token(
-        data={"sub": pessoa.email, "permissions": permissions},
+        data=serialized_pessoa,
         expires_delta=access_token_expires,
     ).decode('utf-8')
-    
-    # _refresh_token = handle_jwt.create_refresh_token(
-    #     data={"sub": pessoa.email, "permissions": permissions},
-    # ).decode('utf-8')
 
-    # append_refresh_token(_refresh_token)
-    response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
+    
+    DEV_ENV = getenv("DEV_ENV")
+    response.set_cookie(
+        key="jid", value=f"{access_token}", httponly=True)
+    if not DEV_ENV:
+        response.set_cookie(
+            key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
     # response.set_cookie(key="rjid", value=f"{_refresh_token}", httponly=True)
     return {"pessoa": pessoa}
 
@@ -84,21 +104,19 @@ async def refresh_token(
     token=Depends(get_current_token),
     db=Depends(get_db),
 ):
-    credentialsException = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="",
-            headers={"WWW-Authenticate": "Bearer"},
-    )
+
     if token:
-        return {"access_token":token}
-    
+        return {"access_token": token}
+
     raise credentialsException
 
 
 @r.post("/logout")
 async def logout(response: Response):
-    response.set_cookie(key="jid", value="", httponly=True)
+    # response.delete_cookie(key="jid", path="/", domain=None)
+    response.set_cookie(key="jid",value="", httponly=True, samesite="none", secure=True)
     return {"message": "deslogado"}
+
 
 @r.post("/signup", response_model=t.Dict[str, schemas.Pessoa])
 async def signup(
@@ -132,10 +150,10 @@ async def signup(
     '''
 
     pessoa = await sign_up_new_pessoa(db, usuario=form_data.username,
-                                senha=form_data.password, telefone=telefone,
-                                nome=nome, email=email,
-                                data_nascimento=data_nascimento,
-                                foto_perfil=foto_perfil)
+                                      senha=form_data.password, telefone=telefone,
+                                      nome=nome, email=email,
+                                      data_nascimento=data_nascimento,
+                                      foto_perfil=foto_perfil)
     if not pessoa:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -150,11 +168,84 @@ async def signup(
         permissions = "admin"
     else:
         permissions = "user"
+
+    serialized_pessoa = {
+        "id": pessoa.id,
+        "idealizador": pessoa.idealizador,
+        "aliado": pessoa.aliado,
+        "colaborador": pessoa.colaborador,
+        "sub": pessoa.email,
+        "permissions": permissions
+    }
+
     access_token = handle_jwt.create_access_token(
-        data={"sub": pessoa.email, "permissions": permissions},
+        data=serialized_pessoa,
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    response.set_cookie(key="jid", value=f"{access_token}", httponly=True)
+    response.set_cookie(
+        key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
 
     return {"pessoa": pessoa}
+
+''''''
+
+
+@r.post("/login", response_model=t.Dict[str, schemas.Pessoa])
+async def authenticate_from_provider(
+    provider: str,
+    response: Response,
+    db=Depends(get_db),
+    pessoa: t.Optional[schemas.PessoaCreateFacebook] = None,
+    token: t.Optional[str] = None,
+):
+    # credentialsException = HTTPException(
+    #     status_code=status.HTTP_401_UNAUTHORIZED,
+    #     detail=f"Não foi possível autenticar com o provedor {provider}",
+    #     headers={"WWW-Authenticate": "Bearer"},
+    # )
+
+    providerExeption = HTTPException(
+        status_code=422,
+        detail="Provedor não cadastrado",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        new_pessoa = {}
+        if provider == "google":
+            new_pessoa = authenticate_google(db, token)
+        elif provider == "facebook":
+            new_pessoa = authenticate_facebook(db, pessoa)
+        else:
+            raise HTTPException(status_code=422)
+
+        if new_pessoa.superusuario:
+            permissions = "admin"
+        else:
+            permissions = "user"
+
+        serialized_pessoa = {
+            "id": new_pessoa.id,
+            "idealizador": new_pessoa.idealizador,
+            "aliado": new_pessoa.aliado,
+            "colaborador": new_pessoa.colaborador,
+            "sub": new_pessoa.email,
+            "permissions": permissions
+        }
+        access_token_expires = timedelta(
+            minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+
+        access_token = handle_jwt.create_access_token(
+            data=serialized_pessoa,
+            expires_delta=access_token_expires,
+        ).decode('utf-8')
+
+        response.set_cookie(
+            key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
+
+    except HTTPException as e:
+        if e.status_code == 422:
+            raise providerExeption
+        raise credentialsException
+    return {"pessoa": new_pessoa}

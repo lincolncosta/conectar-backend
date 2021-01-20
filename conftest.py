@@ -5,12 +5,12 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 from fastapi.testclient import TestClient
 import typing as t
 
-from app.core import config
-from app.core.security import passwords
-from app.db.session import Base, get_db
-from app.db import models
-from app.main import app
-from app.api.api_v1.routers.auth import login
+from core import config
+from core.security import passwords
+from db.session import Base, get_db
+from db import models
+from main import app
+from api.api_v1.routers.auth import login
 
 def get_test_db_url() -> str:
     return f"{config.SQLALCHEMY_DATABASE_URI}_test"
@@ -87,18 +87,6 @@ def client(test_db):
 
 
 @pytest.fixture
-def test_password() -> str:
-    return "securepassword"
-
-
-def get_password_hash() -> str:
-    """
-    Password hashing can be expensive so a mock will be much faster
-    """
-    return "supersecrethash"
-
-
-@pytest.fixture
 def test_pessoa(test_db) -> models.Pessoa:
     """
     Make a test user in the database
@@ -131,38 +119,24 @@ def test_superuser(test_db) -> models.Pessoa:
     return user
 
 
-def verify_password_mock(first: str, second: str) -> bool:
-    return True
+@pytest.fixture
+def fake_login_superuser(client, test_superuser, monkeypatch):
 
-# @pytest.fixture
-# def user_token_headers(
-#     client: TestClient, test_user, test_password, monkeypatch
-# ) -> t.Dict[str, str]:
-#     monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
+    monkeypatch.setattr(passwords, "verify_password", lambda a, b: True)
 
-#     login_data = {
-#         "usuario": test_user.email,
-#         "senha": test_password,
-#     }
-#     r = client.post("/api/token", data=login_data, withCredentials)
-#     tokens = r.json()
-#     a_token = tokens["access_token"]
-#     headers = {"Authorization": f"Bearer {a_token}"}
-#     return headers
+    user = client.post(
+        "/api/token",
+        data={"username": test_superuser.email,
+              "password": "nottheactualpass", "email": "asd"},
+    )
+
+@pytest.fixture
+def test_password() -> str:
+    return "securepassword"
 
 
-# @pytest.fixture
-# def superuser_token_headers(
-#     client: TestClient, test_superuser, test_password, monkeypatch
-# ) -> t.Dict[str, str]:
-#     monkeypatch.setattr(passwords, "verify_password", verify_password_mock)
-
-#     login_data = {
-#         "usuario": test_superuser.email,
-#         "senha": test_password,
-#     }
-#     r = client.post("/api/token", data=login_data)
-#     tokens = r.json()
-#     a_token = tokens["access_token"]
-#     headers = {"Authorization": f"Bearer {a_token}"}
-#     return headers
+def get_password_hash() -> str:
+    """
+    Password hashing can be expensive so a mock will be much faster
+    """
+    return "supersecrethash"

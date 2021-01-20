@@ -1,14 +1,16 @@
+from fastapi import File, UploadFile
 from pydantic import BaseModel
 import typing as t
 from datetime import date
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
+from db.habilidade.schemas import PessoaHabilidadeCreate
+from db.area.schemas import ProjetoAreaCreate
 
 class ProjetoBase(BaseModel):
     nome: str
     descricao: str
     visibilidade: bool
     objetivo: str
+    foto_capa: t.Optional[str] = None
     areas: t.Optional[t.List[ProjetoAreaCreate]] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
 
@@ -27,7 +29,7 @@ class ProjetoEdit(ProjetoBase):
     objetivo: t.Optional[str] = None
 
     class Config:
-        orm_mode = True     
+        orm_mode = True
 
 class Projeto(ProjetoBase):
     id: int
