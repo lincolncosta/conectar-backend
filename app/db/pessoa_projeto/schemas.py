@@ -7,8 +7,9 @@ from db.pessoa.schemas import Pessoa
 from db.projeto.schemas import Projeto
 
 class PessoaProjetoBase(BaseModel):
-    projeto: int
-    pessoa: t.Optional[Pessoa] = None
+
+    projeto_id: int
+    pessoa_id: t.Optional[int] = None
     habilidades: t.Optional[t.List[Habilidades]] = None
     areas: t.Optional[t.List[Area]] = None
     # papel_id: t.Optional[int]
@@ -21,19 +22,23 @@ class PessoaProjetoOut(PessoaProjetoBase):
 
 
 class PessoaProjetoCreate(PessoaProjetoBase):
-    pessoa: t.Optional[int] = None
+    
     class Config:
         orm_mode = True
 
-
 class PessoaProjetoEdit(PessoaProjetoBase):
+
+    pessoa_id: t.Optional[int] = None
+    habilidades: t.Optional[t.List[Habilidades]] = None
+    areas: t.Optional[t.List[Area]] = None
+    descricao: t.Optional[str] = None
 
     class Config:
         orm_mode = True     
-
+    
 class PessoaProjeto(PessoaProjetoBase):
     id: int
-    projeto: Projeto
+    projeto_id: int
 
     class Config:
         orm_mode = True               

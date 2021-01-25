@@ -25,7 +25,7 @@ async def get_pessoa_projeto_by_projeto(db: Session, id_projeto: int) -> schemas
     
 
     if not pessoa_projeto:
-        raise HTTPException(status_code=404, detail="pessoa_projetos não encontradas")
+        raise HTTPException(status_code=404, detail="pessoa_projeto não encontrada")
     return pessoa_projeto
 
 
@@ -35,9 +35,9 @@ async def create_pessoa_projeto(
     ) -> schemas.PessoaProjeto:
 
     try:
-        projeto = get_projeto(db, pessoa_projeto.projeto)
-        if pessoa_projeto.pessoa:
-            pessoa = get_pessoa(db, pessoa_projeto.pessoa)
+        projeto = get_projeto(db, pessoa_projeto.projeto_id)
+        if pessoa_projeto.pessoa_id:
+            pessoa = get_pessoa(db, pessoa_projeto.pessoa_id)
 
             db_pessoa_projeto = models.PessoaProjeto(
             pessoa=pessoa,
@@ -64,8 +64,11 @@ async def create_pessoa_projeto(
     return {"id": db_vaga["id"]}
 
 
-async def edit_pessoa_projeto(db: Session, pessoa_projeto_id: int,
-    pessoa_projeto: schemas.PessoaProjetoEdit) -> schemas.PessoaProjeto:
+async def edit_pessoa_projeto(
+    db: Session,
+    pessoa_projeto_id: int,
+    pessoa_projeto: schemas.PessoaProjetoEdit
+    ) -> schemas.PessoaProjeto:
 
     db_pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not db_pessoa_projeto:
