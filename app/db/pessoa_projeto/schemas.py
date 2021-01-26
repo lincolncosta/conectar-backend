@@ -2,38 +2,39 @@ from pydantic import BaseModel
 import typing as t
 from datetime import date
 from db.area.schemas import Area
-from db.habilidade.schemas import Habilidades 
+from db.habilidade.schemas import Habilidades, PessoaHabilidadeCreate
 from db.pessoa.schemas import Pessoa
 from db.projeto.schemas import Projeto
 
+
 class PessoaProjetoBase(BaseModel):
-    projeto: int
-    pessoa: t.Optional[Pessoa] = None
-    habilidades: t.Optional[t.List[Habilidades]] = None
-    areas: t.Optional[t.List[Area]] = None
-    # papel_id: t.Optional[int]
-    # tipo_acordo_id: t.Optional[int]
+    projeto_id: int
+    pessoa_id: t.Optional[int] = None
+    papel_id: t.Optional[int]
+    tipo_acordo_id: t.Optional[int]
     descricao: t.Optional[str] = None
     situacao: t.Optional[str] = "enviado"
 
+
 class PessoaProjetoOut(PessoaProjetoBase):
+    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
+    areas: t.Optional[t.List[Area]] = None
     pass
 
 
 class PessoaProjetoCreate(PessoaProjetoBase):
-    pessoa: t.Optional[int] = None
     class Config:
         orm_mode = True
 
 
-class PessoaProjetoEdit(PessoaProjetoBase):
-
+class PessoaProjetoEdit(PessoaProjetoOut):
     class Config:
-        orm_mode = True     
+        orm_mode = True
 
-class PessoaProjeto(PessoaProjetoBase):
+
+class PessoaProjeto(PessoaProjetoOut):
     id: int
-    projeto: Projeto
+    projeto_id: int
 
     class Config:
-        orm_mode = True               
+        orm_mode = True

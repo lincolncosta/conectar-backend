@@ -52,7 +52,7 @@ async def pessoa_projeto_create(
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
-    response_model=PessoaProjeto,
+    response_model=t.List[PessoaProjeto],
     response_model_exclude_none=True,
 )
 async def get_all_pessoa_projeto_by_projeto(
@@ -86,10 +86,11 @@ async def pessoa_projeto_get(
 
 @r.put(
     "/pessoa_projeto",
-    response_model=PessoaProjetoEdit,
+    response_model=PessoaProjeto,
     response_model_exclude_none=True,
 )
 async def pessoa_projeto_edit(
+    request: Request,
     pessoa_projeto_id: int,
     pessoa_projeto: PessoaProjetoEdit,
     db=Depends(get_db),
