@@ -44,15 +44,10 @@ async def tipo_acordo_get(
 
 
 @r.post(
-    "/tipo_acordo",
-    response_model_exclude_none=True,
-    response_model=TipoAcordo
+    "/tipo_acordo", response_model_exclude_none=True, response_model=TipoAcordo
 )
 async def tipo_acordo_create(
-    request: Request,
-    tipo_acordo: TipoAcordoCreate,
-    db=Depends(get_db),
-    response_model_exclude_none=True
+    request: Request, tipo_acordo: TipoAcordoCreate, db=Depends(get_db)
 ):
     """
     Create a new tipoAcordo

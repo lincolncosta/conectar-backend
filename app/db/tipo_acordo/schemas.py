@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 import typing as t
 
+
 class TipoAcordoBase(BaseModel):
     descricao: str
     pessoa_projeto_id: int
@@ -8,8 +9,11 @@ class TipoAcordoBase(BaseModel):
 
 class TipoAcordoOut(TipoAcordoBase):
     pass
+
+
 class TipoAcordoCreate(TipoAcordoBase):
     pass
+
 
 class TipoAcordoEdit(TipoAcordoBase):
     descricao: t.Optional[str] = None
