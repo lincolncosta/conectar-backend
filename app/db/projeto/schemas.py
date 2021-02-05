@@ -4,12 +4,14 @@ import typing as t
 from datetime import date
 from db.habilidade.schemas import PessoaHabilidadeCreate
 from db.area.schemas import ProjetoAreaCreate
+from db.pessoa.schemas import Pessoa
 
 class ProjetoBase(BaseModel):
     nome: str
     descricao: str
     visibilidade: bool
     objetivo: str
+    pessoa_id: t.Optional[int] = None
     foto_capa: t.Optional[str] = None
     areas: t.Optional[t.List[ProjetoAreaCreate]] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None

@@ -174,6 +174,8 @@ class Pessoa(Base):
     idealizador = Column(Boolean, default=False)
     aliado = Column(Boolean, default=False)
 
+    projeto = relationship("Projeto", back_populates="dono")
+
     def __repr__(self):
         return f"<Pessoa {self.id}, {self.email}, {self.superusuario}>"
 
@@ -205,6 +207,9 @@ class Projeto(Base):
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     projeto_pessoa = relationship("PessoaProjeto", back_populates="projeto")
+
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=True)
+    dono = relationship("Pessoa", back_populates="projeto")
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 

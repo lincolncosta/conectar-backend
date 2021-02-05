@@ -58,6 +58,7 @@ async def create_projeto(db: Session,
                          descricao: str,
                          visibilidade: bool,
                          objetivo: str,
+                         pessoa_id: t.Optional[int] = None,
                          foto_capa: t.Optional[UploadFile] = None):
 
     path = None
@@ -70,6 +71,7 @@ async def create_projeto(db: Session,
         descricao=descricao,
         visibilidade=visibilidade,
         objetivo=objetivo,
+        pessoa_id=pessoa_id,
         foto_capa=path
     )
 

@@ -71,6 +71,7 @@ async def projeto_create(
     descricao: str = Form(...),
     visibilidade: bool = Form(...),
     objetivo: str = Form(...),
+    pessoa_id: int = Form(None),
     foto_capa: t.Optional[UploadFile] = File(None),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
@@ -85,6 +86,7 @@ async def projeto_create(
             visibilidade=visibilidade,
             objetivo=objetivo,
             foto_capa=foto_capa,
+            pessoa_id=pessoa_id
         )
         return projeto
     except Exception as e:
