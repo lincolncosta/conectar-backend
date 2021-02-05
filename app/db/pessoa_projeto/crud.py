@@ -28,12 +28,22 @@ def get_pessoa_projeto(
     return pessoa_projeto
 
 
+async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
+    pessoas_projeto = db.query(models.PessoaProjeto).all()
+    if not pessoas_projeto:
+        raise HTTPException(
+            status_code=404, detail="Não há pessoas_projeto cadastradas"
+        )
+
+    return pessoas_projeto
+
+
 async def get_pessoa_projeto_by_projeto(
     db: Session, id_projeto: int
-) -> schemas.PessoaProjeto:
+) -> t.List[schemas.PessoaProjeto]:
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
-        .filter(models.Projeto.id == id_projeto)
+        .filter(models.PessoaProjeto.projeto_id == id_projeto)
         .all()
     )
     if not pessoa_projeto:
