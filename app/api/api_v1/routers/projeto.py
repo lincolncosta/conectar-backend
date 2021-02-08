@@ -34,14 +34,18 @@ projeto_router = r = APIRouter()
 async def projetos_list(
     response: Response,
     db=Depends(get_db),
+    visibilidade: t.Optional[bool] = True,
+    skip: t.Optional[int] = 0,
+    limit: t.Optional[int] = 100,
+    pessoa_id: t.Optional[int] = None,
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get all projetos
     """
-    projetos = get_projetos(db)
+    projetos = get_projetos(db, skip, limit, visibilidade, pessoa_id)
     # This is necessary for react-admin to work
-    response.headers["Content-Range"] = f"0-9/{len(projetos)}"
+    # response.headers["Content-Range"] = f"0-9/{len(projetos)}"
     return projetos
 
 
@@ -86,7 +90,7 @@ async def projeto_create(
             visibilidade=visibilidade,
             objetivo=objetivo,
             foto_capa=foto_capa,
-            pessoa_id=pessoa_id
+            pessoa_id=pessoa_id,
         )
         return projeto
     except Exception as e:
