@@ -5,6 +5,8 @@ from datetime import date
 from db.habilidade.schemas import PessoaHabilidadeCreate
 from db.area.schemas import ProjetoAreaCreate
 from db.pessoa.schemas import Pessoa
+from db.reacoes.schemas import Reacoes
+
 
 class ProjetoBase(BaseModel):
     nome: str
@@ -16,13 +18,15 @@ class ProjetoBase(BaseModel):
     areas: t.Optional[t.List[ProjetoAreaCreate]] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
 
+
 class ProjetoOut(ProjetoBase):
-    pass    
+    pass
+
 
 class ProjetoCreate(ProjetoBase):
-
     class Config:
         orm_mode = True
+
 
 class ProjetoEdit(ProjetoBase):
     nome: t.Optional[str] = None
@@ -33,8 +37,10 @@ class ProjetoEdit(ProjetoBase):
     class Config:
         orm_mode = True
 
+
 class Projeto(ProjetoBase):
     id: int
+    projeto_reacoes: t.Optional[t.List[Reacoes]] = None
 
     class Config:
-        orm_mode = True               
+        orm_mode = True

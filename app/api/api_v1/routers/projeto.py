@@ -97,19 +97,6 @@ async def projeto_create(
         raise e
 
 
-# @r.post("/projeto", response_model=Projeto, response_model_exclude_none=True)
-# async def projeto_create(
-#     request: Request,
-#     projeto: ProjetoCreate,
-#     db=Depends(get_db),
-#     current_pessoa=Depends(get_current_active_pessoa),
-# ):
-#     """
-#     Create a new projeto
-#     """
-#     return await create_projeto(db, projeto)
-
-
 @r.put(
     "/projeto/{projeto_id}",
     response_model=Projeto,

@@ -103,28 +103,6 @@ async def create_projeto(
     return {"id": db_proj["id"]}
 
 
-# async def create_projeto(db: Session, projeto: schemas.ProjetoCreate) -> schemas.Projeto:
-#     db_projeto = models.Projeto(
-#             nome=projeto.nome,
-#             descricao=projeto.descricao,
-#             visibilidade=projeto.visibilidade,
-#             objetivo=projeto.objetivo
-#     )
-
-#     db_proj = projeto.dict(exclude_unset=True)
-
-#     await append_areas(db_proj, db)
-#     await append_habilidades(db_proj, db)
-
-#     for key, value in db_proj.items():
-#         setattr(db_projeto, key, value)
-
-#     db.add(db_projeto)
-#     db.commit()
-#     db.refresh(db_projeto)
-#     return db_projeto
-
-
 def delete_projeto(db: Session, projeto_id: int):
     projeto = get_projeto(db, projeto_id)
     if not projeto:

@@ -12,6 +12,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
+from sqlalchemy.ext.associationproxy import association_proxy
+
 from datetime import date
 
 # Tables created from M*N relationships
@@ -143,7 +145,12 @@ class Pessoa(Base):
         colaborador: Boolean
         idealizador: Boolean
         aliado: Boolean
-
+        areas: relationship
+        habilidades: relationship
+        experiencia_profissional: relationship
+        experiencia_projetos: relationship
+        experiencia_academica: relationship
+        projeto: relationship
     """
 
     __tablename__ = "tb_pessoa"
@@ -187,11 +194,17 @@ class Projeto(Base):
 
     Attributes:
         id: Integer, Primary key
+        pessoa_id: Integer, Foreign Key
         descricao: String
         data_atualizacao: Datetime - default uses function Now()
         data_criacao: Datetime - default uses DB function Now()
         visibilidade: Boolean
         objetivo: String
+        dono: relationship
+        areas: relationship
+        habilidades: relationship
+        projeto_pessoa: relationship
+        reacoes: association_proxy - extended form of many-to-many relationship
     """
 
     __tablename__ = "tb_projeto"
@@ -210,6 +223,7 @@ class Projeto(Base):
 
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=True)
     dono = relationship("Pessoa", back_populates="projeto")
+    reacoes = association_proxy("projeto_reacoes", "pessoa")
     # publico_alvo = Column(String, nullable=True)
     # monetizacao = Column(String, nullable=True)
 
@@ -473,3 +487,41 @@ class TipoAcordo(Base):
     descricao = Column(String)
     pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
     pessoa_projeto = relationship("PessoaProjeto", back_populates="tipo_acordo")
+
+
+class Reacoes(Base):
+    """
+    Represents table "tb_reacoes"
+
+
+    Many to Many relationship
+    One Projeto has many Reacoes,
+    One Reacao is exclusively from some pessoa in some projeto
+
+
+    Attributes:
+        id_projeto: Integer, Primary key, Foreign Key
+        id_pessoa: Integer, Primary key, Foreign Key
+        reacao: String
+        data_criacao: Datetime - default uses DB function Now()
+        data_atualizacao: Datetime - default uses function Now()
+    """
+
+    __tablename__ = "tb_reacoes"
+
+    pessoa_id = Column(
+        Integer, ForeignKey("tb_pessoa.id"), primary_key=True, index=True
+    )
+    projeto_id = Column(
+        Integer, ForeignKey("tb_projeto.id"), primary_key=True, index=True
+    )
+    reacao = Column(String)
+    data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
+
+    projeto = relationship(
+        Projeto,
+        backref=backref("projeto_reacoes", cascade="all, delete-orphan"),
+    )
+
+    pessoa = relationship("Pessoa")
