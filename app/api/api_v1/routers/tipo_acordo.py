@@ -22,18 +22,18 @@ from db.tipo_acordo.schemas import (
     TipoAcordo,
     TipoAcordoBase,
     TipoAcordoCreate,
-    TipoAcordoEdit, 
+    TipoAcordoEdit,
     TipoAcordoOut,
 )
 
 tipo_acordo_router = r = APIRouter()
+
 
 @r.get(
     "/tipoAcordo",
     response_model=TipoAcordo,
     response_model_exclude_none=True,
 )
-
 async def tipo_acordo_get(
     request: Request,
     tipo_acordo_id: int,
@@ -44,23 +44,18 @@ async def tipo_acordo_get(
 
 
 @r.post(
-    "/tipo_acordo",
-    response_model_exclude_none=True
+    "/tipo_acordo", response_model_exclude_none=True, response_model=TipoAcordo
 )
 async def tipo_acordo_create(
-    request: Request,
-    db=Depends(get_db),
-    descricao: str = Form(...)
+    request: Request, tipo_acordo: TipoAcordoCreate, db=Depends(get_db)
 ):
     """
     Create a new tipoAcordo
     """
     try:
-        tipo_acordo = await create_tipo_acordo(
-            db,
-            descricao
-        )
-        return tipo_acordo
+        db_tipo_acordo = await create_tipo_acordo(db, tipo_acordo)
+        return db_tipo_acordo
+
     except Exception as e:
         raise e
 
@@ -76,8 +71,7 @@ async def tipo_acordo_edit(
     tipo_acordo_id: int,
     db=Depends(get_db),
 ):
-
-    return await edit_tipo_acordo(db, tipo_acordo_id, tipo_acordo)
+    return edit_tipo_acordo(db, tipo_acordo_id, tipo_acordo)
 
 
 @r.delete(
