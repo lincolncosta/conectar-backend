@@ -249,6 +249,7 @@ class PessoaProjeto(Base):
     )
     descricao = Column(String)
     situacao = Column(String)
+    colaborador = Column(Boolean)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True))
 

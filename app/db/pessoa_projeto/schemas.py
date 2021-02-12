@@ -14,6 +14,7 @@ class PessoaProjetoBase(BaseModel):
     tipo_acordo_id: t.Optional[int]
     descricao: t.Optional[str] = None
     situacao: t.Optional[str] = "enviado"
+    colaborador: t.Optional[bool] = True
 
 
 class PessoaProjetoOut(PessoaProjetoBase):
