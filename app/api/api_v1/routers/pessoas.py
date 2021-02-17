@@ -81,7 +81,7 @@ async def pessoa_create(
 
 @r.put(
     "/pessoas",
-    response_model=PessoaEdit,
+    response_model=Pessoa,
     response_model_exclude_none=True,
 )
 async def pessoa_edit(
@@ -97,7 +97,7 @@ async def pessoa_edit(
         pessoa_id = current_pessoa.id
     except Exception as e:
         print(e)
-
+    print(pessoa)
     return await edit_pessoa(db, pessoa_id, pessoa)
 
 

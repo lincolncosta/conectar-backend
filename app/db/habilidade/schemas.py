@@ -20,6 +20,7 @@ class Habilidades(HabilidadesBase):
 
 
 class PessoaHabilidadeCreate(HabilidadesBase):
+    id: t.Optional[int] = None
     nome: t.Optional[str] = None
 
     class Config:
