@@ -16,7 +16,7 @@ class PessoaProjetoBase(BaseModel):
     situacao: t.Optional[str] = "enviado"
     data_criacao: datetime
     data_atualizacao: datetime
-    colaborador: t.Optional[bool] = True
+    titulo: t.Optional[str]
 
 
 class PessoaProjetoOut(PessoaProjetoBase):
