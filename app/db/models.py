@@ -233,6 +233,7 @@ class PessoaProjeto(Base):
     __tablename__ = "tb_pessoa_projeto"
 
     id = Column(Integer, primary_key=True, index=True)
+    titulo = Column(String)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
     papel = relationship(
