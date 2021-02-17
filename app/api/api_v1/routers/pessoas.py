@@ -9,7 +9,7 @@ from db.pessoa.crud import (
     delete_pessoa,
     edit_pessoa,
 )
-from db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa
+from db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa, PessoaOut
 from core.auth import (
     get_current_active_pessoa,
     get_current_active_superuser,
@@ -47,7 +47,7 @@ async def pessoa_me(current_pessoa=Depends(get_current_active_pessoa)):
 
 @r.get(
     "/pessoas/{pessoa_id}",
-    response_model=Pessoa,
+    response_model=PessoaOut,
     response_model_exclude_none=True,
 )
 async def pessoa_details(
