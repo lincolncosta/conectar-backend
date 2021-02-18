@@ -97,7 +97,6 @@ async def pessoa_edit(
         pessoa_id = current_pessoa.id
     except Exception as e:
         print(e)
-    print(pessoa)
     return await edit_pessoa(db, pessoa_id, pessoa)
 
 
