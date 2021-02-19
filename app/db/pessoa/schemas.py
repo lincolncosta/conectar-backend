@@ -2,7 +2,13 @@ from pydantic import BaseModel
 import typing as t
 from datetime import date
 from db.area.schemas import PessoaAreaCreate
-from db.habilidade.schemas import PessoaHabilidadeCreate 
+from db.habilidade.schemas import PessoaHabilidadeCreate
+from db.experiencia.schemas import (
+    ExperienciaAcad,
+    ExperienciaProf,
+    ExperienciaProj,
+)
+
 
 class PessoaBase(BaseModel):
     data_nascimento: t.Optional[date] = None
@@ -18,8 +24,17 @@ class PessoaBase(BaseModel):
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
 
+
 class PessoaOut(PessoaBase):
-    pass
+    id: int
+    data_criacao: date
+    data_atualizacao: t.Optional[date] = None
+    experiencia_profissional: t.List[ExperienciaProf] = None
+    experiencia_projetos: t.List[ExperienciaProj] = None
+    experiencia_academica: t.List[ExperienciaAcad] = None
+    
+    class Config:
+        orm_mode = True
 
 
 class PessoaCreate(PessoaBase):
@@ -32,6 +47,7 @@ class PessoaCreate(PessoaBase):
 
 class PessoaCreateFacebook(PessoaBase):
     usuario: t.Optional[str] = None
+
     class Config:
         orm_mode = True
 
@@ -40,7 +56,6 @@ class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
     email: t.Optional[str] = None
     usuario: t.Optional[str] = None
-
 
     class Config:
         orm_mode = True

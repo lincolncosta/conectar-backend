@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import typing as t
-from datetime import date
+from datetime import datetime
 from db.area.schemas import Area
 from db.habilidade.schemas import Habilidades, PessoaHabilidadeCreate
 from db.pessoa.schemas import Pessoa
@@ -14,7 +14,9 @@ class PessoaProjetoBase(BaseModel):
     tipo_acordo_id: t.Optional[int]
     descricao: t.Optional[str] = None
     situacao: t.Optional[str] = "enviado"
-    colaborador: t.Optional[bool] = True
+    data_criacao: datetime
+    data_atualizacao: datetime
+    titulo: t.Optional[str]
 
 
 class PessoaProjetoOut(PessoaProjetoBase):

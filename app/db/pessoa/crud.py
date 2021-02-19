@@ -9,7 +9,7 @@ from . import schemas
 from core.security.passwords import get_password_hash
 
 
-def get_pessoa(db: Session, pessoa_id: int) -> schemas.Pessoa:
+def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaOut:
     pessoa = (
         db.query(models.Pessoa).filter(models.Pessoa.id == pessoa_id).first()
     )
@@ -55,7 +55,7 @@ def get_pessoa_by_habilidade(db: Session, pessoa_habilidade: str) -> schemas.Pes
 
 def get_pessoas(
     db: Session, skip: int = 0, limit: int = 100
-) -> t.List[schemas.PessoaOut]:
+) -> t.List[schemas.Pessoa]:
     return db.query(models.Pessoa).offset(skip).limit(limit).all()
 
 

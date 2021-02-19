@@ -57,23 +57,6 @@ async def experiencia_projeto_me(
     return experiencias
 
 @r.get(
-    "/experiencias/projeto/pessoa",
-    response_model=t.List[ExperienciaProj],
-    response_model_exclude_none=True,
-)
-async def experiencia_projeto_pessoa(
-    request: Request,
-    pessoa_id:int,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa)
-):
-    """
-    Get all experiencias from pessoa by id
-    """
-    experiencias = get_experiencias_from_pessoa(db, pessoa_id)
-    return experiencias
-
-@r.get(
     "/experiencias/projeto/{experiencia_id}",
     response_model=ExperienciaProj,
     response_model_exclude_none=True,

@@ -56,22 +56,6 @@ async def experiencia_profissional_me(
     experiencias = get_experiencias_from_pessoa(db, pessoa_id)
     return experiencias
     
-@r.get(
-    "/experiencias/profissional/pessoa",
-    response_model=t.List[ExperienciaProf],
-    response_model_exclude_none=True,
-)
-async def experiencia_profissional_pessoa(
-    request: Request,
-    pessoa_id:int,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa)
-):
-    """
-    Get all experiencias from pessoa by id
-    """
-    experiencias = get_experiencias_from_pessoa(db, pessoa_id)
-    return experiencias
 
 @r.get(
     "/experiencias/profissional/{experiencia_id}",
