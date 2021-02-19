@@ -248,8 +248,9 @@ class PessoaProjeto(Base):
         "Habilidades", secondary=PessoaHabilidadesProjeto
     )
     descricao = Column(String)
-    situacao = Column(String)
     titulo = Column(String)
+    situacao = Column(String)
+    remunerado = Column(Boolean)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
