@@ -4,8 +4,6 @@ import typing as t
 
 class TipoAcordoBase(BaseModel):
     descricao: str
-    pessoa_projeto_id: int
-
 
 class TipoAcordoOut(TipoAcordoBase):
     pass

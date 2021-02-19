@@ -31,7 +31,6 @@ from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
 from app.api.api_v1.routers.pesquisa.projeto import pesquisa_projeto_router
 from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
-from app.api.api_v1.routers.endpoint import endpoint_router
 from app.api.api_v1.routers.reacoes import reacoes_router
 ############################# Routers ###########################################
 
@@ -152,12 +151,6 @@ app.include_router(
     pessoa_projeto_router,
     prefix="/api/v1",
     tags=["pessoa_projeto"],
-)
-
-app.include_router(
-    endpoint_router,
-    prefix="/api/v1",
-    tags=["endpoint"],
 )
 
 app.include_router(

@@ -8,16 +8,19 @@ from db.projeto.schemas import Projeto
 
 
 class PessoaProjetoBase(BaseModel):
-    projeto_id: int
+    projeto_id: t.Optional[int]
     pessoa_id: t.Optional[int] = None
     papel_id: t.Optional[int]
     tipo_acordo_id: t.Optional[int]
+    remunerado: t.Optional[bool]
     descricao: t.Optional[str] = None
-    situacao: t.Optional[str] = "enviado"
-    data_criacao: datetime
-    data_atualizacao: datetime
     titulo: t.Optional[str]
-
+    situacao: t.Optional[str] = "PENDENTE_IDEALIZADOR"
+    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
+    areas: t.Optional[t.List[Area]] = None
+    data_criacao: t.Optional[datetime]
+    data_atualizacao: t.Optional[datetime]
+    
 
 class PessoaProjetoOut(PessoaProjetoBase):
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
@@ -37,7 +40,7 @@ class PessoaProjetoEdit(PessoaProjetoOut):
 
 class PessoaProjeto(PessoaProjetoOut):
     id: int
-    projeto_id: int
+    projeto_id: t.Optional[int]
 
     class Config:
         orm_mode = True

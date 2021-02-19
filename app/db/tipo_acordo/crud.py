@@ -26,8 +26,7 @@ async def create_tipo_acordo(
 ) -> schemas.TipoAcordo:
     try:
         db_tipo_acordo = models.TipoAcordo(
-            descricao=tipo_acordo.descricao,
-            pessoa_projeto_id=tipo_acordo.pessoa_projeto_id,
+            descricao=tipo_acordo.descricao
         )
 
         db.add(db_tipo_acordo)
