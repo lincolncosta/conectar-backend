@@ -82,8 +82,9 @@ async def create_pessoa_projeto(
     db.commit()
     db.refresh(db_pessoa_projeto)
 
-    db_vaga = db_pessoa_projeto.__dict__
-    return {"id": db_vaga["id"]}
+    return db_pessoa_projeto
+    # db_vaga = db_pessoa_projeto.__dict__
+    # return {"id": db_vaga["id"]}
 
 
 async def edit_pessoa_projeto(

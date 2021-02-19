@@ -233,7 +233,6 @@ class PessoaProjeto(Base):
     __tablename__ = "tb_pessoa_projeto"
 
     id = Column(Integer, primary_key=True, index=True)
-    titulo = Column(String)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
     papel = relationship(
@@ -250,6 +249,8 @@ class PessoaProjeto(Base):
     )
     descricao = Column(String)
     situacao = Column(String)
+    titulo = Column(String, nullable=False)
+    remunerado = Column(Boolean, nullable=False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True))
 

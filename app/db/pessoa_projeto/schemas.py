@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import typing as t
-from datetime import date
+from datetime import datetime
 from db.area.schemas import Area, PessoaAreaCreate
 from db.habilidade.schemas import Habilidades, PessoaHabilidadeCreate
 from db.pessoa.schemas import Pessoa
@@ -9,11 +9,13 @@ from db.projeto.schemas import Projeto
 
 class PessoaProjetoBase(BaseModel):
     projeto_id: int
-    pessoa_id: t.Optional[int] = None
+    remunerado: bool
+    titulo: str
     papel_id: t.Optional[int]
     tipo_acordo_id: t.Optional[int]
+    pessoa_id: t.Optional[int] = None
     descricao: t.Optional[str] = None
-    situacao: t.Optional[str] = "enviado"
+    situacao: t.Optional[str] = "PENDENTE_IDEALIZADOR"
 
 
 class PessoaProjetoOut(PessoaProjetoBase):
@@ -22,6 +24,7 @@ class PessoaProjetoOut(PessoaProjetoBase):
 
     class Config:
         orm_mode = True
+
 
 class PessoaProjetoCreate(PessoaProjetoBase):
     class Config:
@@ -35,7 +38,8 @@ class PessoaProjetoEdit(PessoaProjetoOut):
 
 class PessoaProjeto(PessoaProjetoOut):
     id: int
-    projeto_id: int
+    data_criacao: datetime
+    data_atualizacao: datetime
 
     class Config:
         orm_mode = True
