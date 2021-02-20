@@ -32,6 +32,10 @@ class PessoaProjetoCreate(PessoaProjetoBase):
 
 
 class PessoaProjetoEdit(PessoaProjetoOut):
+    projeto_id: t.Optional[int] = None
+    remunerado: t.Optional[bool] = None
+    titulo: t.Optional[str] = None
+    
     class Config:
         orm_mode = True
 
@@ -39,7 +43,7 @@ class PessoaProjetoEdit(PessoaProjetoOut):
 class PessoaProjeto(PessoaProjetoOut):
     id: int
     data_criacao: datetime
-    data_atualizacao: datetime
+    data_atualizacao: t.Optional[datetime] = None
 
     class Config:
         orm_mode = True
