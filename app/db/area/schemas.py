@@ -25,27 +25,27 @@ class Area(AreaBase):
     class Config:
         orm_mode = True
 
+
 class AreasAndSubareas(BaseModel):
     area: t.Optional[Area] = None
     subareas: t.Optional[t.List[Area]] = None
 
 
 class PessoaAreaCreate(Area):
+    id: t.Optional[int] = None
     descricao: t.Optional[str] = None
 
     class Config:
         orm_mode = True
 
 
-class ExperienciaAreaCreate(Area):
-    descricao: t.Optional[str] = None
+class ExperienciaAreaCreate(PessoaAreaCreate):
 
     class Config:
         orm_mode = True
 
 
-class ProjetoAreaCreate(Area):
-    descricao: t.Optional[str] = None
+class ProjetoAreaCreate(PessoaAreaCreate):
 
     class Config:
         orm_mode = True

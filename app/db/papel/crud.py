@@ -5,24 +5,20 @@ import typing as t
 from app.db import models
 from app.db.papel import schemas
 
-def get_papel_by_id( 
 
-    db: Session, papel_id: int
-) -> schemas.Papel:
-    papel = (
-        db.query(models.Papel)
-        .filter(models.Papel.id == papel_id) 
-        .first()
-    )
+def get_papel_by_id(db: Session, papel_id: int) -> schemas.Papel:
+    papel = db.query(models.Papel).filter(models.Papel.id == papel_id).first()
 
     if not papel:
-        raise HTTPException(
-            status_code=404, detail="papel não encontrado"
-        )
+        raise HTTPException(status_code=404, detail="papel não encontrado")
     return papel
 
-def get_papel(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.Papel]:
+
+def get_papel(
+    db: Session, skip: int = 0, limit: int = 100
+) -> t.List[schemas.Papel]:
     return db.query(models.Papel).offset(skip).limit(limit).all()
+
 
 def create_papel(db: Session, papel: schemas.Papel, pessoa_id: int):
     try:
@@ -30,11 +26,12 @@ def create_papel(db: Session, papel: schemas.Papel, pessoa_id: int):
             descricao=papel.descricao,
         )
     except Exception as e:
-        print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
+        print("CORRIGIR FUTURAMENTE. Exceção encontrada:", e)
     db.add(db_papel)
     db.commit()
     db.refresh(db_papel)
     return db_papel
+
 
 def delete_papel(db: Session, papel_id: int):
     papel = get_papel_by_id(db, papel_id)
@@ -46,6 +43,7 @@ def delete_papel(db: Session, papel_id: int):
     db.delete(papel)
     db.commit()
     return papel
+
 
 def edit_papel(
     db: Session, papel_id, papel: schemas.PapelEdit

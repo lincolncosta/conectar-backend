@@ -14,13 +14,14 @@ from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.session import get_db
 from app.db.projeto.crud import get_projeto
-from app.db.pessoa.crud import get_pessoa
+from app.db.pessoa.crud import get_pessoa, get_pessoas
 from app.db.pessoa_projeto.crud import (
     create_pessoa_projeto,
     get_pessoa_projeto,
+    get_all_pessoas_projeto,
     get_pessoa_projeto_by_projeto,
     edit_pessoa_projeto,
-    delete_pessoa_projeto
+    delete_pessoa_projeto,
 )
 from app.db.pessoa_projeto.schemas import (
     PessoaProjeto,
@@ -35,11 +36,16 @@ from core.auth import get_current_active_pessoa
 pessoa_projeto_router = r = APIRouter()
 
 
-@r.post("/pessoa_projeto", response_model_exclude_none=True)
+@r.post(
+    "/pessoa_projeto",
+    response_model=PessoaProjeto,
+    response_model_exclude_none=True,
+)
 async def pessoa_projeto_create(
     request: Request,
     pessoa_projeto: PessoaProjetoCreate,
     db=Depends(get_db),
+    pessoa=Depends(get_current_active_pessoa),
 ):
 
     """
@@ -51,14 +57,34 @@ async def pessoa_projeto_create(
 
 
 @r.get(
+    "/pessoa_projeto",
+    response_model=t.List[PessoaProjeto],
+    response_model_exclude_none=True,
+)
+async def get_pessoas_projeto(
+    request: Request,
+    db=Depends(get_db),
+    pessoa=Depends(get_current_active_pessoa),
+):
+
+    """
+    Get all pessoa_projeto
+    """
+
+    pessoas_projeto = await get_all_pessoas_projeto(db)
+    return pessoas_projeto
+
+
+@r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
-    response_model=PessoaProjeto,
+    response_model=t.List[PessoaProjeto],
     response_model_exclude_none=True,
 )
 async def get_all_pessoa_projeto_by_projeto(
     request: Request,
     projeto_id: int,
     db=Depends(get_db),
+    pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get all pessoa_projeto on projeto
@@ -76,6 +102,7 @@ async def pessoa_projeto_get(
     request: Request,
     pessoa_projeto_id: int,
     db=Depends(get_db),
+    pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get pessoa_projeto by id
@@ -86,13 +113,15 @@ async def pessoa_projeto_get(
 
 @r.put(
     "/pessoa_projeto",
-    response_model=PessoaProjetoEdit,
+    response_model=PessoaProjeto,
     response_model_exclude_none=True,
 )
 async def pessoa_projeto_edit(
+    request: Request,
     pessoa_projeto_id: int,
     pessoa_projeto: PessoaProjetoEdit,
     db=Depends(get_db),
+    pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Update pessoa_projeto
@@ -116,3 +145,15 @@ async def pessoa_projeto_delete(
     Delete existing pessoa_projeto
     """
     return delete_pessoa_projeto(db, pessoa_projeto)
+
+
+# Filter recommendations
+# @r.post("/positions", response_model_exclude_none=True)
+# async def pessoa_projeto_recommendations(
+#     request: Request,
+#     pessoa_projeto: PessoaProjeto,
+#     db=Depends(get_db),
+# ):
+#     experiencias, areas = pessoa_projeto.habilidades, pessoa_projeto.areas
+#     pessoas = get_pessoas()
+#     # Do algorithm here or outsource it
