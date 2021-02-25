@@ -69,6 +69,8 @@ async def create_pessoa_projeto(
                 situacao=pessoa_projeto.situacao,
                 titulo=pessoa_projeto.titulo,
                 remunerado=pessoa_projeto.remunerado,
+                papel_id=pessoa_projeto.papel_id,
+                tipo_acordo_id=pessoa_projeto.tipo_acordo_id,
             )
         else:
             db_pessoa_projeto = models.PessoaProjeto(
@@ -77,6 +79,8 @@ async def create_pessoa_projeto(
                 situacao=pessoa_projeto.situacao,
                 titulo=pessoa_projeto.titulo,
                 remunerado=pessoa_projeto.remunerado,
+                papel_id=pessoa_projeto.papel_id,
+                tipo_acordo_id=pessoa_projeto.tipo_acordo_id,
             )
 
     except HTTPException as e:

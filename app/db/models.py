@@ -235,12 +235,10 @@ class PessoaProjeto(Base):
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
-    papel = relationship(
-        "Papel", uselist=False, back_populates="pessoa_projeto"
-    )
-    tipo_acordo = relationship(
-        "TipoAcordo", uselist=False, back_populates="pessoa_projeto"
-    )
+    papel_id = Column(Integer, ForeignKey("tb_papel.id"))
+    tipo_acordo_id = Column(Integer, ForeignKey("tb_tipo_acordo.id"))
+    papel = relationship("Papel")
+    tipo_acordo = relationship("TipoAcordo")
     pessoa = relationship("Pessoa", back_populates="pessoa_projeto")
     projeto = relationship("Projeto", back_populates="projeto_pessoa")
     areas = relationship("Area", secondary=PessoaAreaProjeto)
@@ -454,7 +452,6 @@ class Papel(Base):
     Attributes:
         id: Integer, Primary key
         descricao: String
-        pessoa_projeto_id: Integer, Foreign Key
         pessoa_projeto: Relationship
     """
 
@@ -462,7 +459,6 @@ class Papel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     descricao = Column(String)
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
     pessoa_projeto = relationship("PessoaProjeto", back_populates="papel")
 
 
@@ -479,7 +475,6 @@ class TipoAcordo(Base):
     Attributes:
         id: Integer, Primary key
         descricao: String
-        pessoa_projeto_id: Integer, Foreign Key
         pessoa_projeto: Relationship
     """
 
@@ -487,7 +482,6 @@ class TipoAcordo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     descricao = Column(String)
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
     pessoa_projeto = relationship("PessoaProjeto", back_populates="tipo_acordo")
 
 
