@@ -112,7 +112,7 @@ async def pessoa_projeto_get(
 
 
 @r.put(
-    "/pessoa_projeto",
+    "/pessoa_projeto/{pessoa_projeto_id}",
     response_model=PessoaProjeto,
     response_model_exclude_none=True,
 )
