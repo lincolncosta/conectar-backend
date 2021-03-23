@@ -10,7 +10,6 @@ from db.projeto.schemas import Projeto
 class PessoaProjetoBase(BaseModel):
     projeto_id: int
     remunerado: bool
-    notificacao: bool
     titulo: str
     papel_id: t.Optional[int]
     tipo_acordo_id: t.Optional[int]

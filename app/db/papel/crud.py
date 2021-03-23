@@ -20,7 +20,7 @@ def get_papel(
     return db.query(models.Papel).offset(skip).limit(limit).all()
 
 
-def create_papel(db: Session, papel: schemas.Papel):
+def create_papel(db: Session, papel: schemas.Papel, pessoa_id: int):
     try:
         db_papel = models.Papel(
             descricao=papel.descricao,

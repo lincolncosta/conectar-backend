@@ -55,7 +55,7 @@ async def experiencia_profissional_me(
     pessoa_id = current_pessoa.id
     experiencias = get_experiencias_from_pessoa(db, pessoa_id)
     return experiencias
-    
+
 
 @r.get(
     "/experiencias/profissional/{experiencia_id}",

@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import func
 import typing as t
 
 from db import models
@@ -34,7 +33,6 @@ def get_rand_pessoas(
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoas
-
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaOut:
     pessoa = (

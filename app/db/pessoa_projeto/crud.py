@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import func, select
 import typing as t
 
 from db import models
@@ -70,7 +69,6 @@ async def create_pessoa_projeto(
                 situacao=pessoa_projeto.situacao,
                 titulo=pessoa_projeto.titulo,
                 remunerado=pessoa_projeto.remunerado,
-                notificacao=pessoa_projeto.notificacao,
                 papel_id=pessoa_projeto.papel_id,
                 tipo_acordo_id=pessoa_projeto.tipo_acordo_id,
             )
@@ -81,7 +79,6 @@ async def create_pessoa_projeto(
                 situacao=pessoa_projeto.situacao,
                 titulo=pessoa_projeto.titulo,
                 remunerado=pessoa_projeto.remunerado,
-                notificacao=pessoa_projeto.notificacao,
                 papel_id=pessoa_projeto.papel_id,
                 tipo_acordo_id=pessoa_projeto.tipo_acordo_id,
             )

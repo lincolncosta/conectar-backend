@@ -69,7 +69,7 @@ async def papel_create(
     """
     Create a new papel
     """
-    return create_papel(db, papel)
+    return create_papel(db, papel, current_pessoa.id)
 
 
 @r.put(
@@ -89,6 +89,7 @@ async def papel_edit(
     """
     return edit_papel(db, papel_id, papel)
 
+
 @r.delete(
     "/papel/{papel_id}",
     response_model=Papel,
@@ -101,9 +102,6 @@ async def papel_delete(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-        Delete existing papel
+    Delete existing papel
     """
     return delete_papel(db, papel_id)
-
-
-    

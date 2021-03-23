@@ -61,8 +61,11 @@ async def pessoa_details(
     Get any pessoa details
     """
     pessoa = get_pessoa(db, pessoa_id)
-
     return pessoa
+    # return encoders.jsonable_encoder(
+    #     pessoa, skip_defaults=True, exclude_none=True,
+    # )
+
 
 @r.post("/pessoas/random", response_model=t.List[Pessoa], response_model_exclude_none=True)
 async def random_pessoas(
@@ -79,13 +82,12 @@ async def random_pessoas(
 
     return pessoas
 
-
 @r.post("/pessoas", response_model=Pessoa, response_model_exclude_none=True)
 async def pessoa_create(
     request: Request,
     pessoa: PessoaCreate,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_superuser),
+    # current_pessoa=Depends(get_current_active_superuser),
 ):
     """
     Create a new pessoa
@@ -95,7 +97,7 @@ async def pessoa_create(
 
 @r.put(
     "/pessoas",
-    response_model=PessoaEdit,
+    response_model=Pessoa,
     response_model_exclude_none=True,
 )
 async def pessoa_edit(
@@ -111,7 +113,6 @@ async def pessoa_edit(
         pessoa_id = current_pessoa.id
     except Exception as e:
         print(e)
-
     return await edit_pessoa(db, pessoa_id, pessoa)
 
 

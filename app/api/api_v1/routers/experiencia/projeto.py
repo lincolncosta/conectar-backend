@@ -56,6 +56,7 @@ async def experiencia_projeto_me(
     experiencias = get_experiencias_from_pessoa(db, pessoa_id)
     return experiencias
 
+
 @r.get(
     "/experiencias/projeto/{experiencia_id}",
     response_model=ExperienciaProj,
