@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 import typing as t
 
 from db import models
@@ -7,6 +8,32 @@ from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from core.security.passwords import get_password_hash
+
+def get_rand_pessoas(
+    db: Session, qtde: dict
+) -> schemas.Pessoa:
+
+    for key in qtde:
+        if key == "aliado":
+            pessoasAliado = db.query(models.Pessoa)\
+                .filter(models.Pessoa.aliado == True)\
+                .order_by(func.random())\
+                .limit(qtde[key])\
+                .all()
+        elif key == "colaborador":
+            pessoasColab = db.query(models.Pessoa)\
+                .filter(models.Pessoa.colaborador == True)\
+                .order_by(func.random())\
+                .limit(qtde[key])\
+                .all()
+        else: raise HTTPException(status_code=404, detail="papel não encontrado")
+
+    pessoas = pessoasAliado + pessoasColab
+
+    if not pessoas:
+        raise HTTPException(status_code=404, detail="pessoas não encontradas")
+
+    return pessoas
 
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaOut:
@@ -24,34 +51,48 @@ def get_pessoa_by_email(db: Session, email: str) -> schemas.Pessoa:
 
 def get_pessoa_by_username(db: Session, usuario: str) -> schemas.Pessoa:
     return (
-        db.query(models.Pessoa).filter(
-            models.Pessoa.usuario == usuario).first()
+        db.query(models.Pessoa).filter(models.Pessoa.usuario == usuario).first()
     )
 
+
 def get_pessoa_by_name(db: Session, pessoa_name: str) -> schemas.Pessoa:
-    pessoa = db.query(models.Pessoa)\
-        .filter(models.Pessoa.nome.ilike(f'{pessoa_name}%')).all()
+    pessoa = (
+        db.query(models.Pessoa)
+        .filter(models.Pessoa.nome.ilike(f"{pessoa_name}%"))
+        .all()
+    )
     if not pessoa:
         raise HTTPException(status_code=404, detail="pessoa não encontrado")
     return pessoa
+
 
 def get_pessoa_by_area(db: Session, pessoa_area: str) -> schemas.Pessoa:
-    pessoa = db.query(models.Pessoa)\
-        .join(models.Area, models.Pessoa.areas)\
-            .filter(models.Area.descricao.ilike(f'{pessoa_area}%')).all()
-    
+    pessoa = (
+        db.query(models.Pessoa)
+        .join(models.Area, models.Pessoa.areas)
+        .filter(models.Area.descricao.ilike(f"{pessoa_area}%"))
+        .all()
+    )
+
     if not pessoa:
         raise HTTPException(status_code=404, detail="pessoa não encontrado")
     return pessoa
 
-def get_pessoa_by_habilidade(db: Session, pessoa_habilidade: str) -> schemas.Pessoa:
-    pessoa = db.query(models.Pessoa)\
-        .join(models.Habilidades, models.Pessoa.habilidades)\
-            .filter(models.habilidades.descricao.ilike(f'{pessoa_habilidade}%')).all()
-    
+
+def get_pessoa_by_habilidade(
+    db: Session, pessoa_habilidade: str
+) -> schemas.Pessoa:
+    pessoa = (
+        db.query(models.Pessoa)
+        .join(models.Habilidades, models.Pessoa.habilidades)
+        .filter(models.habilidades.descricao.ilike(f"{pessoa_habilidade}%"))
+        .all()
+    )
+
     if not pessoa:
         raise HTTPException(status_code=404, detail="pessoa não encontrado")
     return pessoa
+
 
 def get_pessoas(
     db: Session, skip: int = 0, limit: int = 100
@@ -72,6 +113,9 @@ def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
         senha=password,
         data_nascimento=pessoa.data_nascimento,
         foto_perfil=pessoa.foto_perfil,
+        colaborador=pessoa.colaborador,
+        aliado=pessoa.aliado,
+        idealizador=pessoa.idealizador,
     )
     db.add(db_pessoa)
     db.commit()
@@ -129,10 +173,8 @@ async def edit_pessoa(
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
     if "email" in update_data:
-        if update_data['email'] != db_pessoa.email:
-            raise HTTPException(
-                status_code=409, detail="Email já cadastrado"
-            )
+        if update_data["email"] != db_pessoa.email:
+            raise HTTPException(status_code=409, detail="Email já cadastrado")
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)

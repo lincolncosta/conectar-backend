@@ -36,10 +36,20 @@ def get_projetos(
     visibilidade: bool = True,
     pessoa_id: t.Optional[int] = None,
 ) -> t.List[schemas.ProjetoOut]:
+    if pessoa_id:
+        return (
+            db.query(models.Projeto)
+            .filter(
+                models.Projeto.pessoa_id == pessoa_id,
+                models.Projeto.visibilidade == visibilidade,
+            )
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
     return (
         db.query(models.Projeto)
         .filter(
-            models.Projeto.pessoa_id == pessoa_id,
             models.Projeto.visibilidade == visibilidade,
         )
         .offset(skip)

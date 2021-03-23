@@ -9,11 +9,7 @@ from app.db.papel.crud import (
     edit_papel,
     delete_papel,
 )
-from app.db.papel.schemas import (
-    PapelCreate,
-    Papel,
-    PapelEdit
-)
+from app.db.papel.schemas import PapelCreate, Papel, PapelEdit
 from app.core.auth import (
     get_current_active_pessoa,
     get_current_active_superuser,
@@ -21,8 +17,9 @@ from app.core.auth import (
 
 papel_router = r = APIRouter()
 
+
 @r.get(
-    "/Papel",
+    "/papel",
     response_model=t.List[Papel],
     response_model_exclude_none=True,
 )
@@ -40,9 +37,26 @@ async def papel_list(
     return papel
 
 
+@r.get(
+    "/papel/{papel_id}",
+    response_model=Papel,
+    response_model_exclude_none=True,
+)
+async def papel_details(
+    response: Response,
+    papel_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get papel by id
+    """
+    papel = get_papel_by_id(db, papel_id)
+    return papel
+
+
 @r.post(
     "/papel",
-
     response_model=Papel,
     response_model_exclude_none=True,
 )
@@ -55,7 +69,8 @@ async def papel_create(
     """
     Create a new papel
     """
-    return create_papel(db, papel, current_pessoa.id)
+    return create_papel(db, papel)
+
 
 @r.put(
     "/papel/{papel_id}",

@@ -61,7 +61,7 @@ async def projeto_details(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-    Get any projeto details
+    Get any pessoa details
     """
     projeto = get_projeto(db, projeto_id)
     return projeto

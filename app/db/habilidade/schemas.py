@@ -2,28 +2,31 @@ from pydantic import BaseModel
 import typing as t
 from datetime import date
 
+
 class HabilidadesBase(BaseModel):
-  nome: str
+    nome: str
+
 
 class HabilidadesCreate(HabilidadesBase):
-
-  class Config:
+    class Config:
         orm_mode = True
+
 
 class Habilidades(HabilidadesBase):
-  id: int
+    id: int
 
-  class Config:
+    class Config:
         orm_mode = True
-        
-class PessoaHabilidadeCreate(Habilidades):
+
+
+class PessoaHabilidadeCreate(HabilidadesBase):
+    id: t.Optional[int] = None
     nome: t.Optional[str] = None
 
     class Config:
         orm_mode = True
 
+
 class HabilidadesEdit(HabilidadesBase):
-
-  class Config:
+    class Config:
         orm_mode = True
-

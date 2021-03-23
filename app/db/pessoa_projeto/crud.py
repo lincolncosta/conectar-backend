@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func, select
 import typing as t
 
 from db import models
@@ -67,12 +68,22 @@ async def create_pessoa_projeto(
                 projeto=projeto,
                 descricao=pessoa_projeto.descricao,
                 situacao=pessoa_projeto.situacao,
+                titulo=pessoa_projeto.titulo,
+                remunerado=pessoa_projeto.remunerado,
+                notificacao=pessoa_projeto.notificacao,
+                papel_id=pessoa_projeto.papel_id,
+                tipo_acordo_id=pessoa_projeto.tipo_acordo_id,
             )
         else:
             db_pessoa_projeto = models.PessoaProjeto(
                 projeto=projeto,
                 descricao=pessoa_projeto.descricao,
                 situacao=pessoa_projeto.situacao,
+                titulo=pessoa_projeto.titulo,
+                remunerado=pessoa_projeto.remunerado,
+                notificacao=pessoa_projeto.notificacao,
+                papel_id=pessoa_projeto.papel_id,
+                tipo_acordo_id=pessoa_projeto.tipo_acordo_id,
             )
 
     except HTTPException as e:
@@ -82,8 +93,9 @@ async def create_pessoa_projeto(
     db.commit()
     db.refresh(db_pessoa_projeto)
 
-    db_vaga = db_pessoa_projeto.__dict__
-    return {"id": db_vaga["id"]}
+    return db_pessoa_projeto
+    # db_vaga = db_pessoa_projeto.__dict__
+    # return {"id": db_vaga["id"]}
 
 
 async def edit_pessoa_projeto(

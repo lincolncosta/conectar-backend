@@ -3,6 +3,7 @@ import typing as t
 
 from db.session import get_db
 from db.pessoa.crud import (
+    get_rand_pessoas,
     get_pessoas,
     get_pessoa,
     create_pessoa,
@@ -60,10 +61,23 @@ async def pessoa_details(
     Get any pessoa details
     """
     pessoa = get_pessoa(db, pessoa_id)
+
     return pessoa
-    # return encoders.jsonable_encoder(
-    #     pessoa, skip_defaults=True, exclude_none=True,
-    # )
+
+@r.post("/pessoas/random", response_model=t.List[Pessoa], response_model_exclude_none=True)
+async def random_pessoas(
+    request: Request,
+    qtde: dict,
+    db=Depends(get_db)
+):
+
+    """
+    Get random pessoas
+    """
+
+    pessoas = get_rand_pessoas(db, qtde)
+
+    return pessoas
 
 
 @r.post("/pessoas", response_model=Pessoa, response_model_exclude_none=True)
@@ -71,7 +85,7 @@ async def pessoa_create(
     request: Request,
     pessoa: PessoaCreate,
     db=Depends(get_db),
-    # current_pessoa=Depends(get_current_active_superuser),
+    current_pessoa=Depends(get_current_active_superuser),
 ):
     """
     Create a new pessoa
