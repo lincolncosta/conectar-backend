@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import select, func
 import typing as t
 
 from db import models
@@ -8,6 +9,31 @@ from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from core.security.passwords import get_password_hash
 
+def get_rand_pessoas(
+    db: Session, qtde: dict
+) -> schemas.Pessoa:
+
+    for key in qtde:
+        if key == "aliado":
+            pessoasAliado = db.query(models.Pessoa)\
+                .filter(models.Pessoa.aliado == True)\
+                .order_by(func.random())\
+                .limit(qtde[key])\
+                .all()
+        elif key == "colaborador":
+            pessoasColab = db.query(models.Pessoa)\
+                .filter(models.Pessoa.colaborador == True)\
+                .order_by(func.random())\
+                .limit(qtde[key])\
+                .all()
+        else: raise HTTPException(status_code=404, detail="papel não encontrado")
+
+    pessoas = pessoasAliado + pessoasColab
+
+    if not pessoas:
+        raise HTTPException(status_code=404, detail="pessoas não encontradas")
+
+    return pessoas
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaOut:
     pessoa = (

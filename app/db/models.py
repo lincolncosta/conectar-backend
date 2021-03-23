@@ -247,8 +247,9 @@ class PessoaProjeto(Base):
     )
     descricao = Column(String)
     situacao = Column(String)
-    titulo = Column(String, nullable=False)
+    titulo = Column(String, nullable=True)
     remunerado = Column(Boolean, nullable=False)
+    notificacao = Column(Boolean, nullable=False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 

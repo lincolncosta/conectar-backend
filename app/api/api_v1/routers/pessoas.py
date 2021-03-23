@@ -3,6 +3,7 @@ import typing as t
 
 from db.session import get_db
 from db.pessoa.crud import (
+    get_rand_pessoas,
     get_pessoas,
     get_pessoa,
     create_pessoa,
@@ -65,6 +66,21 @@ async def pessoa_details(
     #     pessoa, skip_defaults=True, exclude_none=True,
     # )
 
+
+@r.post("/pessoas/random", response_model=t.List[Pessoa], response_model_exclude_none=True)
+async def random_pessoas(
+    request: Request,
+    qtde: dict,
+    db=Depends(get_db)
+):
+
+    """
+    Get random pessoas
+    """
+
+    pessoas = get_rand_pessoas(db, qtde)
+
+    return pessoas
 
 @r.post("/pessoas", response_model=Pessoa, response_model_exclude_none=True)
 async def pessoa_create(
