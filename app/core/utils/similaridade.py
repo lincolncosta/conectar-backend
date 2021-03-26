@@ -16,17 +16,16 @@ stop_words = set(
 
 def pre_processing(text):
 
-    # convet to min
+    # conversão para letras minúsculas
     letras_min = re.findall(r'\b[A-zÀ-úü]+\b', text.lower())
 
-    # remove stopwords
+    # remoção de stopwords
     #stopwords = nltk.corpus.stopwords.words('portuguese')
     stop = set(stop_words)
     no_stopwords = [w for w in letras_min if w not in stop]
 
-    # tokennize
+    # tokennização
     text_clean = " ".join(no_stopwords)
-    # print(text_clean)
     return text_clean
 
 
