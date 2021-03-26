@@ -9,6 +9,7 @@ from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from core.security.passwords import get_password_hash
 
+
 def get_rand_pessoas(
     db: Session, qtde: dict
 ) -> schemas.Pessoa:
@@ -26,7 +27,8 @@ def get_rand_pessoas(
                 .order_by(func.random())\
                 .limit(qtde[key])\
                 .all()
-        else: raise HTTPException(status_code=404, detail="papel não encontrado")
+        else:
+            raise HTTPException(status_code=404, detail="papel não encontrado")
 
     pessoas = pessoasAliado + pessoasColab
 
@@ -34,6 +36,7 @@ def get_rand_pessoas(
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoas
+
 
 def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaOut:
     pessoa = (
@@ -50,7 +53,8 @@ def get_pessoa_by_email(db: Session, email: str) -> schemas.Pessoa:
 
 def get_pessoa_by_username(db: Session, usuario: str) -> schemas.Pessoa:
     return (
-        db.query(models.Pessoa).filter(models.Pessoa.usuario == usuario).first()
+        db.query(models.Pessoa).filter(
+            models.Pessoa.usuario == usuario).first()
     )
 
 

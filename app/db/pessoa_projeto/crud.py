@@ -4,11 +4,12 @@ import typing as t
 
 from db import models
 from . import schemas
-from db.pessoa.crud import get_pessoa
+from db.pessoa.crud import get_pessoa, get_pessoas
 from db.projeto.crud import get_projeto
 
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
+from core.utils import similaridade
 
 
 def get_pessoa_projeto(
@@ -36,6 +37,61 @@ async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
         )
 
     return pessoas_projeto
+
+
+def get_similaridade_pessoas_projeto(
+    db: Session, qtde: dict, id_projeto: int
+) -> schemas.Pessoa:
+
+    pessoas_vagas = {}
+
+    # Com o id do projeto, buscar as vagas disponíveis
+    vagas_projeto = get_pessoa_projeto_by_projeto(db, id_projeto)
+
+    # Iterar em cada vaga, buscando o papel
+    for vaga in vagas_projeto:
+        papel = vaga.papel_id
+
+        # Extração de informações de habilidades e áreas da vaga
+
+        similaridades = {}
+
+        habilidades_areas_vaga = []
+
+        habilidades_projeto = vaga['habilidade']
+        areas_projeto = vaga['areas']
+
+        for habilidade_projeto in habilidades_projeto:
+            habilidades_areas_vaga.append(habilidade_projeto)
+
+        for area_projeto in areas_projeto:
+            habilidades_areas_vaga.append(area_projeto)
+
+        # Precisamos criar um filtro para buscar somente pessoas de um papel específico
+        pessoas = get_pessoas(db)
+        habilidades_areas = []
+
+        for pessoa in pessoas:
+            habilidades = pessoa['habilidade']
+            areas = pessoa['areas']
+
+            for habilidade in habilidades:
+                habilidades_areas.append(habilidade)
+
+            for area in areas:
+                habilidades_areas.append(area)
+
+            similaridades[pessoa.id] = similaridade.jaccard_similarity(
+                '. '.join(habilidades_areas_vaga), '. '.join(habilidades_areas))
+
+        similaridades = dict(sorted(similaridades.items(), key=lambda item: item[1]))
+
+        pessoas_vagas[vaga.id] = next(iter(similaridades))
+
+    if not pessoas:
+        raise HTTPException(status_code=404, detail="pessoas não encontradas")
+
+    return pessoas_vagas
 
 
 async def get_pessoa_projeto_by_projeto(

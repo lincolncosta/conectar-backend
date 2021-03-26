@@ -24,6 +24,7 @@ from app.db.pessoa_projeto.crud import (
     delete_pessoa_projeto,
 )
 from app.db.pessoa_projeto.schemas import (
+    Pessoa,
     PessoaProjeto,
     PessoaProjetoBase,
     PessoaProjetoEdit,
@@ -74,6 +75,24 @@ async def get_pessoas_projeto(
     pessoas_projeto = await get_all_pessoas_projeto(db)
     return pessoas_projeto
 
+@r.post("/pessoa_projeto/similaridade", response_model=t.List[Pessoa], response_model_exclude_none=True)
+async def random_pessoas(
+    request: Request,
+    qtde: dict,
+    pessoa_projeto_id: int,
+    db=Depends(get_db)
+):
+
+    """
+    Get random pessoas
+    """
+
+    pessoas = get_pessoas(db)
+
+    if pessoas:
+        print(pessoas['habilidades'])
+
+    return pessoas
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
