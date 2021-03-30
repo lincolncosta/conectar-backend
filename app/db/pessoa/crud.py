@@ -103,6 +103,17 @@ def get_pessoas(
     return db.query(models.Pessoa).offset(skip).limit(limit).all()
 
 
+def get_pessoas_by_papel(db: Session, papel: int) -> t.List[schemas.Pessoa]:
+
+    # Refatorar futuramente para não utilizarmos números fixos no código.
+    if (papel == 1):
+        return db.query(models.Pessoa).filter(models.aliado == True).all()
+    elif (papel == 2):
+        return db.query(models.Pessoa).filter(models.colaborador == True).all()    
+    elif (papel == 3):
+        return db.query(models.Pessoa).filter(models.idealizador == True).all()
+
+
 def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
     password = get_password_hash(pessoa.senha)
 

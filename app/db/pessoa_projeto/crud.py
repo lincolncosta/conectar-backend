@@ -4,7 +4,7 @@ import typing as t
 
 from db import models
 from . import schemas
-from db.pessoa.crud import get_pessoa, get_pessoas
+from db.pessoa.crud import get_pessoa, get_pessoas, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
 
 from db.utils.extract_areas import append_areas
@@ -68,7 +68,7 @@ def get_similaridade_pessoas_projeto(
             habilidades_areas_vaga.append(area_projeto)
 
         # Precisamos criar um filtro para buscar somente pessoas de um papel específico
-        pessoas = get_pessoas(db)
+        pessoas = get_pessoas_by_papel(db, papel)
         habilidades_areas = []
 
         for pessoa in pessoas:
@@ -84,7 +84,8 @@ def get_similaridade_pessoas_projeto(
             similaridades[pessoa.id] = similaridade.jaccard_similarity(
                 '. '.join(habilidades_areas_vaga), '. '.join(habilidades_areas))
 
-        similaridades = dict(sorted(similaridades.items(), key=lambda item: item[1]))
+        similaridades = dict(
+            sorted(similaridades.items(), key=lambda item: item[1]))
 
         pessoas_vagas[vaga.id] = next(iter(similaridades))
 
