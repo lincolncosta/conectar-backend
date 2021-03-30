@@ -40,7 +40,7 @@ async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
 
 
 def get_similaridade_pessoas_projeto(
-    db: Session, qtde: dict, id_projeto: int
+    db: Session, id_projeto: int
 ) -> schemas.Pessoa:
 
     pessoas_vagas = {}

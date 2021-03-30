@@ -20,6 +20,7 @@ from app.db.pessoa_projeto.crud import (
     get_pessoa_projeto,
     get_all_pessoas_projeto,
     get_pessoa_projeto_by_projeto,
+    get_similaridade_pessoas_projeto,
     edit_pessoa_projeto,
     delete_pessoa_projeto,
 )
@@ -78,19 +79,15 @@ async def get_pessoas_projeto(
 @r.post("/pessoa_projeto/similaridade", response_model=t.List[Pessoa], response_model_exclude_none=True)
 async def random_pessoas(
     request: Request,
-    qtde: dict,
-    pessoa_projeto_id: int,
+    projeto_id: int,
     db=Depends(get_db)
 ):
 
     """
-    Get random pessoas
+    Get similaridade pessoas
     """
 
-    pessoas = get_pessoas(db)
-
-    if pessoas:
-        print(pessoas['habilidades'])
+    pessoas = get_similaridade_pessoas_projeto(db, projeto_id)
 
     return pessoas
 
