@@ -76,7 +76,7 @@ async def get_pessoas_projeto(
     pessoas_projeto = await get_all_pessoas_projeto(db)
     return pessoas_projeto
 
-@r.post("/pessoa_projeto/similaridade", response_model=t.List[Pessoa], response_model_exclude_none=True)
+@r.post("/pessoa_projeto/similaridade", response_model=dict, response_model_exclude_none=True)
 async def random_pessoas(
     request: Request,
     projeto_id: int,
@@ -87,7 +87,7 @@ async def random_pessoas(
     Get similaridade pessoas
     """
 
-    pessoas = get_similaridade_pessoas_projeto(db, projeto_id)
+    pessoas = await get_similaridade_pessoas_projeto(db, projeto_id)
 
     return pessoas
 

@@ -20,7 +20,7 @@ def pre_processing(text):
     letras_min = re.findall(r'\b[A-zÀ-úü]+\b', text.lower())
 
     # remoção de stopwords
-    #stopwords = nltk.corpus.stopwords.words('portuguese')
+    # stopwords = nltk.corpus.stopwords.words('portuguese')
     stop = set(stop_words)
     no_stopwords = [w for w in letras_min if w not in stop]
 
@@ -32,7 +32,11 @@ def pre_processing(text):
 def similaridade_jaccard(texto_projeto, texto_pessoa):
     set_projeto = set(texto_projeto)
     set_pessoa = set(texto_pessoa)
-    return float(len(set_projeto.intersection(set_pessoa)) / len(set_projeto.union(set_pessoa)))
+
+    if float(len(set_projeto.intersection(set_pessoa))) > 0:
+        return float(len(set_projeto.intersection(set_pessoa)) / len(set_projeto.union(set_pessoa)))
+    else:
+        return 0
 
 
 def calcula_similaridade_projeto_pessoa(caracteristica_projeto, caracteristica_pessoa):
