@@ -39,7 +39,7 @@ def similaridade_jaccard(texto_projeto, texto_pessoa):
         return 0
 
 
-def calcula_similaridade_projeto_pessoa(caracteristica_projeto, caracteristica_pessoa):
+def calcula_similaridade_vaga_pessoa(caracteristica_projeto, caracteristica_pessoa):
     texto_projeto = pre_processing(caracteristica_projeto)
     texto_pessoa = pre_processing(caracteristica_pessoa)
 

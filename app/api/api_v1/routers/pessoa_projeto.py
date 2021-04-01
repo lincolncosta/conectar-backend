@@ -76,8 +76,8 @@ async def get_pessoas_projeto(
     pessoas_projeto = await get_all_pessoas_projeto(db)
     return pessoas_projeto
 
-@r.post("/pessoa_projeto/similaridade", response_model=dict, response_model_exclude_none=True)
-async def random_pessoas(
+@r.post("/pessoa_projeto/similaridade", response_model=t.Dict[int, Pessoa], response_model_exclude_none=True)
+async def get_pessoas_vagas(
     request: Request,
     projeto_id: int,
     db=Depends(get_db)

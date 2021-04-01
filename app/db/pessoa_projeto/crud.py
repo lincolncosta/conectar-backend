@@ -47,61 +47,65 @@ async def get_similaridade_pessoas_projeto(
 
     # Com o id do projeto, buscar as vagas disponíveis - CRIAR NOVO MÉTODO QUE PEGA SOMENTE AS VAGAS
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
+    pessoas_selecionadas = []
     similaridades_retorno = {}
-    
+
     # Iterar em cada vaga, buscando o papel
     for vaga in vagas_projeto:
         papel = vaga.papel_id
 
-        # Extração de informações de habilidades e áreas da vaga        
+        # Extração de informações de habilidades e áreas da vaga
         habilidades_areas_vaga = []
 
         habilidades_projeto = vaga.habilidades
         areas_projeto = vaga.areas
 
         for habilidade_projeto in habilidades_projeto:
-            habilidades_areas_vaga.append(habilidade_projeto)
+            habilidades_areas_vaga.append(habilidade_projeto.nome)
 
         for area_projeto in areas_projeto:
-            habilidades_areas_vaga.append(area_projeto)
+            habilidades_areas_vaga.append(area_projeto.descricao)
 
-        # Precisamos criar um filtro para buscar somente pessoas de um papel específico
-        pessoas = get_pessoas_by_papel(db, papel)
+        # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
+        pessoas = get_pessoas_by_papel(db, papel, pessoas_selecionadas)
         habilidades_areas = []
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
             if pessoa not in similaridades_pessoa:
-                habilidades = pessoa.habilidade
+                habilidades = pessoa.habilidades
                 areas = pessoa.areas
 
                 for habilidade in habilidades:
-                    habilidades_areas.append(habilidade)
+                    habilidades_areas.append(habilidade.nome)
 
                 for area in areas:
-                    habilidades_areas.append(area)
+                    habilidades_areas.append(area.descricao)
 
-                similaridades_pessoa[pessoa] = similaridade.similaridade_jaccard(
+                similaridades_pessoa[pessoa] = similaridade.calcula_similaridade_vaga_pessoa(
                     '. '.join(habilidades_areas_vaga), '. '.join(habilidades_areas))
 
-        # - CONFERIR O QUE ESTÁ SENDO RETORNADO
         similaridades_retorno = dict(
-            sorted(similaridades_pessoa.items(), key=lambda item: item[1]))
+            sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
-        pessoas_vagas[vaga.id] = next(iter(similaridades_retorno))
+        pessoa_selecionada = next(iter(similaridades_retorno))
+        pessoas_vagas[vaga.id] = pessoa_selecionada
+        pessoas_selecionadas.append(pessoa_selecionada.id)
 
     if not pessoas:
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoas_vagas
 
+
 async def get_vagas_by_projeto(
     db: Session, id_projeto: int
+
 ) -> t.List[schemas.PessoaProjeto]:
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
         .filter(models.PessoaProjeto.projeto_id == id_projeto)
-        .filter(models.PessoaProjeto.pessoa_id == None))
+        .filter(models.PessoaProjeto.pessoa_id == None)
         .all()
     )
     if not pessoa_projeto:
@@ -109,6 +113,7 @@ async def get_vagas_by_projeto(
             status_code=404, detail="pessoa_projeto não encontrada"
         )
     return pessoa_projeto
+
 
 async def get_pessoa_projeto_by_projeto(
     db: Session, id_projeto: int
