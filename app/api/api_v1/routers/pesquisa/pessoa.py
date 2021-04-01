@@ -19,8 +19,7 @@ pesquisa_pessoa_router = r = APIRouter()
 async def pessoa_by_name(
     request: Request,
     pessoa_name: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search pessoa by name
@@ -35,8 +34,7 @@ async def pessoa_by_name(
 async def pessoa_by_area(
     request: Request,
     pessoa_area: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search pessoa by area
@@ -50,8 +48,7 @@ async def pessoa_by_area(
 async def pessoa_by_habilidade(
     request: Request,
     pessoa_habilidade: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search pessoa by habilidade
