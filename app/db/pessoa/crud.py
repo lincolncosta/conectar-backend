@@ -103,7 +103,7 @@ def get_pessoas(
     return db.query(models.Pessoa).offset(skip).limit(limit).all()
 
 
-def get_pessoas_by_papel(db: Session, papel: int, pessoas_selecionadas: list = []) -> t.List[schemas.Pessoa]:
+def get_pessoas_by_papel(db: Session, papel: int, pessoas_selecionadas: t.List[schemas.Pessoa]) -> t.List[schemas.Pessoa]:
 
     # Refatorar futuramente para não utilizarmos números fixos no código.
     if (papel == 1):
