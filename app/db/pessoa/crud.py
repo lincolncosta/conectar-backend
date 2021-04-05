@@ -98,18 +98,18 @@ def get_pessoa_by_habilidade(
 
 
 def get_pessoas(
-    db: Session, skip: int = 0, limit: int = 100, pessoas_selecionadas: list = []
+    db: Session, skip: int = 0, limit: int = 100
 ) -> t.List[schemas.Pessoa]:
     return db.query(models.Pessoa).offset(skip).limit(limit).all()
 
 
-def get_pessoas_by_papel(db: Session, papel: int) -> t.List[schemas.Pessoa]:
+def get_pessoas_by_papel(db: Session, papel: int, pessoas_selecionadas: list = []) -> t.List[schemas.Pessoa]:
 
     # Refatorar futuramente para não utilizarmos números fixos no código.
     if (papel == 1):
         return db.query(models.Pessoa).filter(models.Pessoa.aliado == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()
     elif (papel == 2):
-        return db.query(models.Pessoa).filter(models.Pessoa.colaborador == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()    
+        return db.query(models.Pessoa).filter(models.Pessoa.colaborador == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()
     elif (papel == 3):
         return db.query(models.Pessoa).filter(models.Pessoa.idealizador == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()
 
