@@ -45,7 +45,7 @@ async def get_similaridade_pessoas_projeto(
 
     pessoas_vagas = {}
 
-    # Com o id do projeto, buscar as vagas disponíveis - CRIAR NOVO MÉTODO QUE PEGA SOMENTE AS VAGAS
+    # Com o id do projeto, buscar as vagas disponíveis
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
     pessoas_selecionadas = []
     similaridades_retorno = {}
