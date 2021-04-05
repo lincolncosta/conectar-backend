@@ -20,10 +20,12 @@ from app.db.pessoa_projeto.crud import (
     get_pessoa_projeto,
     get_all_pessoas_projeto,
     get_pessoa_projeto_by_projeto,
+    get_similaridade_pessoas_projeto,
     edit_pessoa_projeto,
     delete_pessoa_projeto,
 )
 from app.db.pessoa_projeto.schemas import (
+    Pessoa,
     PessoaProjeto,
     PessoaProjetoBase,
     PessoaProjetoEdit,
@@ -74,6 +76,20 @@ async def get_pessoas_projeto(
     pessoas_projeto = await get_all_pessoas_projeto(db)
     return pessoas_projeto
 
+@r.post("/pessoa_projeto/similaridade", response_model=t.Dict[int, Pessoa], response_model_exclude_none=True)
+async def get_pessoas_vagas(
+    request: Request,
+    projeto_id: int,
+    db=Depends(get_db)
+):
+
+    """
+    Get pessoas mais similares dado um projeto específico
+    """
+
+    pessoas = await get_similaridade_pessoas_projeto(db, projeto_id)
+
+    return pessoas
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
