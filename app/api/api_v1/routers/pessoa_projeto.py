@@ -84,7 +84,7 @@ async def get_pessoas_vagas(
 ):
 
     """
-    Get similaridade pessoas
+    Get pessoas mais similares dado um projeto específico
     """
 
     pessoas = await get_similaridade_pessoas_projeto(db, projeto_id)
