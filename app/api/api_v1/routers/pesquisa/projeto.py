@@ -10,7 +10,6 @@ from app.db.pesquisa.projeto import (
     get_projeto_by_objective,
 )
 from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
-from app.core.auth import get_current_active_pessoa
 
 pesquisa_projeto_router = r = APIRouter()
 
@@ -20,8 +19,7 @@ pesquisa_projeto_router = r = APIRouter()
 async def projeto_by_name(
     request: Request,
     projeto_name: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search project by name
@@ -35,8 +33,7 @@ async def projeto_by_name(
 async def projeto_by_objective(
     request: Request,
     projeto_objective: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search project by objective
@@ -50,8 +47,7 @@ async def projeto_by_objective(
 async def projeto_by_area(
     request: Request,
     projeto_area: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search project by area
@@ -65,8 +61,7 @@ async def projeto_by_area(
 async def projeto_by_habilidades(
     request: Request,
     projeto_habilidade: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Search project by habilidade

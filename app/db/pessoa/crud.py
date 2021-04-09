@@ -187,7 +187,10 @@ async def edit_pessoa(
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
     if "email" in update_data:
-        if update_data["email"] != db_pessoa.email:
+        filtro = db.query(models.Pessoa)\
+        .filter(models.Pessoa.email == update_data["email"])\
+        .first()
+        if filtro:
             raise HTTPException(status_code=409, detail="Email já cadastrado")
 
     await append_areas(update_data, db)

@@ -248,10 +248,24 @@ class PessoaProjeto(Base):
     descricao = Column(String)
     situacao = Column(String)
     titulo = Column(String, nullable=True)
-    remunerado = Column(Boolean, nullable=False)    
+    remunerado = Column(Boolean, nullable=False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
+
+class Notificacao(Base):
+
+    __tablename__ = "tb_notificacao"
+
+    id = Column(Integer, primary_key=True, index=True)
+    remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
+    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
+    situacao = Column(String, nullable = False)
+    lido = Column(Boolean, nullable = False)
+    data_criacao = Column(DateTime(timezone=True), server_default=func.now())
+    data_visualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
 class ExperienciaProf(Base):
     """

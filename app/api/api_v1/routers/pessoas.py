@@ -87,7 +87,7 @@ async def pessoa_create(
     request: Request,
     pessoa: PessoaCreate,
     db=Depends(get_db),
-    # current_pessoa=Depends(get_current_active_superuser),
+    current_pessoa=Depends(get_current_active_superuser),
 ):
     """
     Create a new pessoa
