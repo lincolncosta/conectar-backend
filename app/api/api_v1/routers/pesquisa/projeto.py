@@ -10,7 +10,6 @@ from app.db.pesquisa.projeto import (
     get_projeto_by_objective,
 )
 from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
-from app.core.auth import get_current_active_pessoa
 
 pesquisa_projeto_router = r = APIRouter()
 

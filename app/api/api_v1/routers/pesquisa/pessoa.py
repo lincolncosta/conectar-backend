@@ -9,7 +9,6 @@ from app.db.pesquisa.pessoa import (
    get_pessoa_by_habilidade,
 )
 from app.db.pessoa.schemas import Pessoa
-from app.core.auth import get_current_active_pessoa
 
 pesquisa_pessoa_router = r = APIRouter()
 
