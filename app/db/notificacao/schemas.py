@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 import typing as t
 
 class NotificacaoBase(BaseModel):
@@ -17,6 +18,8 @@ class NotificacaoCreate(NotificacaoBase):
 
 class Notificacao(NotificacaoBase):
     id: int
+    data_criacao: datetime
+    data_atualizacao: t.Optional[datetime]
 
     class Config:
         orm_mode = True
@@ -28,6 +31,7 @@ class NotificacaoEdit(NotificacaoBase):
     pessoa_projeto_id: t.Optional[int]
     situacao: t.Optional[str]
     lido: t.Optional[bool]
+    data_atualizacao: t.Optional[datetime]
 
     class Config:
         orm_mode = True

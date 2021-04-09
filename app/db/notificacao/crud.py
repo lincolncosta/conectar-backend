@@ -144,8 +144,7 @@ def check_notificacao_vaga(db: Session):
     hoje = datetime.today()
 
     vagas = db.query(models.PessoaProjeto)\
-            .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR" 
-            and hoje.day != models.PessoaProjeto.data_atualizacao.day)\
+            .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR")\
             .all()
 
     notificacao = []
@@ -163,25 +162,54 @@ def check_notificacao_vaga(db: Session):
             situacao = "Você tem " + str(6-diff.days) + " dias para responder ao convite de " + remetente.nome + " para o projeto " + projeto.nome,
             destinatario_id = vaga.pessoa_id
 
+            filtro = db.query(models.Notificacao)\
+            .filter(models.Notificacao.destinatario_id == destinatario_id)\
+            .filter(models.Notificacao.situacao == situacao)\
+            .first()
+
+            if not filtro:
+                db_notificacao = models.Notificacao(
+                    remetente_id = remetente.id,
+                    destinatario_id = destinatario_id,
+                    projeto_id = vaga.projeto_id,
+                    pessoa_projeto_id = vaga.id,
+                    situacao = situacao,
+                    lido = False,
+                    )
+
+                db.add(db_notificacao)
+                db.commit()
+                db.refresh(db_notificacao)
+
+                notificacao.append(db_notificacao)
+
         elif(diff.days == 6):
             remetente = get_pessoa(db, vaga.pessoa_id)
             situacao = "O prazo de resposta de " + remetente.nome + " expirou! Faça uma nova busca."
-            destinatario_id = projeto.pessoa_id,
+            destinatario_id = projeto.pessoa_id
         
-        db_notificacao = models.Notificacao(
-                remetente_id = remetente.id,
-                destinatario_id = destinatario_id,
-                projeto_id = vaga.projeto_id,
-                pessoa_projeto_id = vaga.id,
-                situacao = situacao,
-                lido = False,
-                )
+            filtro = db.query(models.Notificacao)\
+            .filter(models.Notificacao.destinatario_id == destinatario_id)\
+            .filter(models.Notificacao.situacao == situacao)\
+            .first()
 
-        db.add(db_notificacao)
-        db.commit()
-        db.refresh(db_notificacao)
+            if not filtro:
+                db_notificacao = models.Notificacao(
+                    remetente_id = remetente.id,
+                    destinatario_id = destinatario_id,
+                    projeto_id = vaga.projeto_id,
+                    pessoa_projeto_id = vaga.id,
+                    situacao = situacao,
+                    lido = False,
+                    )
 
-        notificacao.append(db_notificacao)
+                db.add(db_notificacao)
+                db.commit()
+                db.refresh(db_notificacao)
+
+                notificacao.append(db_notificacao)
+        
+        
     
     return notificacao
 

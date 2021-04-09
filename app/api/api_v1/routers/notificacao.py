@@ -31,16 +31,15 @@ notificacao_router = r = APIRouter()
 )
 async def notificacao_create_vaga(
     request: Request,
-    remetente_id: int,
     pessoa_projeto_id: int,
     db=Depends(get_db),
-    #current_pessoa=Depends(get_current_active_pessoa),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Create notificacao
     """
 
-    notificacao = create_notificacao_vaga(db, remetente_id, pessoa_projeto_id)
+    notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoa_projeto_id)
 
     return notificacao
 
@@ -52,7 +51,7 @@ async def notificacao_create_vaga(
 async def notificacao_checagem(
     request: Request,
     db=Depends(get_db),
-    #current_pessoa=Depends(get_current_active_pessoa),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Create notificacao
@@ -72,7 +71,7 @@ async def get_notificacao_id(
     request: Request,
     notificacao_id: int,
     db=Depends(get_db),
-    #current_pessoa=Depends(get_current_active_pessoa),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get any notificacao details by id
@@ -91,7 +90,7 @@ async def get_notificacao_destinatario(
     request: Request,
     destinatario_id: int,
     db=Depends(get_db),
-    #current_pessoa=Depends(get_current_active_pessoa),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get any notificacao details by destinatario
@@ -110,7 +109,7 @@ async def notificacao_edit(
     notificacao_id: int,
     notificacao: NotificacaoEdit,
     db=Depends(get_db),
-    #current_pessoa=Depends(get_current_active_pessoa),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Edit Notificacao
@@ -128,7 +127,7 @@ async def notificacao_delete(
     request: Request,
     notificacao_id: int,
     db=Depends(get_db),
-    #current_pessoa=Depends(get_current_active_pessoa),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Delete notificacao
