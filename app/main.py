@@ -32,6 +32,7 @@ from app.api.api_v1.routers.pesquisa.pessoa import pesquisa_pessoa_router
 from app.api.api_v1.routers.pesquisa.projeto import pesquisa_projeto_router
 from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
 from app.api.api_v1.routers.reacoes import reacoes_router
+from app.api.api_v1.routers.notificacao import notificacao_router
 ############################# Routers ###########################################
 
 # from app.core import config
@@ -151,6 +152,12 @@ app.include_router(
     pessoa_projeto_router,
     prefix="/api/v1",
     tags=["pessoa_projeto"],
+)
+
+app.include_router(
+    notificacao_router,
+    prefix="/api/v1",
+    tags=["notificacao"],
 )
 
 app.include_router(

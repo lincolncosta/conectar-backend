@@ -59,8 +59,7 @@ def get_projetos(
 
 
 async def edit_projeto(
-    db: Session, projeto_id: int, projeto: schemas.ProjetoEdit, pessoa_id: int
-) -> schemas.Projeto:
+    db: Session, projeto_id: int, projeto: schemas.ProjetoEdit) -> schemas.Projeto:
 
     db_projeto = get_projeto(db, projeto_id)
     if not db_projeto:

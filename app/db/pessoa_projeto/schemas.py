@@ -15,7 +15,7 @@ class PessoaProjetoBase(BaseModel):
     tipo_acordo_id: t.Optional[int]
     pessoa_id: t.Optional[int] = None
     descricao: t.Optional[str] = None
-    situacao: t.Optional[str] = "PENDENTE_IDEALIZADOR"
+    situacao: t.Optional[str] = "CRIADO"
 
 
 class PessoaProjetoOut(PessoaProjetoBase):

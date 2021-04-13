@@ -46,7 +46,7 @@ def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habili
         raise HTTPException(status_code=404, detail="habilidades não encontrada")
     return habilidades
 
-def create_habilidades(db: Session, habilidades: schemas.Habilidades, pessoa_id: int):
+def create_habilidades(db: Session, habilidades: schemas.Habilidades):
     try:
         db_habilidades = models.Habilidades(
             nome=habilidades.nome,
