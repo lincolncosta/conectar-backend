@@ -139,6 +139,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-#app/alembic/versions/*
+app/alembic/versions/*
 uploads/*
 .vscode/settings.json
