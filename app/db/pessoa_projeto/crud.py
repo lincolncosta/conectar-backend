@@ -199,16 +199,15 @@ async def edit_pessoa_projeto(
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
 
+    if "situacao" in update_data.keys():
+        create_notificacao_vaga(db, current_pessoa.id, db_pessoa_projeto)
+
     for key, value in update_data.items():
         setattr(db_pessoa_projeto, key, value)
 
     db.add(db_pessoa_projeto)
     db.commit()
     db.refresh(db_pessoa_projeto)
-
-    # TO-DO: método usado para edição de PEssoaProjeto, é necessário criar checagem interna para não criar notificações repetidas
-    # já que ele será chamado em todas as edições, não somente na alteração de situação.
-    create_notificacao_vaga(db, current_pessoa.id, db_pessoa_projeto)
 
     return db_pessoa_projeto
 

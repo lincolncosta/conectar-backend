@@ -38,6 +38,7 @@ def create_notificacao_vaga(db: Session,
 
     hoje = datetime.today()
 
+    # pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     projeto_id = pessoa_projeto.projeto_id
     projeto = get_projeto(db, projeto_id)
     pessoa = get_pessoa(db, remetente_id)
