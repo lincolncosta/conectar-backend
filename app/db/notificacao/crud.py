@@ -5,9 +5,9 @@ from datetime import datetime
 
 from app.db import models
 from app.db.notificacao import schemas
-from app.db.pessoa_projeto.crud import get_pessoa_projeto
 from app.db.pessoa.crud import get_pessoa
 from app.db.projeto.crud import get_projeto
+
 
 def get_notificacao_by_id(db: Session, notificacao_id: int):
     notificacao = db.query(models.Notificacao)\
@@ -15,59 +15,63 @@ def get_notificacao_by_id(db: Session, notificacao_id: int):
                     .first()
 
     if not notificacao:
-        raise HTTPException(status_code=404, detail="notificacao não encontrada")
+        raise HTTPException(
+            status_code=404, detail="notificacao não encontrada")
     return notificacao
 
 
 def get_notificacao_by_destinatario(db: Session, destinatario_id: int):
-    
+
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.destinatario_id == destinatario_id)\
                     .all()
 
     if not notificacao:
-        raise HTTPException(status_code=404, detail="notificacao não encontrada")
+        raise HTTPException(
+            status_code=404, detail="notificacao não encontrada")
     return notificacao
 
+
 def create_notificacao_vaga(db: Session,
-                        remetente_id: int,
-                        pessoa_projeto: models.PessoaProjeto):
-    
+                            remetente_id: int,
+                            pessoa_projeto: models.PessoaProjeto):
+
     hoje = datetime.today()
 
-    # pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     projeto_id = pessoa_projeto.projeto_id
     projeto = get_projeto(db, projeto_id)
     pessoa = get_pessoa(db, remetente_id)
 
-    if pessoa_projeto.situacao == "PENDENTE_IDEALIZADOR": 
-        situacao = "Finalize o cadastro do projeto " + projeto.nome + " e encontre o time ideal"
+    if pessoa_projeto.situacao == "PENDENTE_IDEALIZADOR":
+        situacao = "Finalize o cadastro do projeto " + \
+            projeto.nome + " e encontre o time ideal"
         destinatario_id = remetente_id
 
     elif pessoa_projeto.situacao == "RECUSADO":
-        situacao = pessoa.nome + " recusou seu convite para o projeto " + projeto.nome + ". Realize uma nova busca"
+        situacao = pessoa.nome + " recusou seu convite para o projeto " + \
+            projeto.nome + ". Realize uma nova busca"
         destinatario_id = projeto.pessoa_id
 
     elif pessoa_projeto.situacao == "ACEITO":
-        situacao = pessoa.nome + " aceitou seu convite para o projeto " + projeto.nome + ". Finalize o acordo e preencha essa vaga!"
+        situacao = pessoa.nome + " aceitou seu convite para o projeto " + \
+            projeto.nome + ". Finalize o acordo e preencha essa vaga!"
         destinatario_id = projeto.pessoa_id
 
     elif pessoa_projeto.situacao == "PENDENTE_COLABORADOR":
         if(hoje.day == pessoa_projeto.data_atualizacao.day):
-            situacao = pessoa.nome + " te fez um convite para o projeto " + projeto.nome + ". Confira!"
+            situacao = pessoa.nome + " te fez um convite para o projeto " + \
+                projeto.nome + ". Confira!"
             destinatario_id = pessoa_projeto.pessoa_id
 
-
     db_notificacao = models.Notificacao(
-        remetente_id = remetente_id,
-        destinatario_id = destinatario_id,
-        projeto_id = projeto_id,
-        pessoa_projeto_id = pessoa_projeto_id,
-        situacao = situacao,
-        lido = False,
+        remetente_id=remetente_id,
+        destinatario_id=destinatario_id,
+        projeto_id=projeto_id,
+        pessoa_projeto_id=pessoa_projeto.id,
+        situacao=situacao,
+        lido=False,
     )
-    
-    
+
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
@@ -79,11 +83,10 @@ def check_notificacao_vaga(db: Session):
     hoje = datetime.today()
 
     vagas = db.query(models.PessoaProjeto)\
-            .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR")\
-            .all()
+        .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR")\
+        .all()
 
     notificacao = []
-
 
     for vaga in vagas:
         projeto = get_projeto(db, vaga.projeto_id)
@@ -91,26 +94,27 @@ def check_notificacao_vaga(db: Session):
         att = datetime.strptime(att_str, "%Y-%m-%d")
 
         diff = hoje - att
-        
+
         if(diff.days < 6):
             remetente = get_pessoa(db, projeto.pessoa_id)
-            situacao = "Você tem " + str(6-diff.days) + " dias para responder ao convite de " + remetente.nome + " para o projeto " + projeto.nome,
+            situacao = "Você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
+                remetente.nome + " para o projeto " + projeto.nome,
             destinatario_id = vaga.pessoa_id
 
             filtro = db.query(models.Notificacao)\
-            .filter(models.Notificacao.destinatario_id == destinatario_id)\
-            .filter(models.Notificacao.situacao == situacao)\
-            .first()
+                .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                .filter(models.Notificacao.situacao == situacao)\
+                .first()
 
             if not filtro:
                 db_notificacao = models.Notificacao(
-                    remetente_id = remetente.id,
-                    destinatario_id = destinatario_id,
-                    projeto_id = vaga.projeto_id,
-                    pessoa_projeto_id = vaga.id,
-                    situacao = situacao,
-                    lido = False,
-                    )
+                    remetente_id=remetente.id,
+                    destinatario_id=destinatario_id,
+                    projeto_id=vaga.projeto_id,
+                    pessoa_projeto_id=vaga.id,
+                    situacao=situacao,
+                    lido=False,
+                )
 
                 db.add(db_notificacao)
                 db.commit()
@@ -120,38 +124,38 @@ def check_notificacao_vaga(db: Session):
 
         elif(diff.days == 6):
             remetente = get_pessoa(db, vaga.pessoa_id)
-            situacao = "O prazo de resposta de " + remetente.nome + " expirou! Faça uma nova busca."
+            situacao = "O prazo de resposta de " + \
+                remetente.nome + " expirou! Faça uma nova busca."
             destinatario_id = projeto.pessoa_id
-        
+
             filtro = db.query(models.Notificacao)\
-            .filter(models.Notificacao.destinatario_id == destinatario_id)\
-            .filter(models.Notificacao.situacao == situacao)\
-            .first()
+                .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                .filter(models.Notificacao.situacao == situacao)\
+                .first()
 
             if not filtro:
                 db_notificacao = models.Notificacao(
-                    remetente_id = remetente.id,
-                    destinatario_id = destinatario_id,
-                    projeto_id = vaga.projeto_id,
-                    pessoa_projeto_id = vaga.id,
-                    situacao = situacao,
-                    lido = False,
-                    )
+                    remetente_id=remetente.id,
+                    destinatario_id=destinatario_id,
+                    projeto_id=vaga.projeto_id,
+                    pessoa_projeto_id=vaga.id,
+                    situacao=situacao,
+                    lido=False,
+                )
 
                 db.add(db_notificacao)
                 db.commit()
                 db.refresh(db_notificacao)
 
                 notificacao.append(db_notificacao)
-        
-        
-    
+
     return notificacao
+
 
 def edit_notificacao(
     db: Session, notificacao_id, notificacao: schemas.NotificacaoEdit
 ) -> schemas.Notificacao:
-    
+
     db_notificacao = get_notificacao_by_id(db, notificacao_id)
     if not db_notificacao:
         raise HTTPException(
