@@ -6,7 +6,6 @@ from db import models
 from . import schemas
 from db.pessoa.crud import get_pessoa, get_pessoas, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
-from app.db.pessoa_projeto.crud import edit_pessoa_projeto
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from core.utils import similaridade
