@@ -44,7 +44,7 @@ async def habilidades_list(
 
 @r.get(
     "/habilidades/name/{habilidades_name}",
-    response_model=Habilidades,
+    response_model=t.List[Habilidades],
     response_model_exclude_none=True,
 )
 async def habilidades_details_name(
@@ -77,7 +77,6 @@ async def habilidades_create(
     Create a new habilidades
     """
     return create_habilidades(db, habilidades)
-
 
 @r.put(
     "/habilidades/{habilidade_id}",

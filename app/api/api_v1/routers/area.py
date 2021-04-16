@@ -55,7 +55,7 @@ async def area_details_id(
 
 @r.get(
     "/areas/name/{area_name}",
-    response_model=Area,
+    response_model=t.List[Area],
     response_model_exclude_none=True,
 )
 async def area_details_name(

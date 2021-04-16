@@ -25,7 +25,7 @@ def get_habilidades_by_id(
 def get_habilidades(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.Habilidades]:
     return db.query(models.Habilidades).offset(skip).limit(limit).all()
 
-def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habilidades:
+def get_habilidade_by_name(db: Session, habilidades_name: int) -> t.List[schemas.Habilidades]:
     '''
         Get a single instance of habilidades from its name
 
@@ -39,14 +39,21 @@ def get_habilidade_by_name(db: Session, habilidades_name: int) -> schemas.Habili
         Raises:
             HTTPException: No habilidades corresponds to the habilidades_id.
     '''
-    habilidades = (
-        db.query(models.Habilidades).filter(models.Habilidades.nome == habilidades_name).first()
-    )
+    habilidades = db.query(models.Habilidades)\
+            .filter(models.Habilidades.nome.ilike(f'%{habilidades_name}%'))\
+            .all()
+    
     if not habilidades:
         raise HTTPException(status_code=404, detail="habilidades não encontrada")
     return habilidades
 
 def create_habilidades(db: Session, habilidades: schemas.Habilidades):
+
+    filtro = db.query(models.Habilidades)\
+        .filter(models.Habilidades.nome == habilidades.nome).first()
+    if filtro:
+        raise HTTPException(status_code=409, detail="Habilidade já cadastrada")
+
     try:
         db_habilidades = models.Habilidades(
             nome=habilidades.nome,
@@ -104,6 +111,12 @@ def edit_habilidades(
             detail="habilidades academica não encontrada",
         )
     update_data = habilidades.dict(exclude_unset=True)
+
+    filtro = db.query(models.Habilidades)\
+        .filter(models.Habilidades.nome == update_data["nome"]).first()
+
+    if filtro:
+        raise HTTPException(status_code=409, detail="Habilidade já cadastrada")
 
     for key, value in update_data.items():
         setattr(db_habilidades, key, value)

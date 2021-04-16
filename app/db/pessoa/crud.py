@@ -183,10 +183,10 @@ async def edit_pessoa(
         )
     update_data = pessoa.dict(exclude_unset=True)
 
-    if "senha" in update_data:
+    if "senha" in update_data.keys():
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
-    if "email" in update_data:
+    if "email" in update_data.keys():
         filtro = db.query(models.Pessoa)\
         .filter(models.Pessoa.email == update_data["email"])\
         .first()
