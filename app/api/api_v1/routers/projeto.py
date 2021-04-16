@@ -37,8 +37,7 @@ async def projetos_list(
     visibilidade: t.Optional[bool] = True,
     skip: t.Optional[int] = 0,
     limit: t.Optional[int] = 100,
-    pessoa_id: t.Optional[int] = None,
-    current_pessoa=Depends(get_current_active_pessoa),
+    pessoa_id: t.Optional[int] = None
 ):
     """
     Get all projetos
@@ -110,7 +109,7 @@ async def projeto_edit(
     current_pessoa=Depends(get_current_active_pessoa),
 ):
 
-    return await edit_projeto(db, projeto_id, projeto, current_pessoa.id)
+    return await edit_projeto(db, projeto_id, projeto)
 
 
 @r.delete(

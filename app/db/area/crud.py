@@ -29,7 +29,7 @@ async def get_area_by_id(db: Session, area_id: int) -> schemas.Area:
     return area
 
 
-async def get_area_by_name(db: Session, area_name: int) -> schemas.Area:
+async def get_area_by_name(db: Session, area_name: int):
     '''
         Get a single instance of area from its name
 
@@ -44,7 +44,7 @@ async def get_area_by_name(db: Session, area_name: int) -> schemas.Area:
             HTTPException: No area corresponds to the area_id.
     '''
     area = (
-        db.query(models.Area).filter(models.Area.descricao == area_name).first()
+        db.query(models.Area).filter(models.Area.descricao.ilike(f'%{area_name}%')).all()
     )
     if not area:
         raise HTTPException(status_code=404, detail="area não encontrada")
@@ -118,6 +118,11 @@ async def get_areas(
 
 
 async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
+
+    filtro = db.query(models.Area).filter(models.Area.descricao == area.descricao).first()
+    if filtro:
+        raise HTTPException(status_code=409, detail="Area já cadastrada")
+
     try:
         if area.area_pai_id:
             area_pai = await get_area_by_id(db, area.area_pai_id)
@@ -186,7 +191,13 @@ async def edit_area(
         )
 
     update_data = area.dict(exclude_unset=True)
-    
+
+    filtro = db.query(models.Area)\
+        .filter(models.Area.descricao == update_data["descricao"]).first()
+
+    if filtro:
+        raise HTTPException(status_code=409, detail="Area já cadastrada")
+
     for key, value in update_data.items():
         setattr(db_area, key, value)
 
