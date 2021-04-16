@@ -5,7 +5,6 @@ from datetime import datetime
 from pathlib import Path
 
 from app.db.pessoa_projeto.schemas import PessoaProjeto
-from app.db.pessoa_projeto.crud import get_pessoa_projeto
 from app.db.pessoa.crud import get_pessoa
 from app.db.projeto.crud import get_projeto
 from app.db.tipo_acordo.crud import get_tipo_acordo
