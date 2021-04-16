@@ -31,11 +31,11 @@ def get_notificacao_by_destinatario(db: Session, destinatario_id: int):
 
 def create_notificacao_vaga(db: Session,
                         remetente_id: int,
-                        pessoa_projeto_id: int):
+                        pessoa_projeto: models.PessoaProjeto):
     
     hoje = datetime.today()
 
-    pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
+    # pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     projeto_id = pessoa_projeto.projeto_id
     projeto = get_projeto(db, projeto_id)
     pessoa = get_pessoa(db, remetente_id)
