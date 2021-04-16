@@ -106,11 +106,10 @@ async def projeto_edit(
     request: Request,
     projeto: ProjetoEdit,
     projeto_id: int,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
 
-    return await edit_projeto(db, projeto_id, projeto, current_pessoa.id)
+    return await edit_projeto(db, projeto_id, projeto)
 
 
 @r.delete(
