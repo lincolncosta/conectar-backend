@@ -88,7 +88,7 @@ async def get_similaridade_pessoas_projeto(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
         pessoa_selecionada = next(iter(similaridades_retorno))
-        await atualiza_match_vaga(db, vaga, pessoa_selecionada)
+        atualiza_match_vaga(db, vaga, pessoa_selecionada)
 
         pessoas_vagas[vaga.id] = pessoa_selecionada
         pessoas_selecionadas.append(pessoa_selecionada.id)
@@ -99,7 +99,7 @@ async def get_similaridade_pessoas_projeto(
     return pessoas_vagas
 
 
-async def atualiza_match_vaga(db, vaga, pessoa):
+def atualiza_match_vaga(db, vaga, pessoa):
     vagaEdit = schemas.PessoaProjetoEdit()
     vagaEdit.pessoa_id = pessoa.id
     vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
