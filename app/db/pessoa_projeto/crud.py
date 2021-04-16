@@ -6,7 +6,7 @@ from db import models
 from . import schemas
 from db.pessoa.crud import get_pessoa, get_pessoas, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
-
+from app.db.pessoa_projeto.crud import edit_pessoa_projeto
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from core.utils import similaridade
@@ -89,6 +89,8 @@ async def get_similaridade_pessoas_projeto(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
         pessoa_selecionada = next(iter(similaridades_retorno))
+        await atualiza_match_vaga(db, vaga, pessoa_selecionada)
+
         pessoas_vagas[vaga.id] = pessoa_selecionada
         pessoas_selecionadas.append(pessoa_selecionada.id)
 
@@ -96,6 +98,14 @@ async def get_similaridade_pessoas_projeto(
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoas_vagas
+
+
+def atualiza_match_vaga(db, vaga, pessoa):
+    vagaEdit = schemas.PessoaProjetoEdit()
+    vagaEdit.pessoa_id = pessoa.id
+    vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
+
+    edit_pessoa_projeto(db, vaga.id, vagaEdit)
 
 
 async def get_vagas_by_projeto(
