@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Depends, Response
-#from crontab import CronTab
+from app.db.pessoa_projeto.crud import get_pessoa_projeto
 import typing as t
 
 from app.db.session import get_db
@@ -25,6 +25,7 @@ from app.core.auth import (
 
 notificacao_router = r = APIRouter()
 
+
 @r.post(
     "/notificacao",
     response_model=NotificacaoCreate,
@@ -40,9 +41,11 @@ async def notificacao_create_vaga(
     Create notificacao
     """
 
-    notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoa_projeto_id)
+    notificacao = create_notificacao_vaga(
+        db, current_pessoa.id, pessoa_projeto_id)
 
     return notificacao
+
 
 @r.post(
     "/notificacao/finaliza",
@@ -59,9 +62,12 @@ async def notificacao_finaliza_vaga(
     Create notificacao to pessoa_projeto that are "FINALIZADO"
     """
 
-    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto_id)
+    pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
+    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto_id, pessoa_projeto)
 
     return notificacao
+
 
 @r.post(
     "/notificacao/check",
@@ -101,6 +107,7 @@ async def get_notificacao_id(
 
     return notificacao
 
+
 @r.get(
     "/notificacao/destinatario",
     response_model=t.List[Notificacao],
@@ -120,10 +127,11 @@ async def get_notificacao_destinatario(
 
     return notificacao
 
+
 @r.put("/notificacao",
-    response_model=Notificacao,
-    response_model_exclude_none=True,
-)
+       response_model=Notificacao,
+       response_model_exclude_none=True,
+       )
 async def notificacao_edit(
     request: Request,
     notificacao_id: int,
