@@ -187,7 +187,7 @@ async def edit_pessoa_projeto(
     db: Session,
     pessoa_projeto_id: int,
     pessoa_projeto: schemas.PessoaProjetoEdit,
-    current_pessoa=Depends(get_current_active_pessoa)
+    pessoa_logada: schemas.Pessoa
 ) -> schemas.PessoaProjeto:
     db_pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not db_pessoa_projeto:
@@ -200,7 +200,7 @@ async def edit_pessoa_projeto(
     await append_habilidades(update_data, db)
 
     if "situacao" in update_data.keys():
-        create_notificacao_vaga(db, current_pessoa.id, db_pessoa_projeto)
+        create_notificacao_vaga(db, pessoa_logada.id, db_pessoa_projeto)
 
     for key, value in update_data.items():
         setattr(db_pessoa_projeto, key, value)
