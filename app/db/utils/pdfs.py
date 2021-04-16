@@ -36,9 +36,8 @@ class PDF(FPDF):
         self.cell(175, 10, txt=data_str, ln=1, align="C")
 
 
-def createPDF(db: Session, vaga_id: int):
+def createPDF(db: Session, vaga: PessoaProjeto):
 
-    vaga = get_pessoa_projeto(db, vaga_id)
     colab = get_pessoa(db, vaga.pessoa_id)
     projeto = get_projeto(db, vaga.projeto_id)
     idealizador = get_pessoa(db, projeto.pessoa_id)
@@ -64,7 +63,7 @@ def createPDF(db: Session, vaga_id: int):
     pdf.cell(200, 10, txt=vaga.titulo, ln=1, align="L")
     pdf.cell(200, 10, txt=acordo.descricao, ln=1, align="L")
 
-    saida = "PDF/acordo" + str(vaga_id) + str(colab.id) + \
+    saida = "PDF/acordo" + str(vaga.id) + str(colab.id) + \
         str(idealizador.id) + ".pdf"
     pdf.output(saida)
 
