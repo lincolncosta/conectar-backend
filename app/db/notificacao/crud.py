@@ -8,7 +8,7 @@ from app.db.notificacao import schemas
 from app.db.pessoa.crud import get_pessoa
 from app.db.projeto.crud import get_projeto
 from app.db.pessoa_projeto.crud import get_pessoa_projeto
-from app.db.utils.pdfs import createPDF 
+from app.db.utils.pdfs import createPDF
 
 
 def get_notificacao_by_id(db: Session, notificacao_id: int):
@@ -79,9 +79,10 @@ def create_notificacao_vaga(db: Session,
     db.refresh(db_notificacao)
     return db_notificacao
 
-def finaliza_notificacao_vaga(db: Session, vaga_id: int):
-    
-    vaga = get_pessoa_projeto(db, vaga_id)
+
+def finaliza_notificacao_vaga(db: Session, pessoa_projeto: schemas.PessoaProjeto):
+
+    vaga = pessoa_projeto
 
     if (vaga.situacao != "FINALIZADO"):
         raise HTTPException(
@@ -91,37 +92,37 @@ def finaliza_notificacao_vaga(db: Session, vaga_id: int):
 
     notificacao = []
 
-    link = createPDF(db, vaga_id)
+    link = createPDF(db, vaga.id)
 
     colab = get_pessoa(db, vaga.pessoa_id)
     proj = get_projeto(db, vaga.projeto_id)
     idealizador = get_pessoa(db, proj.pessoa_id)
 
-    #notificacao idealizador
+    # notificacao idealizador
     db_notificacao = models.Notificacao(
-                    remetente_id = colab.id,
-                    destinatario_id = idealizador.id,
-                    projeto_id = vaga.projeto_id,
-                    pessoa_projeto_id = vaga.id,
-                    situacao = link,
-                    lido = False,
-                    )
-                    
+        remetente_id=colab.id,
+        destinatario_id=idealizador.id,
+        projeto_id=vaga.projeto_id,
+        pessoa_projeto_id=vaga.id,
+        situacao=link,
+        lido=False,
+    )
+
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
 
     notificacao.append(db_notificacao)
 
-    #notificacao colab
+    # notificacao colab
     db_notificacao = models.Notificacao(
-                    remetente_id = idealizador.id,
-                    destinatario_id = colab.id,
-                    projeto_id = vaga.projeto_id,
-                    pessoa_projeto_id = vaga.id,
-                    situacao = link,
-                    lido = False,
-                    )
+        remetente_id=idealizador.id,
+        destinatario_id=colab.id,
+        projeto_id=vaga.projeto_id,
+        pessoa_projeto_id=vaga.id,
+        situacao=link,
+        lido=False,
+    )
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
@@ -129,6 +130,7 @@ def finaliza_notificacao_vaga(db: Session, vaga_id: int):
     notificacao.append(db_notificacao)
 
     return notificacao
+
 
 def check_notificacao_vaga(db: Session):
 
