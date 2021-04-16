@@ -81,14 +81,15 @@ async def get_pessoas_projeto(
 async def get_pessoas_vagas(
     request: Request,
     projeto_id: int,
-    db=Depends(get_db)
+    db=Depends(get_db),
+    pessoa_logada=Depends(get_current_active_pessoa),
 ):
 
     """
     Get pessoas mais similares dado um projeto específico
     """
 
-    pessoas = await get_similaridade_pessoas_projeto(db, projeto_id)
+    pessoas = await get_similaridade_pessoas_projeto(db, pessoa_logada, projeto_id)
 
     return pessoas
 

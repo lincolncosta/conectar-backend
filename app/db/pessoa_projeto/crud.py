@@ -40,14 +40,14 @@ async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
 
 
 async def get_similaridade_pessoas_projeto(
-    db: Session, id_projeto: int
+    db: Session, pessoa_logada: models.Pessoa, id_projeto: int
 ) -> schemas.Pessoa:
 
     pessoas_vagas = {}
 
     # Com o id do projeto, buscar as vagas disponíveis
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
-    pessoas_selecionadas = []
+    pessoas_selecionadas = [pessoa_logada.id]
     similaridades_retorno = {}
 
     # Iterar em cada vaga, buscando o papel
