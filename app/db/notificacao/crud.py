@@ -5,6 +5,7 @@ from datetime import datetime
 
 from app.db import models
 from app.db.notificacao import schemas
+from app.db.pessoa_projeto.schemas import PessoaProjeto
 from app.db.pessoa.crud import get_pessoa
 from app.db.projeto.crud import get_projeto
 from app.db.utils.pdfs import createPDF
@@ -35,7 +36,7 @@ def get_notificacao_by_destinatario(db: Session, destinatario_id: int):
 
 def create_notificacao_vaga(db: Session,
                             remetente_id: int,
-                            pessoa_projeto: models.PessoaProjeto):
+                            pessoa_projeto: PessoaProjeto):
 
     hoje = datetime.today()
 
@@ -79,7 +80,7 @@ def create_notificacao_vaga(db: Session,
     return db_notificacao
 
 
-def finaliza_notificacao_vaga(db: Session, pessoa_projeto: schemas.PessoaProjeto):
+def finaliza_notificacao_vaga(db: Session, pessoa_projeto: PessoaProjeto):
 
     vaga = pessoa_projeto
 
