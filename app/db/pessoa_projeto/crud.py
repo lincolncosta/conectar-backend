@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 import typing as t
 
@@ -6,9 +6,11 @@ from db import models
 from . import schemas
 from db.pessoa.crud import get_pessoa, get_pessoas, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
+from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from core.utils import similaridade
+from app.core.auth import get_current_active_pessoa
 
 
 def get_pessoa_projeto(
@@ -185,6 +187,7 @@ async def edit_pessoa_projeto(
     db: Session,
     pessoa_projeto_id: int,
     pessoa_projeto: schemas.PessoaProjetoEdit,
+    current_pessoa=Depends(get_current_active_pessoa)
 ) -> schemas.PessoaProjeto:
     db_pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not db_pessoa_projeto:
@@ -202,6 +205,11 @@ async def edit_pessoa_projeto(
     db.add(db_pessoa_projeto)
     db.commit()
     db.refresh(db_pessoa_projeto)
+
+    # TO-DO: método usado para edição de PEssoaProjeto, é necessário criar checagem interna para não criar notificações repetidas
+    # já que ele será chamado em todas as edições, não somente na alteração de situação.
+    create_notificacao_vaga(db, current_pessoa.id, db_pessoa_projeto)
+
     return db_pessoa_projeto
 
 
