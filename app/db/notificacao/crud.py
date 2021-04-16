@@ -7,7 +7,6 @@ from app.db import models
 from app.db.notificacao import schemas
 from app.db.pessoa.crud import get_pessoa
 from app.db.projeto.crud import get_projeto
-from app.db.pessoa_projeto.crud import get_pessoa_projeto
 from app.db.utils.pdfs import createPDF
 
 
