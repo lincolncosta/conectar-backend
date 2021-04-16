@@ -99,7 +99,7 @@ async def get_similaridade_pessoas_projeto(
     return pessoas_vagas
 
 
-def atualiza_match_vaga(db, vaga, pessoa):
+async def atualiza_match_vaga(db, vaga, pessoa):
     vagaEdit = schemas.PessoaProjetoEdit()
     vagaEdit.pessoa_id = pessoa.id
     vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
