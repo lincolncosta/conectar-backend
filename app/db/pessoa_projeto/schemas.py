@@ -32,9 +32,11 @@ class PessoaProjetoCreate(PessoaProjetoBase):
 
 
 class PessoaProjetoEdit(PessoaProjetoOut):
+    situacao: t.Optional[str]
     projeto_id: t.Optional[int] = None
     remunerado: t.Optional[bool] = None
     titulo: t.Optional[str] = None
+    pessoa_id: t.Optional[int] = None
     
     class Config:
         orm_mode = True

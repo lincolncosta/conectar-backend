@@ -22,6 +22,7 @@ from core.auth import (
 
 experiencia_proj_router = r = APIRouter()
 
+
 @r.get(
     "/experiencias/projeto",
     response_model=t.List[ExperienciaProj],
@@ -84,12 +85,11 @@ async def experiencia_create(
     request: Request,
     experiencia: ExperienciaProjCreate,
     db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Create a new experiencia projeto
     """
-    return await create_experiencia(db, experiencia, current_pessoa.id)
+    return await create_experiencia(db, experiencia)
 
 
 @r.put(
