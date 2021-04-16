@@ -24,6 +24,14 @@ def get_tipo_acordo(db: Session, tipo_acordo_id: int) -> schemas.TipoAcordo:
 async def create_tipo_acordo(
     db: Session, tipo_acordo: schemas.TipoAcordoCreate
 ) -> schemas.TipoAcordo:
+
+    filtro = db.query(models.Area)\
+        .filter(models.TipoAcordo.descricao == tipo_acordo.descricao)\
+        .first()
+    if filtro:
+        raise HTTPException(status_code=409, detail="TipoAcordo já cadastrado")
+
+
     try:
         db_tipo_acordo = models.TipoAcordo(
             descricao=tipo_acordo.descricao,
@@ -49,6 +57,13 @@ def edit_tipo_acordo(
         )
 
     update_data = tipo_acordo.dict(exclude_unset=True)
+
+    filtro = db.query(models.Area)\
+        .filter(models.TipoAcordo.descricao == update_data["descricao"])\
+        .first()
+    if filtro:
+        raise HTTPException(status_code=409, detail="TipoAcordo já cadastrado")
+
 
     for key, value in update_data.items():
         setattr(db_tipo_acordo, key, value)

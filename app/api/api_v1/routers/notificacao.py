@@ -10,6 +10,7 @@ from app.db.notificacao.crud import (
     get_notificacao_by_id,
     edit_notificacao,
     delete_notificacao,
+    finaliza_notificacao_vaga,
 )
 from app.db.notificacao.schemas import (
     Notificacao,
@@ -40,6 +41,25 @@ async def notificacao_create_vaga(
     """
 
     notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoa_projeto_id)
+
+    return notificacao
+
+@r.post(
+    "/notificacao/finaliza",
+    response_model=t.List[Notificacao],
+    response_model_exclude_none=True,
+)
+async def notificacao_finaliza_vaga(
+    request: Request,
+    pessoa_projeto_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Create notificacao to pessoa_projeto that are "FINALIZADO"
+    """
+
+    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto_id)
 
     return notificacao
 
