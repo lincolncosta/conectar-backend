@@ -84,8 +84,7 @@ async def db_session_middleware(request: Request, call_next):
 app.include_router(
     pessoas_router,
     prefix="/api/v1",
-    tags=["pessoas"],
-    dependencies=[Depends(get_current_active_pessoa)],
+    tags=["pessoas"]
 )
 
 app.include_router(

@@ -26,8 +26,7 @@ pessoas_router = r = APIRouter()
 )
 async def pessoas_list(
     response: Response,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Get all pessoas

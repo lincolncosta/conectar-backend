@@ -37,8 +37,7 @@ async def projetos_list(
     visibilidade: t.Optional[bool] = True,
     skip: t.Optional[int] = 0,
     limit: t.Optional[int] = 100,
-    pessoa_id: t.Optional[int] = None,
-    current_pessoa=Depends(get_current_active_pessoa),
+    pessoa_id: t.Optional[int] = None
 ):
     """
     Get all projetos
