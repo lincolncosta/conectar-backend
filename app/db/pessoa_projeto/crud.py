@@ -9,7 +9,7 @@ from db.projeto.crud import get_projeto
 from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from core.utils import similaridade
+from db.utils import similaridade
 from app.core.auth import get_current_active_pessoa
 
 
