@@ -91,7 +91,7 @@ def finaliza_notificacao_vaga(db: Session, pessoa_projeto: schemas.PessoaProjeto
 
     notificacao = []
 
-    link = createPDF(db, vaga.id)
+    link = createPDF(db, vaga)
 
     colab = get_pessoa(db, vaga.pessoa_id)
     proj = get_projeto(db, vaga.projeto_id)
