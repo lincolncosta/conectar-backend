@@ -76,20 +76,23 @@ async def get_pessoas_projeto(
     pessoas_projeto = await get_all_pessoas_projeto(db)
     return pessoas_projeto
 
-@r.post("/pessoa_projeto/similaridade", response_model=t.Dict[int, Pessoa], response_model_exclude_none=True)
+
+@r.get("/pessoa_projeto/similaridade/{projeto_id}", response_model=t.Dict[int, Pessoa], response_model_exclude_none=True)
 async def get_pessoas_vagas(
     request: Request,
     projeto_id: int,
-    db=Depends(get_db)
+    db=Depends(get_db),
+    pessoa_logada=Depends(get_current_active_pessoa),
 ):
 
     """
     Get pessoas mais similares dado um projeto específico
     """
 
-    pessoas = await get_similaridade_pessoas_projeto(db, projeto_id)
+    pessoas = await get_similaridade_pessoas_projeto(db, pessoa_logada, projeto_id)
 
     return pessoas
+
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
@@ -143,7 +146,7 @@ async def pessoa_projeto_edit(
     Update pessoa_projeto
     """
 
-    return await edit_pessoa_projeto(db, pessoa_projeto_id, pessoa_projeto)
+    return await edit_pessoa_projeto(db, pessoa_projeto_id, pessoa_projeto, pessoa)
 
 
 @r.delete(

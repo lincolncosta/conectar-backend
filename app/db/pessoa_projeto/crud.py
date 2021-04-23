@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 import typing as t
 
@@ -6,10 +6,11 @@ from db import models
 from . import schemas
 from db.pessoa.crud import get_pessoa, get_pessoas, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
-
+from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from core.utils import similaridade
+from db.utils import similaridade
+from app.core.auth import get_current_active_pessoa
 
 
 def get_pessoa_projeto(
@@ -40,14 +41,14 @@ async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
 
 
 async def get_similaridade_pessoas_projeto(
-    db: Session, id_projeto: int
+    db: Session, pessoa_logada: models.Pessoa, id_projeto: int
 ) -> schemas.Pessoa:
 
     pessoas_vagas = {}
 
     # Com o id do projeto, buscar as vagas disponíveis
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
-    pessoas_selecionadas = []
+    pessoas_selecionadas = [pessoa_logada.id]
     similaridades_retorno = {}
 
     # Iterar em cada vaga, buscando o papel
@@ -89,6 +90,8 @@ async def get_similaridade_pessoas_projeto(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
         pessoa_selecionada = next(iter(similaridades_retorno))
+        await atualiza_match_vaga(db, vaga, pessoa_selecionada)
+
         pessoas_vagas[vaga.id] = pessoa_selecionada
         pessoas_selecionadas.append(pessoa_selecionada.id)
 
@@ -96,6 +99,14 @@ async def get_similaridade_pessoas_projeto(
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoas_vagas
+
+
+async def atualiza_match_vaga(db, vaga, pessoa):
+    vagaEdit = schemas.PessoaProjetoEdit()
+    vagaEdit.pessoa_id = pessoa.id
+    vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
+
+    await edit_pessoa_projeto(db, vaga.id, vagaEdit)
 
 
 async def get_vagas_by_projeto(
@@ -176,6 +187,7 @@ async def edit_pessoa_projeto(
     db: Session,
     pessoa_projeto_id: int,
     pessoa_projeto: schemas.PessoaProjetoEdit,
+    pessoa_logada: schemas.Pessoa
 ) -> schemas.PessoaProjeto:
     db_pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not db_pessoa_projeto:
@@ -187,12 +199,16 @@ async def edit_pessoa_projeto(
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
 
+    if "situacao" in update_data.keys():
+        create_notificacao_vaga(db, pessoa_logada.id, db_pessoa_projeto)
+
     for key, value in update_data.items():
         setattr(db_pessoa_projeto, key, value)
 
     db.add(db_pessoa_projeto)
     db.commit()
     db.refresh(db_pessoa_projeto)
+
     return db_pessoa_projeto
 
 

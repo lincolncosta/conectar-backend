@@ -13,7 +13,7 @@ def get_pessoa_by_name(db: Session, pessoa_name: str) -> schemas.Pessoa:
     '''
 
     pessoa = db.query(models.Pessoa)\
-        .filter(models.Pessoa.nome.ilike(f'{pessoa_name}%')).all()
+        .filter(models.Pessoa.nome.ilike(f'%{pessoa_name}%')).all()
     if not pessoa:
         raise HTTPException(status_code=404, detail="pessoa não encontrado")
     return pessoa
