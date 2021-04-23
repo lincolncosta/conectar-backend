@@ -5,13 +5,13 @@ from starlette.requests import Request
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
+from fastapi.testclient import TestClient
+from fastapi_utils.tasks import repeat_every
 
 ############################# Routers ###########################################
 from app.api.api_v1.routers.pessoas import pessoas_router
 from app.api.api_v1.routers.projeto import projeto_router
-from app.api.api_v1.routers.experiencia.profissional import (
-    experiencia_prof_router,
-)
+from app.api.api_v1.routers.experiencia.profissional import experiencia_prof_router
 from app.api.api_v1.routers.experiencia.academica import experiencia_acad_router
 from app.api.api_v1.routers.experiencia.projeto import experiencia_proj_router
 from app.api.api_v1.routers.habilidade import habilidades_router
@@ -171,7 +171,19 @@ app.include_router(
     tags=["reacoes"]
 )
 
-app.include_router(auth_router, prefix="/api", tags=["auth"])
+app.include_router(
+    auth_router,
+    prefix="/api",
+    tags=["auth"]
+)
+
+client = TestClient(app)
+
+@app.on_event("startup")
+@repeat_every(seconds=60*60*24)
+def test_read_main():
+    client.post("api/v1/notificacao/check")
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)

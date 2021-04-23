@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Request, Depends, Response
-#from crontab import CronTab
 import typing as t
 
 from app.db.session import get_db
@@ -70,8 +69,7 @@ async def notificacao_finaliza_vaga(
 )
 async def notificacao_checagem(
     request: Request,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Create notificacao
