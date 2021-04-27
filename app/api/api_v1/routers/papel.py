@@ -69,7 +69,7 @@ async def papel_create(
     """
     Create a new papel
     """
-    return create_papel(db, papel, current_pessoa.id)
+    return create_papel(db, papel)
 
 
 @r.put(

@@ -40,7 +40,9 @@ async def notificacao_create_vaga(
     Create notificacao
     """
 
-    notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoa_projeto_id)
+    pessoaProjeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
+    notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoaProjeto)
 
     return notificacao
 

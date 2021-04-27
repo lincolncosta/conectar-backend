@@ -9,11 +9,12 @@ class NotificacaoBase(BaseModel):
     pessoa_projeto_id: int
     situacao: str
     foto: str
+    link: str
     lido: bool
 
 class NotificacaoCreate(NotificacaoBase):
     situacao: t.Optional[str]
-    link: t.Optional[str]
+    link: t.Optional[str] = None
 
     class Config:
         orm_mode = True
