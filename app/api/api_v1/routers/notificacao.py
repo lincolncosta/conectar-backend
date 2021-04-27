@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, Depends, Response
+from app.db.pessoa_projeto.crud import get_pessoa_projeto
 import typing as t
 
 from app.db.session import get_db
@@ -58,7 +59,9 @@ async def notificacao_finaliza_vaga(
     Create notificacao to pessoa_projeto that are "FINALIZADO"
     """
 
-    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto_id)
+    pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
+    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto)
 
     return notificacao
 

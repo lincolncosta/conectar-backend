@@ -5,10 +5,9 @@ from datetime import datetime
 from pathlib import Path
 
 from app.db.pessoa_projeto.schemas import PessoaProjeto
-from app.db.pessoa_projeto.crud import get_pessoa_projeto
-from app.db.pessoa.crud import get_pessoa
+from app.db.pessoa.crud import get_pessoa_by_id
 from app.db.projeto.crud import get_projeto
-from app.db.tipo_acordo.crud import get_tipo_acordo 
+from app.db.tipo_acordo.crud import get_tipo_acordo
 
 FULL_MONTHS = {1: 'janeiro',  2: 'fevereiro', 3: u'março',    4: 'abril',
                5: 'maio',     6: 'junho',     7: 'julho',     8: 'agosto',
@@ -34,12 +33,11 @@ class PDF(FPDF):
         self.cell(175,10, txt=data_str, ln=1, align="C")
 
 
-def createPDF(db: Session, vaga_id: int):
+def createPDF(db: Session, vaga: PessoaProjeto):
     
-    vaga = get_pessoa_projeto(db, vaga_id)
-    colab = get_pessoa(db, vaga.pessoa_id)
+    colab = get_pessoa_by_id(db, vaga.pessoa_id)
     projeto = get_projeto(db, vaga.projeto_id)
-    idealizador = get_pessoa(db, projeto.pessoa_id)
+    idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
     acordo = get_tipo_acordo(db, vaga.tipo_acordo_id)
 
        
@@ -66,7 +64,7 @@ def createPDF(db: Session, vaga_id: int):
     
     
 
-    saida = "PDF/acordo" + str(vaga_id) + str(colab.id) + str(idealizador.id) + ".pdf"
+    saida = "PDF/acordo" + str(vaga.id) + str(colab.id) + str(idealizador.id) + ".pdf"
     pdf.output(saida)
 
     return saida
