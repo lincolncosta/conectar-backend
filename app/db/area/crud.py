@@ -30,10 +30,10 @@ async def get_area_by_id(
 async def get_area_by_name(
     db: Session,
     area_name: str
-    ):
+    ) -> schemas.Area:
 
     '''
-        Busca todas as Áreas cujo nome contenha a string buscada
+        Busca Área cujo nome seja exatamente igual à string inserida
 
         Entrada: string
 
@@ -43,8 +43,8 @@ async def get_area_by_name(
     '''
 
     area = db.query(models.Area)\
-        .filter(models.Area.descricao.ilike(f'%{area_name}%'))\
-        .all()
+        .filter(models.Area.descricao == area_name)\
+        .first()
     
     if not area:
         raise HTTPException(status_code=404, detail="area não encontrada")

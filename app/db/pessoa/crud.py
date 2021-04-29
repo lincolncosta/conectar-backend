@@ -273,7 +273,9 @@ async def edit_pessoa(
 
     for key, value in update_data.items():
         setattr(db_pessoa, key, value)
+
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)
+
     return db_pessoa
