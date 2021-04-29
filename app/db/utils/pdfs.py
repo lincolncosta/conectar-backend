@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from app.db.pessoa_projeto.schemas import PessoaProjeto
-from app.db.pessoa.crud import get_pessoa
+from app.db.pessoa.crud import get_pessoa_by_id
 from app.db.projeto.crud import get_projeto
 from app.db.tipo_acordo.crud import get_tipo_acordo
 
@@ -34,12 +34,13 @@ class PDF(FPDF):
         self.cell(20, 175, txt='', ln=1)
         self.cell(175, 10, txt=data_str, ln=1, align="C")
 
-
+        
 def createPDF(db: Session, vaga: PessoaProjeto):
+    
+    colab = get_pessoa_by_id(db, vaga.pessoa_id)
 
-    colab = get_pessoa(db, vaga.pessoa_id)
     projeto = get_projeto(db, vaga.projeto_id)
-    idealizador = get_pessoa(db, projeto.pessoa_id)
+    idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
     acordo = get_tipo_acordo(db, vaga.tipo_acordo_id)
 
     pdf = PDF()
@@ -62,8 +63,8 @@ def createPDF(db: Session, vaga: PessoaProjeto):
     pdf.cell(200, 10, txt=vaga.titulo, ln=1, align="L")
     pdf.cell(200, 10, txt=acordo.descricao, ln=1, align="L")
 
-    saida = "PDF/acordo" + str(vaga.id) + str(colab.id) + \
-        str(idealizador.id) + ".pdf"
+    saida = "PDF/acordo" + str(vaga.id) + str(colab.id) + str(idealizador.id) + ".pdf"
+
     pdf.output(saida)
 
     return saida

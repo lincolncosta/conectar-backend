@@ -8,10 +8,13 @@ class NotificacaoBase(BaseModel):
     projeto_id: int
     pessoa_projeto_id: int
     situacao: str
+    foto: str
+    link: str
     lido: bool
 
 class NotificacaoCreate(NotificacaoBase):
     situacao: t.Optional[str]
+    link: t.Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -20,6 +23,14 @@ class Notificacao(NotificacaoBase):
     id: int
     data_criacao: datetime
     data_atualizacao: t.Optional[datetime]
+
+    class Config:
+        orm_mode = True
+
+class NotificacaoOut(NotificacaoBase):
+    situacao: str
+    foto: str
+    link: t.Optional[str]
 
     class Config:
         orm_mode = True

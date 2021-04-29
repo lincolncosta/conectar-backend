@@ -5,7 +5,6 @@ from db.session import get_db
 from db.habilidade.crud import (
     get_habilidades,
     create_habilidades,
-    get_habilidades_by_id,
     edit_habilidades,
     delete_habilidades,
     get_habilidade_by_name

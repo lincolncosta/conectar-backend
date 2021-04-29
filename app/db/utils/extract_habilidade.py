@@ -1,4 +1,4 @@
-from db.habilidade.crud import get_habilidades_by_id, get_habilidade_by_name
+from db.habilidade.crud import get_habilidade_by_id, get_habilidade_by_name
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
@@ -21,7 +21,7 @@ async def append_habilidades(update_data: dict, db: Session):
         try:
             if ids:
                 for habilidade_id in ids:
-                    new_habilidades.append(get_habilidades_by_id(db, habilidade_id))
+                    new_habilidades.append(get_habilidade_by_id(db, habilidade_id))
             else:
                 for habilidade_name in names:
                     new_habilidades.append(get_habilidade_by_name(db, habilidade_name))

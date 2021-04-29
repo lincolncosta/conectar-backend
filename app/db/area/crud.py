@@ -1,125 +1,126 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-import typing as t
 
 from db import models
 from . import schemas
-from core.security.passwords import get_password_hash
 
+async def get_area_by_id(
+    db: Session,
+    area_id: int
+    ) -> schemas.Area:
 
-async def get_area_by_id(db: Session, area_id: int) -> schemas.Area:
     '''
-        Get a single instance of area
+        Busca uma Área a partir do ID da mesma
 
-        Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        area_id: Integer representing the area id.
+        Entrada: ID
 
-        Returns:
-        An Area object.
+        Saída: Esquema da Área correspondente
 
-        Raises:
-            HTTPException: No area corresponds to the area_id.
+        Exceções: Não existe Área correspondente ao ID inserido
     '''
-    area = (
-        db.query(models.Area).filter(models.Area.id == area_id).first()
-    )
+
+    area = db.query(models.Area)\
+        .filter(models.Area.id == area_id)\
+        .first()
     if not area:
         raise HTTPException(status_code=404, detail="area não encontrada")
     return area
 
 
-async def get_area_by_name(db: Session, area_name: int):
+async def get_area_by_name(
+    db: Session,
+    area_name: str
+    ):
+
     '''
-        Get a single instance of area from its name
+        Busca todas as Áreas cujo nome contenha a string buscada
 
-        Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        area_name: String representing the area description.
+        Entrada: string
 
-        Returns:
-        An Area object.
+        Saída: Lista de Esquemas da Área correspondente
 
-        Raises:
-            HTTPException: No area corresponds to the area_id.
+        Exceções: Não existe Área correspondente à string inserida
     '''
-    area = (
-        db.query(models.Area).filter(models.Area.descricao.ilike(f'%{area_name}%')).all()
-    )
+
+    area = db.query(models.Area)\
+        .filter(models.Area.descricao.ilike(f'%{area_name}%'))\
+        .all()
+    
     if not area:
         raise HTTPException(status_code=404, detail="area não encontrada")
+        
     return area
 
 
 async def get_area_and_subareas(
     db: Session,
     area_id: int
-):
+    ):
+
     '''
-        Get the area and all its subareas from an id.
+        Busca uma Área e todas as suas subareas a partir do ID buscado
 
-        Gets all subareas by filtering all Areas where area_pai_id are
-        equal to the passed id. Then it gets the area object from the id itself
-        and map it on required format.
+        Entrada: ID
 
-        Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        area_id: Integer representing the area id.
+        Saída: Dicionário contendo área pai e suas subareas
 
-        Returns:
-        A dict on this format:
-        {
-            "area": {
-                "descricao": "Geografia",
-                "id": 38
-            },
-            "subareas": [{
-                "descricao": "Topografia",
-                "id": 39,
-                "area_pai_id": 38
-            }]
-        }
+        Exceções: Não existe Área correspondente ao ID inserido
     '''
-    areas = db.query(models.Area).filter(models.Area.area_pai_id == area_id).all()
-    parent = await get_area_by_id(db, area_id)
-    parent_and_subareas = {"area": parent, "subareas": areas}
-    return parent_and_subareas
+    
+    area = await get_area_by_id(db, area_id)
+    if not area:
+        raise HTTPException(status_code=404, detail="area não encontrada")
+
+    subareas = db.query(models.Area)\
+        .filter(models.Area.area_pai_id == area_id)\
+        .all()
+    
+    area_and_subareas = {"area": area, "subareas": subareas}
+
+    return area_and_subareas
 
 async def get_areas(
     db: Session
-):
-    '''
-        Get all instances of areas and its subareas
-
-        Firstly get all areas on top of tree, then creates a list
-        containing all areas and subareas of each node
-
-        Returns:
-        A list containing objects with area and subareas, for example:
-        [
-            {
-                "area": {
-                    "descricao": "Geografia",
-                    "id": 38
-                },
-                "subareas": [{
-                    "descricao": "Topografia",
-                    "id": 39,
-                    "area_pai_id": 38
-                }]
-            },
-        ]
+    ):
 
     '''
-    areas = db.query(models.Area).filter(models.Area.area_pai_id == None).all()
+        Busca todas as Áreas e subareas
+
+        Entrada: 
+
+        Saída: Lista com todas as áreas e subáreas cadastradas
+
+        Exceções:
+    '''
+
+    areas = db.query(models.Area)\
+        .filter(models.Area.area_pai_id == None)\
+        .all()
+        
     areasAndSubareas = [await get_area_and_subareas(db, area.id) for area in areas]
                 
     return areasAndSubareas
 
 
-async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
+async def create_area(
+    db: Session,
+    area: schemas.AreaCreate
+    ) -> schemas.Area:
 
-    filtro = db.query(models.Area).filter(models.Area.descricao == area.descricao).first()
+    '''
+        Cria uma nova área
+
+        Entrada: Esquema de Area
+
+        Saída: Esquema da Area Criada
+
+        Exceções: Area já existe
+                : Area pai não encontrada
+    '''
+
+    filtro = db.query(models.Area)\
+        .filter(models.Area.descricao == area.descricao)\
+        .first()
     if filtro:
         raise HTTPException(status_code=409, detail="Area já cadastrada")
 
@@ -133,67 +134,60 @@ async def create_area(db: Session, area: schemas.AreaCreate) -> schemas.Area:
           descricao=area.descricao,
           area_pai_id=area.area_pai_id
     )
+
     db.add(db_area)
     db.commit()
     db.refresh(db_area)
+
     return db_area
 
 
-async def delete_area(db: Session, area_id: int):
+async def delete_area(
+    db: Session,
+    area_id: int
+    ):
+
+    '''
+        Apaga uma área existente
+
+        Entrada: ID
+
+        Saída: Esquema da Area Deletada
+
+        Exceções: Area não encontrada
+    '''
+
     area = await get_area_by_id(db, area_id)
-    if not area:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="area não encontrada"
-        )
+
     db.delete(area)
     db.commit()
     return area
 
 
 async def edit_area(
-    db: Session, area_id: int, area: schemas.AreaEdit
-) -> schemas.Area:
-    """
-    Edits area on database.
+    db: Session,
+    area_id: int,
+    area: schemas.AreaEdit
+    ) -> schemas.Area:
+    
+    '''
+        Edita uma área existente
 
-    Tries to find the area in the database, if it finds, updates each field
-    that was send with new information to the database.
+        Entrada: ID, Esquema de area a ser editada
 
-    Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        area_id: Integer representing the area id. Integer.
-        area: New data to use on update of area. Schema from AreaEdit.
+        Saída: Esquema da Area Editada
 
-    Returns:
-        A dict of area with the updated values. For example, the adition 
-        of an area_pai_id:
-        another_area: {
-          id: 1,
-          descricao: "Matemática"
-        }
-        old_area: {
-            id: 2,
-            descricao: "Algebra"
-        }
-        new_area: {
-            id: 2,
-            descricao: "Algebra"
-            area_pai_id: 1
-        }
+        Exceções: Area não encontrada
+                : Area já Cadastrada
+    '''
 
-    Raises:
-        HTTPException: No person corresponds to area_id in the database.
-    """
     db_area = await get_area_by_id(db, area_id)
-    if not db_area:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="area não encontrada"
-        )
 
     update_data = area.dict(exclude_unset=True)
 
     filtro = db.query(models.Area)\
-        .filter(models.Area.descricao == update_data["descricao"]).first()
+        .filter(models.Area.descricao == update_data["descricao"])\
+        .first()
 
     if filtro:
         raise HTTPException(status_code=409, detail="Area já cadastrada")
@@ -204,4 +198,5 @@ async def edit_area(
     db.add(db_area)
     db.commit()
     db.refresh(db_area)
+
     return db_area

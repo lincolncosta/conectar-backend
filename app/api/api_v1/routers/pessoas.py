@@ -5,7 +5,7 @@ from db.session import get_db
 from db.pessoa.crud import (
     get_rand_pessoas,
     get_pessoas,
-    get_pessoa,
+    get_pessoa_by_id,
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
@@ -59,7 +59,7 @@ async def pessoa_details(
     """
     Get any pessoa details
     """
-    pessoa = get_pessoa(db, pessoa_id)
+    pessoa = get_pessoa_by_id(db, pessoa_id)
     return pessoa
     # return encoders.jsonable_encoder(
     #     pessoa, skip_defaults=True, exclude_none=True,

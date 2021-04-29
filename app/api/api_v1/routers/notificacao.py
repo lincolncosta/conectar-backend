@@ -41,8 +41,10 @@ async def notificacao_create_vaga(
     Create notificacao
     """
 
-    notificacao = create_notificacao_vaga(
-        db, current_pessoa.id, pessoa_projeto_id)
+
+    pessoaProjeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
+    notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoaProjeto)
 
     return notificacao
 
@@ -64,7 +66,8 @@ async def notificacao_finaliza_vaga(
 
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
 
-    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto_id, pessoa_projeto)
+    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto)
+
 
     return notificacao
 
@@ -76,8 +79,7 @@ async def notificacao_finaliza_vaga(
 )
 async def notificacao_checagem(
     request: Request,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Create notificacao
