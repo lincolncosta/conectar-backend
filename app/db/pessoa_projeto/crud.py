@@ -4,7 +4,7 @@ import typing as t
 
 from db import models
 from . import schemas
-from db.pessoa.crud import get_pessoa, get_pessoas, get_pessoas_by_papel
+from db.pessoa.crud import get_pessoa_by_id, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
 from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
@@ -13,14 +13,24 @@ from db.utils import similaridade
 
 
 def get_pessoa_projeto(
-    db: Session, pessoa_projeto_id: int
-) -> schemas.PessoaProjeto:
+    db: Session,
+    pessoa_projeto_id: int
+    ) -> schemas.PessoaProjeto:
 
-    pessoa_projeto = (
-        db.query(models.PessoaProjeto)
-        .filter(models.PessoaProjeto.id == pessoa_projeto_id)
+    '''
+        Busca pessoa_projeto pelo ID
+
+        Entrada: ID
+
+        Saída: Esquema da PessoaProjeto referente
+
+        Exceções: Não existe PessoaProjeto correspondente ao ID inserido
+    '''
+
+    pessoa_projeto = db.query(models.PessoaProjeto)\
+        .filter(models.PessoaProjeto.id == pessoa_projeto_id)\
         .first()
-    )
+    
     if not pessoa_projeto:
         raise HTTPException(
             status_code=404, detail="pessoa_projeto não encontrada"
@@ -29,8 +39,23 @@ def get_pessoa_projeto(
     return pessoa_projeto
 
 
-async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
-    pessoas_projeto = db.query(models.PessoaProjeto).all()
+async def get_all_pessoas_projeto(
+    db: Session
+    ) -> t.List[schemas.PessoaProjeto]:
+
+    '''
+        Busca todas as PessoasProjeto
+
+        Entrada:
+
+        Saída: Lista de Esquemas de PessoaProjeto
+
+        Exceções: Não existem PessoaProjetos cadastrados
+    '''
+
+    pessoas_projeto = db.query(models.PessoaProjeto)\
+        .all()
+        
     if not pessoas_projeto:
         raise HTTPException(
             status_code=404, detail="Não há pessoas_projeto cadastradas"
@@ -40,8 +65,20 @@ async def get_all_pessoas_projeto(db: Session) -> t.List[schemas.PessoaProjeto]:
 
 
 async def get_similaridade_pessoas_projeto(
-    db: Session, pessoa_logada: models.Pessoa, id_projeto: int
+    db: Session,
+    pessoa_logada: models.Pessoa,
+    id_projeto: int
 ) -> schemas.Pessoa:
+
+    '''
+        Busca pessoa pelo ID
+
+        Entrada: ID
+
+        Saída: Esquema da Pessoa referente
+
+        Exceções: Não existe Pessoa correspondente ao ID inserido
+    '''
 
     pessoas_vagas = {}
 
@@ -105,7 +142,7 @@ async def atualiza_match_vaga(db, vaga, pessoa):
     vagaEdit.pessoa_id = pessoa.id
     vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
 
-    await edit_pessoa_projeto(db, vaga.id, vagaEdit)
+    await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa)
 
 
 async def get_vagas_by_projeto(
@@ -147,7 +184,7 @@ async def create_pessoa_projeto(
     try:
         projeto = get_projeto(db, pessoa_projeto.projeto_id)
         if pessoa_projeto.pessoa_id:
-            pessoa = get_pessoa(db, pessoa_projeto.pessoa_id)
+            pessoa = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
 
             db_pessoa_projeto = models.PessoaProjeto(
                 pessoa=pessoa,

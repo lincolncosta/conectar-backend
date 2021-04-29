@@ -6,51 +6,98 @@ from db import models
 from db.habilidade import schemas
 
 
-def get_habilidades_by_id( 
+def get_habilidade_by_id( 
+    db: Session,
+    habilidades_id: int
+    ) -> schemas.Habilidades:
 
-    db: Session, habilidades_id: int
-) -> schemas.Habilidades:
-    habilidades = (
-        db.query(models.Habilidades)
-        .filter(models.Habilidades.id == habilidades_id) 
+    '''
+        Busca habilidade pelo ID
+
+        Entrada: ID
+
+        Saída: Esquema da Habilidade referente
+
+        Exceções: Não existe Habilidade correspondente ao ID inserido
+    '''
+
+    habilidades = db.query(models.Habilidades)\
+        .filter(models.Habilidades.id == habilidades_id)\
         .first()
-    )
 
     if not habilidades:
-        raise HTTPException(
-            status_code=404, detail="Habilidade não encontrada"
-        )
+        raise HTTPException(status_code=404, detail="Habilidade não encontrada")
+
     return habilidades
 
-def get_habilidades(db: Session, skip: int = 0, limit: int = 100) -> t.List[schemas.Habilidades]:
-    return db.query(models.Habilidades).offset(skip).limit(limit).all()
 
-def get_habilidade_by_name(db: Session, habilidades_name: int) -> t.List[schemas.Habilidades]:
+def get_habilidade_by_name(
+    db: Session,
+    habilidades_name: str
+    ) -> t.List[schemas.Habilidades]:
+
     '''
-        Get a single instance of habilidades from its name
+        Busca todas as Habilidades cujo nome contenha a string buscada
 
-        Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        habilidades_name: String representing the habilidades description.
+        Entrada: string
 
-        Returns:
-        An habilidades object.
+        Saída: Lista de Esquemas da Habilidade correspondente
 
-        Raises:
-            HTTPException: No habilidades corresponds to the habilidades_id.
+        Exceções: Não existe Habilidade correspondente à string inserida
     '''
+
     habilidades = db.query(models.Habilidades)\
             .filter(models.Habilidades.nome.ilike(f'%{habilidades_name}%'))\
             .all()
     
     if not habilidades:
         raise HTTPException(status_code=404, detail="habilidades não encontrada")
+
     return habilidades
 
-def create_habilidades(db: Session, habilidades: schemas.Habilidades):
+
+def get_habilidades(
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+    ) -> t.List[schemas.Habilidades]:
+
+    '''
+        Busca todas as Habilidades
+
+        Entrada: 
+
+        Saída: Lista com todas as Habilidades cadastradas
+
+        Exceções: 
+    '''
+
+    habilidades = db.query(models.Habilidades)\
+        .offset(skip)\
+        .limit(limit)\
+        .all()
+
+    return habilidades
+
+
+def create_habilidades(
+    db: Session,
+    habilidades: schemas.Habilidades
+    ):
+
+    '''
+        Cria uma nova Habilidade
+
+        Entrada: Esquema de Habilidade
+
+        Saída: Esquema da Habilidade Criada
+
+        Exceções: Habilidade já cadastrada
+    '''
 
     filtro = db.query(models.Habilidades)\
-        .filter(models.Habilidades.nome == habilidades.nome).first()
+        .filter(models.Habilidades.nome == habilidades.nome)\
+        .first()
     if filtro:
         raise HTTPException(status_code=409, detail="Habilidade já cadastrada")
 
@@ -58,62 +105,64 @@ def create_habilidades(db: Session, habilidades: schemas.Habilidades):
         db_habilidades = models.Habilidades(
             nome=habilidades.nome,
         )
+
     except Exception as e:
         print('CORRIGIR FUTURAMENTE. Exceção encontrada:', e)
+
     db.add(db_habilidades)
     db.commit()
     db.refresh(db_habilidades)
+
     return db_habilidades
 
-def delete_habilidades(db: Session, habilidades_id: int):
-    habilidades = get_habilidades_by_id(db, habilidades_id)
-    if not habilidades:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            detail="experiencia academica não encontrada",
-        )
+
+def delete_habilidades(
+    db: Session,
+    habilidades_id: int
+    ):
+
+    '''
+        Apaga uma habilidade existente
+
+        Entrada: ID
+
+        Saída: Esquema da habilidade Deletada
+
+        Exceções: Habilidade não encontrada
+    '''
+
+    habilidades = get_habilidade_by_id(db, habilidades_id)
+
     db.delete(habilidades)
     db.commit()
+
     return habilidades
 
+
 def edit_habilidades(
-    db: Session, habilidades_id, habilidades: schemas.HabilidadesEdit
-) -> schemas.Habilidades:
-    """
-    Edits experiencia on database.
+    db: Session,
+    habilidades_id: int,
+    habilidades: schemas.HabilidadesEdit
+    ) -> schemas.Habilidades:
+    
+    '''
+        Edita uma habilidade existente
 
-    Tries to find the experience in the database, if it finds, updates each field
-    that was send with new information to the database.
+        Entrada: ID, esquema de habilidade a ser editada
 
-    Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        experiencia_id: Integer representing the experiencia id. Integer.
-        experiencia: New data to use on update of experienciaAcad. Schema from ExperienciaAcadEdit.
+        Saída: Esquema da habilidade editada
 
-    Returns:
-        A dict of experiencia with the updated values. For example:
-        old_experiencia: {
-            id: 1,
-            descricao: "uma descrição"
-        }
-        db_experiencia: {
-            id: 1,
-            descricao: "Uma nova descrição"
-        }
+        Exceções: Habilidade não encontrada
+                : Habilidade já cadastrada
+    '''
 
-    Raises:
-        HTTPException: No experience corresponds to experiencia_id in the database.
-    """
-    db_habilidades = get_habilidades_by_id(db, habilidades_id)
-    if not db_habilidades:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            detail="habilidades academica não encontrada",
-        )
+    db_habilidades = get_habilidade_by_id(db, habilidades_id)
+    
     update_data = habilidades.dict(exclude_unset=True)
 
     filtro = db.query(models.Habilidades)\
-        .filter(models.Habilidades.nome == update_data["nome"]).first()
+        .filter(models.Habilidades.nome == update_data["nome"])\
+        .first()
 
     if filtro:
         raise HTTPException(status_code=409, detail="Habilidade já cadastrada")
@@ -124,4 +173,5 @@ def edit_habilidades(
     db.add(db_habilidades)
     db.commit()
     db.refresh(db_habilidades)
+
     return db_habilidades

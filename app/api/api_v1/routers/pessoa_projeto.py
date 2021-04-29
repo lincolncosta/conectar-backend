@@ -14,7 +14,7 @@ from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.session import get_db
 from app.db.projeto.crud import get_projeto
-from app.db.pessoa.crud import get_pessoa, get_pessoas
+from app.db.pessoa.crud import get_pessoas
 from app.db.pessoa_projeto.crud import (
     create_pessoa_projeto,
     get_pessoa_projeto,

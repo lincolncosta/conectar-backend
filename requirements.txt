@@ -56,3 +56,4 @@ wcwidth==0.2.5
 websockets==8.1
 nltk==3.5
 fpdf==1.7.2
+

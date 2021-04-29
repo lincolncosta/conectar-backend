@@ -11,8 +11,20 @@ from core.security.passwords import get_password_hash
 
 
 def get_rand_pessoas(
-    db: Session, qtde: dict
-) -> schemas.Pessoa:
+    db: Session,
+    qtde: dict
+    ) -> t.List[schemas.Pessoa]:
+
+    '''
+        Busca Pessoas aleatoriamente baseado no tipo de papel
+
+        Entrada: dict {papel: quantidade}
+
+        Saída: Lista de Esquemas de Pessoas 
+
+        Exceções: Papel não encontrado
+                : Pessoas não Encontradas
+    '''
 
     for key in qtde:
         if key == "aliado":
@@ -38,83 +50,148 @@ def get_rand_pessoas(
     return pessoas
 
 
-def get_pessoa(db: Session, pessoa_id: int) -> schemas.PessoaOut:
-    pessoa = (
-        db.query(models.Pessoa).filter(models.Pessoa.id == pessoa_id).first()
-    )
+def get_pessoa_by_id(
+    db: Session,
+    pessoa_id: int
+    ) -> schemas.PessoaOut:
+
+    '''
+        Busca pessoa pelo ID
+
+        Entrada: ID
+
+        Saída: Esquema da Pessoa referente
+
+        Exceções: Não existe Pessoa correspondente ao ID inserido
+    '''
+
+    pessoa = db.query(models.Pessoa)\
+        .filter(models.Pessoa.id == pessoa_id)\
+        .first()
+    
     if not pessoa:
         raise HTTPException(status_code=404, detail="pessoa não encontrada")
+
     return pessoa
 
 
-def get_pessoa_by_email(db: Session, email: str) -> schemas.Pessoa:
-    return db.query(models.Pessoa).filter(models.Pessoa.email == email).first()
+def get_pessoa_by_email(
+    db: Session,
+    email: str
+    ) -> schemas.Pessoa:
 
+    '''
+        Busca pessoa pelo email exatamente como digitado
 
-def get_pessoa_by_username(db: Session, usuario: str) -> schemas.Pessoa:
-    return (
-        db.query(models.Pessoa).filter(
-            models.Pessoa.usuario == usuario).first()
-    )
+        Entrada: string
 
+        Saída: Esquema da Pessoa referente
 
-def get_pessoa_by_name(db: Session, pessoa_name: str) -> schemas.Pessoa:
-    pessoa = (
-        db.query(models.Pessoa)
-        .filter(models.Pessoa.nome.ilike(f"{pessoa_name}%"))
-        .all()
-    )
-    if not pessoa:
-        raise HTTPException(status_code=404, detail="pessoa não encontrado")
+        Exceções: Não existe Pessoa correspondente ao email inserido
+    '''
+
+    pessoa = db.query(models.Pessoa)\
+        .filter(models.Pessoa.email == email)\
+        .first()
+
     return pessoa
 
 
-def get_pessoa_by_area(db: Session, pessoa_area: str) -> schemas.Pessoa:
-    pessoa = (
-        db.query(models.Pessoa)
-        .join(models.Area, models.Pessoa.areas)
-        .filter(models.Area.descricao.ilike(f"{pessoa_area}%"))
-        .all()
-    )
+def get_pessoa_by_username(
+    db: Session,
+    usuario: str
+    ) -> schemas.Pessoa:
+    
+    '''
+        Busca pessoa pelo usuário exatamente como digitado
 
-    if not pessoa:
-        raise HTTPException(status_code=404, detail="pessoa não encontrado")
-    return pessoa
+        Entrada: string
 
+        Saída: Esquema da Pessoa referente
 
-def get_pessoa_by_habilidade(
-    db: Session, pessoa_habilidade: str
-) -> schemas.Pessoa:
-    pessoa = (
-        db.query(models.Pessoa)
-        .join(models.Habilidades, models.Pessoa.habilidades)
-        .filter(models.habilidades.descricao.ilike(f"{pessoa_habilidade}%"))
-        .all()
-    )
+        Exceções: Não existe Pessoa correspondente ao email inserido
+    '''
 
-    if not pessoa:
-        raise HTTPException(status_code=404, detail="pessoa não encontrado")
+    pessoa = db.query(models.Pessoa)\
+        .filter(models.Pessoa.usuario == usuario)\
+        .first()
+
     return pessoa
 
 
 def get_pessoas(
-    db: Session, skip: int = 0, limit: int = 100
-) -> t.List[schemas.Pessoa]:
-    return db.query(models.Pessoa).offset(skip).limit(limit).all()
+    db: Session,
+    skip: int = 0,
+    limit: int = 100
+    ) -> t.List[schemas.Pessoa]:
+
+    '''
+        Busca todas as pessoas
+
+        Entrada:
+
+        Saída: Lista de Esquemas de Pessoas
+
+        Exceções: 
+    '''
+
+    pessoas = db.query(models.Pessoa)\
+        .offset(skip)\
+        .limit(limit)\
+        .all()
+
+    return pessoas
 
 
-def get_pessoas_by_papel(db: Session, papel: int, pessoas_selecionadas: t.List[schemas.Pessoa]) -> t.List[schemas.Pessoa]:
+def get_pessoas_by_papel(
+    db: Session,
+    papel_id: int,
+    pessoas_selecionadas: t.List[schemas.Pessoa]
+    ) -> t.List[schemas.Pessoa]:
+
+    '''
+        Busca pessoas pelo papel
+
+        Entrada: ID 
+
+        Saída: Lista de Esquemas da Pessoa referente
+
+        Exceções:
+    '''
 
     # Refatorar futuramente para não utilizarmos números fixos no código.
-    if (papel == 1):
-        return db.query(models.Pessoa).filter(models.Pessoa.aliado == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()
-    elif (papel == 2):
-        return db.query(models.Pessoa).filter(models.Pessoa.colaborador == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()
-    elif (papel == 3):
-        return db.query(models.Pessoa).filter(models.Pessoa.idealizador == True).filter(models.Pessoa.id.notin_(pessoas_selecionadas)).all()
+    if (papel_id == 1):
+        return db.query(models.Pessoa)\
+            .filter(models.Pessoa.aliado == True)\
+            .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
+            .all()
+    elif (papel_id == 2):
+        return db.query(models.Pessoa)\
+            .filter(models.Pessoa.colaborador == True)\
+            .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
+            .all()
+    elif (papel_id == 3):
+        return db.query(models.Pessoa)\
+            .filter(models.Pessoa.idealizador == True)\
+            .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
+            .all()
 
 
-def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
+def create_pessoa(
+    db: Session,
+    pessoa: schemas.PessoaCreate
+    ) -> schemas.Pessoa:
+    
+    '''
+        Cria pessoa
+
+        Entrada: Esquema de Pessoa
+
+        Saída: Esquema da Pessoa Criada
+
+        Exceções:
+    '''
+    
     password = get_password_hash(pessoa.senha)
 
     db_pessoa = models.Pessoa(
@@ -131,65 +208,63 @@ def create_pessoa(db: Session, pessoa: schemas.PessoaCreate) -> schemas.Pessoa:
         aliado=pessoa.aliado,
         idealizador=pessoa.idealizador,
     )
+
     db.add(db_pessoa)
     db.commit()
     db.refresh(db_pessoa)
+
     return db_pessoa
 
 
-def delete_pessoa(db: Session, pessoa_id: int):
-    pessoa = get_pessoa(db, pessoa_id)
-    if not pessoa:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="pessoa não encontrada"
-        )
+def delete_pessoa(
+    db: Session,
+    pessoa_id: int
+    ):
+
+    '''
+        Apaga pessoa existente
+
+        Entrada: ID
+
+        Saída: Esquema da Pessoa deletada
+
+        Exceções: Pessoa não encontrada
+    '''
+
+    pessoa = get_pessoa_by_id(db, pessoa_id)
+    
     db.delete(pessoa)
     db.commit()
+
     return pessoa
 
 
 async def edit_pessoa(
-    db: Session, pessoa_id: int, pessoa: schemas.PessoaEdit
-) -> schemas.Pessoa:
-    """
-    Edits pessoa on database.
+    db: Session,
+    pessoa_id: int,
+    pessoa: schemas.PessoaEdit
+    ) -> schemas.Pessoa:
 
-    Tries to find the person in the database, if it finds, updates each field
-    that was send with new information to the database.
+    '''
+        Edita pessoa já existente
 
-    Args:
-        db: Database Local Session. sqlalchemy.orm.sessionmaker instance.
-        pessoa_id: Integer representing the pessoa id. Integer.
-        pessoa: New data to use on update of pessoa. Schema from PessoaEdit.
+        Entrada: ID, esquema de pessoa
 
-    Returns:
-        A dict of pessoa with the updated values. For example:
-        old_pessoa: {
-            id: 1,
-            nome: "Lucas"
-        }
-        db_pessoa: {
-            id: 1,
-            nome: "Luis"
-        }
+        Saída: Esquema da Pessoa Editada
 
-    Raises:
-        HTTPException: No person corresponds to pessoa_id in the database.
-    """
-    db_pessoa = get_pessoa(db, pessoa_id)
-    if not db_pessoa:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="pessoa não encontrada"
-        )
+        Exceções: Pessoa não encontrada
+                : Email já cadastrado
+    '''
+
+    db_pessoa = get_pessoa_by_id(db, pessoa_id)
+    
     update_data = pessoa.dict(exclude_unset=True)
 
     if "senha" in update_data.keys():
         update_data["senha"] = get_password_hash(pessoa.senha)
         del update_data["senha"]
     if "email" in update_data.keys():
-        filtro = db.query(models.Pessoa)\
-        .filter(models.Pessoa.email == update_data["email"])\
-        .first()
+        filtro = get_pessoa_by_email(db, update_data["email"])
         if filtro:
             raise HTTPException(status_code=409, detail="Email já cadastrado")
 
