@@ -85,11 +85,12 @@ async def experiencia_create(
     request: Request,
     experiencia: ExperienciaProjCreate,
     db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa)
 ):
     """
     Create a new experiencia projeto
     """
-    return await create_experiencia(db, experiencia)
+    return await create_experiencia(db, experiencia, current_pessoa.id)
 
 
 @r.put(
