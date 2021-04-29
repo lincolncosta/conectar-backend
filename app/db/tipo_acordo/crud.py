@@ -5,14 +5,48 @@ import typing as t
 from app.db import models
 from . import schemas
 
+def get_all_tipo_acordo(
+    db: Session,
+    ) -> t.List[schemas.TipoAcordo]:
 
-def get_tipo_acordo(db: Session, tipo_acordo_id: int) -> schemas.TipoAcordo:
+    '''
+        Busca todos os tipo acordo
 
-    tipo_acordo = (
-        db.query(models.TipoAcordo)
-        .filter(models.TipoAcordo.id == tipo_acordo_id)
+        Entrada: 
+
+        Saída: Lista de Esquemas de TipoAcordo
+
+        Exceções: TipoAcordo não encontrado
+    '''
+
+    tipo_acordo = db.query(models.TipoAcordo).all()
+
+    if not tipo_acordo:
+        raise HTTPException(
+            status_code=404, detail="tipo_acordo não encontrado"
+        )
+
+    return tipo_acordo
+
+
+def get_tipo_acordo_by_id(
+    db: Session,
+    tipo_acordo_id: int
+    ) -> schemas.TipoAcordo:
+
+    '''
+        Busca tipo_acordo pelo id
+
+        Entrada: ID
+
+        Saída: Esquema de TipoAcordo
+
+        Exceções: TipoAcordo não encontrado
+    '''
+
+    tipo_acordo = db.query(models.TipoAcordo)\
+        .filter(models.TipoAcordo.id == tipo_acordo_id)\
         .first()
-    )
 
     if not tipo_acordo:
         raise HTTPException(
@@ -22,8 +56,19 @@ def get_tipo_acordo(db: Session, tipo_acordo_id: int) -> schemas.TipoAcordo:
 
 
 async def create_tipo_acordo(
-    db: Session, tipo_acordo: schemas.TipoAcordoCreate
-) -> schemas.TipoAcordo:
+    db: Session,
+    tipo_acordo: schemas.TipoAcordoCreate
+    ) -> schemas.TipoAcordo:
+
+    '''
+        Cria TipoAcordo
+
+        Entrada: Esquema de TipoAcordo
+
+        Saída: Esquema de TipoAcordo criado
+
+        Exceções: TipoAcordo já cadastrado
+    '''
 
     filtro = db.query(models.Area)\
         .filter(models.TipoAcordo.descricao == tipo_acordo.descricao)\
@@ -47,10 +92,23 @@ async def create_tipo_acordo(
 
 
 def edit_tipo_acordo(
-    db: Session, tipo_acordo_id: int, tipo_acordo: schemas.TipoAcordoEdit
-) -> schemas.TipoAcordoEdit:
+    db: Session,
+    tipo_acordo_id: int,
+    tipo_acordo: schemas.TipoAcordoEdit
+    ) -> schemas.TipoAcordoEdit:
 
-    db_tipo_acordo = get_tipo_acordo(db, tipo_acordo_id)
+    '''
+        Edita TipoAcordo
+
+        Entrada: ID, Esquema de TipoAcordo
+
+        Saída: Esquema de TipoAcordo editado
+
+        Exceções: TipoAcordo não encontrado
+                : TipoAcordo já cadastrado
+    '''
+
+    db_tipo_acordo = get_tipo_acordo_by_id(db, tipo_acordo_id)
     if not db_tipo_acordo:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="tipo_acordo não encontrado"
@@ -74,9 +132,22 @@ def edit_tipo_acordo(
     return db_tipo_acordo
 
 
-def delete_tipo_acordo(db: Session, tipo_acordo_id: int):
+def delete_tipo_acordo(
+    db: Session,
+    tipo_acordo_id: int
+    ):
 
-    tipo_acordo = get_tipo_acordo(db, tipo_acordo_id)
+    '''
+        Apaga TipoAcordo
+
+        Entrada: ID, Esquema de TipoAcordo
+
+        Saída:
+
+        Exceções: TipoAcordo não encontrado
+    '''
+
+    tipo_acordo = get_tipo_acordo_by_id(db, tipo_acordo_id)
     if not tipo_acordo:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="tipo_acordo não encontrado"
@@ -84,4 +155,5 @@ def delete_tipo_acordo(db: Session, tipo_acordo_id: int):
 
     db.delete(tipo_acordo)
     db.commit()
+    
     return tipo_acordo
