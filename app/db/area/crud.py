@@ -30,7 +30,7 @@ async def get_area_by_id(
 async def get_area_by_name(
     db: Session,
     area_name: str
-    ):
+    ) -> schemas.Area:
 
     '''
         Busca Área cujo nome seja exatamente igual à string inserida
