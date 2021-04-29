@@ -7,11 +7,16 @@ from db.area.crud import (
     delete_area,
     edit_area,
     get_area_by_id,
-    get_area_by_name,
     get_areas,
     get_area_and_subareas
 )
-from db.area.schemas import Area, AreaCreate, AreaEdit, AreasAndSubareas
+from db.pesquisa.area_habilidade import search_area_by_name
+from db.area.schemas import (
+    Area,
+    AreaCreate,
+    AreaEdit,
+    AreasAndSubareas
+)
 from core.auth import get_current_active_pessoa
 
 area_router = r = APIRouter()
@@ -67,7 +72,7 @@ async def area_details_name(
     """
     Get any area details by its name
     """
-    area = await get_area_by_name(db, area_name)
+    area = search_area_by_name(db, area_name)
     return area
 
 
