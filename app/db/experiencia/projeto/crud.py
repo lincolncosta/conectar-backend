@@ -46,7 +46,9 @@ def get_experiencias_from_pessoa(
 
 
 async def create_experiencia(
-    db: Session, experiencia: schemas.ExperienciaProj, pessoa_id: int
+    db: Session,
+    experiencia: schemas.ExperienciaProj,
+    pessoa_id: int
 ):
     db_experiencia_proj = models.ExperienciaProj(
             nome=experiencia.nome,
