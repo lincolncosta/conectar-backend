@@ -34,10 +34,10 @@ def get_habilidade_by_id(
 def get_habilidade_by_name(
     db: Session,
     habilidades_name: str
-    ) -> t.List[schemas.Habilidades]:
+    ) -> schemas.Habilidades:
 
     '''
-        Busca todas as Habilidades cujo nome contenha a string buscada
+        Busca habilidade com nome exatamente igual à string buscada
 
         Entrada: string
 
@@ -47,8 +47,8 @@ def get_habilidade_by_name(
     '''
 
     habilidades = db.query(models.Habilidades)\
-            .filter(models.Habilidades.nome.ilike(f'%{habilidades_name}%'))\
-            .all()
+            .filter(models.Habilidades.nome == habilidades_name)\
+            .first()
     
     if not habilidades:
         raise HTTPException(status_code=404, detail="habilidades não encontrada")
