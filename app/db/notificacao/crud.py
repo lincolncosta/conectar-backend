@@ -69,6 +69,7 @@ def create_notificacao_vaga(
     pessoa_projeto: PessoaProjeto
     ):
 
+
     '''
         Cria uma notificacao baseada na situação de PessoaProjeto
 
@@ -81,7 +82,8 @@ def create_notificacao_vaga(
 
     projeto_id = pessoa_projeto.projeto_id
     projeto = get_projeto(db, projeto_id)
-    pessoa = get_pessoa_by_id(db, remetente_id)
+    pessoa = 
+    _id(db, remetente_id)
 
 
     if pessoa_projeto.situacao == "PENDENTE_IDEALIZADOR":
@@ -125,7 +127,7 @@ def create_notificacao_vaga(
 
     return db_notificacao
 
-
+  
 def finaliza_notificacao_vaga(
     db: Session,
     pessoa_projeto: PessoaProjeto
@@ -155,7 +157,7 @@ def finaliza_notificacao_vaga(
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
     idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
 
-    #notificacao idealizador
+    # notificacao idealizador
     db_notificacao = models.Notificacao(
                     remetente_id = colaborador.id,
                     destinatario_id = idealizador.id,
@@ -166,15 +168,16 @@ def finaliza_notificacao_vaga(
                     link = link,
                     lido = False,
                     )
-                    
+
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
 
     notificacao.append(db_notificacao)
 
-    #notificacao colab
+    # notificacao colab
     db_notificacao = models.Notificacao(
+
                     remetente_id = idealizador.id,
                     destinatario_id = colaborador.id,
                     projeto_id = pessoa_projeto.projeto_id,
@@ -207,6 +210,7 @@ def check_notificacao_vaga(
 
         Exceções: 
     '''
+
 
     hoje = datetime.today()
 
