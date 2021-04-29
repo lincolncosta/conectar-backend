@@ -12,7 +12,8 @@ import typing as t
 
 from db.session import get_db
 from db.tipo_acordo.crud import (
-    get_tipo_acordo,
+    get_tipo_acordo_by_id,
+    get_all_tipo_acordo,
     create_tipo_acordo,
     delete_tipo_acordo,
     edit_tipo_acordo,
@@ -39,7 +40,19 @@ async def tipo_acordo_get(
     tipo_acordo_id: int,
     db=Depends(get_db),
 ):
-    tipo_acordo = get_tipo_acordo(db, tipo_acordo_id)
+    tipo_acordo = get_tipo_acordo_by_id(db, tipo_acordo_id)
+    return tipo_acordo
+
+@r.get(
+    "/tipoAcordo/all",
+    response_model=t.List[TipoAcordo],
+    response_model_exclude_none=True,
+)
+async def tipo_acordo_get(
+    request: Request,
+    db=Depends(get_db),
+):
+    tipo_acordo = get_all_tipo_acordo(db)
     return tipo_acordo
 
 

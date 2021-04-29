@@ -6,9 +6,9 @@ from db.habilidade.crud import (
     get_habilidades,
     create_habilidades,
     edit_habilidades,
-    delete_habilidades,
-    get_habilidade_by_name
+    delete_habilidades
 )
+from db.pesquisa.area_habilidade import search_habilidade_by_name
 from db.habilidade.schemas import (
     HabilidadesCreate,
     Habilidades,
@@ -56,7 +56,7 @@ async def habilidades_details_name(
     Get any habilidades details by its name
     """
 
-    habilidades = get_habilidade_by_name(db, habilidades_name)
+    habilidades = search_habilidade_by_name(db, habilidades_name)
 
     return habilidades
 
