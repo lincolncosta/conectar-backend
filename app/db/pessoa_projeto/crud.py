@@ -66,7 +66,7 @@ async def get_all_pessoas_projeto(
 
 async def get_similaridade_pessoas_projeto(
     db: Session,
-    pessoa_logada: models.Pessoa,
+    pessoa_logada: schemas.Pessoa,
     id_projeto: int
 ) -> schemas.Pessoa:
 
@@ -235,15 +235,15 @@ async def edit_pessoa_projeto(
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
 
-    if "situacao" in update_data.keys():
-        create_notificacao_vaga(db, pessoa_logada.id, db_pessoa_projeto)
-
     for key, value in update_data.items():
         setattr(db_pessoa_projeto, key, value)
 
     db.add(db_pessoa_projeto)
     db.commit()
     db.refresh(db_pessoa_projeto)
+
+    if "situacao" in update_data.keys():
+        create_notificacao_vaga(db, pessoa_logada.id, db_pessoa_projeto)
 
     return db_pessoa_projeto
 

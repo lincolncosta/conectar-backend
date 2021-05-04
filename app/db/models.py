@@ -264,7 +264,7 @@ class Notificacao(Base):
     pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
     situacao = Column(String, nullable = False)
     link = Column(String, nullable = True)
-    foto = Column(String, nullable = False)
+    foto = Column(String, nullable = True)
     lido = Column(Boolean, nullable = False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_visualizacao = Column(DateTime(timezone=True), onupdate=func.now())

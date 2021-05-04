@@ -77,7 +77,11 @@ async def get_pessoas_projeto(
     return pessoas_projeto
 
 
-@r.get("/pessoa_projeto/similaridade/{projeto_id}", response_model=t.Dict[int, Pessoa], response_model_exclude_none=True)
+@r.get(
+    "/pessoa_projeto/similaridade/{projeto_id}",
+    response_model=t.Dict[int, Pessoa],
+    response_model_exclude_none=True
+)
 async def get_pessoas_vagas(
     request: Request,
     projeto_id: int,
