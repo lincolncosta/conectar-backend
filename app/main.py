@@ -182,6 +182,7 @@ client = TestClient(app)
 @app.on_event("startup")
 @repeat_every(seconds=60*60*24)
 def test_read_main():
+    print("Verificação Diária")
     client.post("api/v1/notificacao/check")
 
 
