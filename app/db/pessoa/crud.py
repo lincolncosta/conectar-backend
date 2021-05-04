@@ -160,17 +160,17 @@ def get_pessoas_by_papel(
     '''
 
     # Refatorar futuramente para não utilizarmos números fixos no código.
-    if (papel_id == 1):
+    if (papel_id == 36):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.aliado == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
             .all()
-    elif (papel_id == 2):
+    elif (papel_id == 37):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.colaborador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
             .all()
-    elif (papel_id == 3):
+    elif (papel_id == 38):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.idealizador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
