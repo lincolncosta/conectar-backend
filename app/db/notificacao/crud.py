@@ -85,25 +85,25 @@ def create_notificacao_vaga(
 
     if pessoa_projeto.situacao == "PENDENTE_IDEALIZADOR":
         situacao = "<strong>Finalize o cadastro do projeto " + \
-            projeto.nome + "</strong><p> e encontre o time ideal</p>"
+            projeto.nome + "</strong> <span> e encontre o time ideal</span>"
         destinatario_id = remetente_id
         foto = projeto.foto_capa
 
     elif pessoa_projeto.situacao == "RECUSADO":
-        situacao = "<strong>" + pessoa.nome + " recusou seu convite</strong><p> para o projeto " + \
-            projeto.nome + ". Realize uma nova busca</p>"
+        situacao = "<strong>" + pessoa.nome + " recusou seu convite</strong> <span> para o projeto " + \
+            projeto.nome + ". Realize uma nova busca</span>"
         destinatario_id = projeto.pessoa_id
         foto = pessoa.foto_perfil
 
     elif pessoa_projeto.situacao == "ACEITO":
-        situacao = "<strong>" + pessoa.nome + " aceitou seu convite</strong><p> para o projeto " + \
-            projeto.nome + ". Finalize o acordo e preencha essa vaga!</p>"
+        situacao = "<strong>" + pessoa.nome + " aceitou seu convite</strong> <span> para o projeto " + \
+            projeto.nome + ". Finalize o acordo e preencha essa vaga!</span>"
         destinatario_id = projeto.pessoa_id
         foto = pessoa.foto_perfil
 
     elif pessoa_projeto.situacao == "PENDENTE_COLABORADOR":
-        situacao = "<strong>" + pessoa.nome + " te fez um convite</strong><p> para o projeto " + \
-            projeto.nome + ". Confira!</p>"
+        situacao = "<strong>" + pessoa.nome + " te fez um convite</strong> <span> para o projeto " + \
+            projeto.nome + ". Confira!</span>"
         destinatario_id = pessoa_projeto.pessoa_id
         foto = projeto.foto_capa
 
@@ -164,7 +164,7 @@ def finaliza_notificacao_vaga(
                     destinatario_id = idealizador.id,
                     projeto_id = pessoa_projeto.projeto_id,
                     pessoa_projeto_id = pessoa_projeto.id,
-                    situacao = "<strong>Seu acordo foi finalizado!</strong><p> Clique aqui e veja seu PDF top!</p>",
+                    situacao = "<strong>Seu acordo foi finalizado!</strong> <span> Clique aqui e veja seu PDF top!</span>",
                     foto = projeto.foto_capa,
                     link = link,
                     lido = False,
@@ -182,7 +182,7 @@ def finaliza_notificacao_vaga(
                     destinatario_id = colaborador.id,
                     projeto_id = pessoa_projeto.projeto_id,
                     pessoa_projeto_id = pessoa_projeto.id,
-                    situacao = "<strong>Seu acordo foi finalizado!</strong><p> Clique aqui e veja seu PDF top!</p>",
+                    situacao = "<strong>Seu acordo foi finalizado!</strong> <span> Clique aqui e veja seu PDF top!</span>",
                     foto = projeto.foto_capa,
                     link = link,
                     lido = False,
@@ -228,8 +228,8 @@ def check_notificacao_vaga(
 
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
-            situacao = "<strong>Se liga:</strong><p> você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
-                remetente.nome + " para o projeto " + projeto.nome + ".<\p>",
+            situacao = "<strong>Se liga:</strong> <span> você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
+                remetente.nome + " para o projeto " + projeto.nome + ".</span>",
             destinatario_id = pessoa_projeto.pessoa_id
 
             filtro = db.query(models.Notificacao)\
@@ -257,7 +257,7 @@ def check_notificacao_vaga(
         elif(diff.days == 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
             situacao = "<strong>O prazo de resposta de " + \
-                remetente.nome + " expirou!</strong><p> Realize uma nova busca e complete seu time!</p>"
+                remetente.nome + " expirou!</strong> <span> Realize uma nova busca e complete seu time!</span>"
             destinatario_id = projeto.pessoa_id
 
             filtro = db.query(models.Notificacao)\
