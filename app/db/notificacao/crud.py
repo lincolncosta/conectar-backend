@@ -76,13 +76,12 @@ def create_notificacao_vaga(
 
         Saída: Esquema da notificacao criada
 
-        Exceções: 
+        Exceções: PessoaProjeto não pode gerar notificação
     '''
 
     projeto_id = pessoa_projeto.projeto_id
     projeto = get_projeto(db, projeto_id)
     pessoa = get_pessoa_by_id(db, remetente_id)
-
 
     if pessoa_projeto.situacao == "PENDENTE_IDEALIZADOR":
         situacao = "<strong>Finalize o cadastro do projeto " + \
@@ -108,16 +107,20 @@ def create_notificacao_vaga(
         destinatario_id = pessoa_projeto.pessoa_id
         foto = projeto.foto_capa
 
-
-    db_notificacao = models.Notificacao(
-        remetente_id=remetente_id,
-        destinatario_id=destinatario_id,
-        projeto_id=projeto_id,
-        pessoa_projeto_id=pessoa_projeto.id,
-        situacao=situacao,
-        foto=foto,
-        lido=False,
-    )
+    try:
+        db_notificacao = models.Notificacao(
+            remetente_id=remetente_id,
+            destinatario_id=destinatario_id,
+            projeto_id=projeto_id,
+            pessoa_projeto_id=pessoa_projeto.id,
+            situacao=situacao,
+            foto=foto,
+            lido=False,
+        )
+    except:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="Item necessário faltante")
 
     db.add(db_notificacao)
     db.commit()

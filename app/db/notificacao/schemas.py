@@ -8,8 +8,8 @@ class NotificacaoBase(BaseModel):
     projeto_id: int
     pessoa_projeto_id: int
     situacao: str
-    foto: str
-    link: str
+    foto: t.Optional[str]
+    link: t.Optional[str]
     lido: bool
 
 class NotificacaoCreate(NotificacaoBase):
@@ -29,7 +29,7 @@ class Notificacao(NotificacaoBase):
 
 class NotificacaoOut(NotificacaoBase):
     situacao: str
-    foto: str
+    foto: t.Optional[str]
     link: t.Optional[str]
 
     class Config:
