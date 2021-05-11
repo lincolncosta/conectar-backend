@@ -9,7 +9,7 @@ from db.projeto.crud import get_projeto
 from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from db.utils import similaridade
+from db.utils.similaridade import similaridade_vaga_pessoa
 
 
 def get_pessoa_projeto(
@@ -71,13 +71,7 @@ async def get_similaridade_pessoas_projeto(
 ) -> schemas.Pessoa:
 
     '''
-        Busca pessoa pelo ID
-
-        Entrada: ID
-
-        Saída: Esquema da Pessoa referente
-
-        Exceções: Não existe Pessoa correspondente ao ID inserido
+     
     '''
 
     pessoas_vagas = {}
@@ -105,22 +99,27 @@ async def get_similaridade_pessoas_projeto(
 
         # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
         pessoas = get_pessoas_by_papel(db, papel, pessoas_selecionadas)
-        habilidades_areas = []
+        
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
+            habilidades_areas_pessoa = []
             if pessoa not in similaridades_pessoa:
                 habilidades = pessoa.habilidades
                 areas = pessoa.areas
 
                 for habilidade in habilidades:
-                    habilidades_areas.append(habilidade.nome)
+                    habilidades_areas_pessoa.append(habilidade.nome)
 
                 for area in areas:
-                    habilidades_areas.append(area.descricao)
+                    habilidades_areas_pessoa.append(area.descricao)
 
-                similaridades_pessoa[pessoa] = similaridade.calcula_similaridade_vaga_pessoa(
-                    '. '.join(habilidades_areas_vaga), '. '.join(habilidades_areas))
+                similaridades_pessoa[pessoa] = similaridade_vaga_pessoa(
+                    habilidades_areas_vaga,
+                    habilidades_areas_pessoa
+                    )
+
+        ##adicionar sort by random aqui
 
         similaridades_retorno = dict(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
