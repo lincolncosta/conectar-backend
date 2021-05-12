@@ -9,7 +9,7 @@ from db.projeto.crud import get_projeto
 from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from db.utils.similaridade import similaridade_vaga_pessoa
+from db.utils.similaridade import calcula_similaridade_vaga_pessoa
 
 
 def get_pessoa_projeto(
@@ -89,7 +89,10 @@ async def get_similaridade_pessoas_projeto(
         habilidades_areas_vaga = []
 
         habilidades_projeto = vaga.habilidades
+        habilidades_projeto.sort()
+        
         areas_projeto = vaga.areas
+        areas_projeto.sort()
 
         for habilidade_projeto in habilidades_projeto:
             habilidades_areas_vaga.append(habilidade_projeto.nome)
@@ -103,10 +106,14 @@ async def get_similaridade_pessoas_projeto(
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
-            habilidades_areas_pessoa = []
             if pessoa not in similaridades_pessoa:
+                habilidades_areas_pessoa = []
+
                 habilidades = pessoa.habilidades
+                habilidades.sort()
+
                 areas = pessoa.areas
+                areas.sort()
 
                 for habilidade in habilidades:
                     habilidades_areas_pessoa.append(habilidade.nome)
@@ -114,7 +121,7 @@ async def get_similaridade_pessoas_projeto(
                 for area in areas:
                     habilidades_areas_pessoa.append(area.descricao)
 
-                similaridades_pessoa[pessoa] = similaridade_vaga_pessoa(
+                similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
                     habilidades_areas_vaga,
                     habilidades_areas_pessoa
                     )

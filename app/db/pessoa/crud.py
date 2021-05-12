@@ -164,16 +164,19 @@ def get_pessoas_by_papel(
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.aliado == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
+            .order_by(func.random())\
             .all()
     elif (papel_id == 37):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.colaborador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
+            .order_by(func.random())\
             .all()
     elif (papel_id == 38):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.idealizador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
+            .order_by(func.random())\
             .all()
 
 
