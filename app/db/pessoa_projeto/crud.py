@@ -144,7 +144,7 @@ async def get_similaridade_pessoas_projeto(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
         pessoa_selecionada = next(iter(similaridades_retorno))
-        await atualiza_match_vaga(db, vaga, pessoa_selecionada)
+        await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
 
         pessoas_vagas[vaga.id] = pessoa_selecionada
         pessoas_selecionadas.append(pessoa_selecionada.id)
@@ -155,12 +155,12 @@ async def get_similaridade_pessoas_projeto(
     return pessoas_vagas
 
 
-async def atualiza_match_vaga(db, vaga, pessoa):
+async def atualiza_match_vaga(db, vaga, pessoa, pessoa_logada):
     vagaEdit = schemas.PessoaProjetoEdit()
     vagaEdit.pessoa_id = pessoa.id
     vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
 
-    await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa)
+    await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa_logada)
 
 
 async def get_vagas_by_projeto(
@@ -241,8 +241,9 @@ async def edit_pessoa_projeto(
     db: Session,
     pessoa_projeto_id: int,
     pessoa_projeto: schemas.PessoaProjetoEdit,
-    pessoa_logada: schemas.Pessoa
+    pessoa_logada: int
 ) -> schemas.PessoaProjeto:
+
     db_pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not db_pessoa_projeto:
         raise HTTPException(
@@ -261,7 +262,7 @@ async def edit_pessoa_projeto(
     db.refresh(db_pessoa_projeto)
 
     if "situacao" in update_data.keys():
-        create_notificacao_vaga(db, pessoa_logada.id, db_pessoa_projeto)
+        create_notificacao_vaga(db, pessoa_logada, db_pessoa_projeto)
 
     return db_pessoa_projeto
 

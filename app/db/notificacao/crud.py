@@ -108,6 +108,20 @@ def create_notificacao_vaga(
         foto = projeto.foto_capa
 
     try:
+        filtro = db.query(models.Notificacao)\
+                .filter(models.Notificacao.situacao == situacao)\
+                .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                .first()
+
+        if filtro:
+            return
+
+    except:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="Item necessário faltante")
+
+    try:
         db_notificacao = models.Notificacao(
             remetente_id=remetente_id,
             destinatario_id=destinatario_id,
