@@ -7,6 +7,7 @@ from . import schemas
 from db.pessoa.crud import get_pessoa_by_id, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
 from db.notificacao.crud import create_notificacao_vaga
+from db.ignorados.crud import add_pessoa_ignorada, get_pessoa_ignorada_by_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from db.utils.similaridade import calcula_similaridade_vaga_pessoa
@@ -83,6 +84,18 @@ async def get_similaridade_pessoas_projeto(
 
     # Iterar em cada vaga, buscando o papel
     for vaga in vagas_projeto:
+
+        #ignora o dono da vaga
+        add_pessoa_ignorada(db, pessoa_logada.id, vaga.id)
+        pessoas_ignoradas = get_pessoa_ignorada_by_vaga(db, vaga.id)
+
+        pessoas_ignoradas_ids = []
+
+        for pessoa_ignorada in pessoas_ignoradas:
+            pessoas_ignoradas_ids.append(pessoa_ignorada.pessoa_id)
+
+        print(pessoas_ignoradas_ids)
+
         papel = vaga.papel_id
 
         # Extração de informações de habilidades e áreas da vaga
@@ -115,7 +128,7 @@ async def get_similaridade_pessoas_projeto(
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
-            if pessoa not in similaridades_pessoa:
+            if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_ignoradas_ids:
                 habilidades_areas_pessoa = []
 
                 habilidades = pessoa.habilidades
@@ -148,6 +161,8 @@ async def get_similaridade_pessoas_projeto(
 
         pessoas_vagas[vaga.id] = pessoa_selecionada
         pessoas_selecionadas.append(pessoa_selecionada.id)
+
+        add_pessoa_ignorada(db, pessoa_selecionada.id, vaga.id)
 
     if not pessoas:
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
