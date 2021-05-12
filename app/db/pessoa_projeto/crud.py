@@ -16,8 +16,7 @@ from db.utils.similaridade import calcula_similaridade_vaga_pessoa
 def get_pessoa_projeto(
     db: Session,
     pessoa_projeto_id: int
-    ) -> schemas.PessoaProjeto:
-
+) -> schemas.PessoaProjeto:
     '''
         Busca pessoa_projeto pelo ID
 
@@ -31,7 +30,7 @@ def get_pessoa_projeto(
     pessoa_projeto = db.query(models.PessoaProjeto)\
         .filter(models.PessoaProjeto.id == pessoa_projeto_id)\
         .first()
-    
+
     if not pessoa_projeto:
         raise HTTPException(
             status_code=404, detail="pessoa_projeto não encontrada"
@@ -42,7 +41,7 @@ def get_pessoa_projeto(
 
 async def get_all_pessoas_projeto(
     db: Session
-    ) -> t.List[schemas.PessoaProjeto]:
+) -> t.List[schemas.PessoaProjeto]:
 
     '''
         Busca todas as PessoasProjeto
@@ -56,7 +55,7 @@ async def get_all_pessoas_projeto(
 
     pessoas_projeto = db.query(models.PessoaProjeto)\
         .all()
-        
+
     if not pessoas_projeto:
         raise HTTPException(
             status_code=404, detail="Não há pessoas_projeto cadastradas"
@@ -72,7 +71,7 @@ async def get_similaridade_pessoas_projeto(
 ) -> schemas.Pessoa:
 
     '''
-     
+
     '''
 
     pessoas_vagas = {}
@@ -81,16 +80,14 @@ async def get_similaridade_pessoas_projeto(
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
     similaridades_retorno = {}
 
+    # futuramente implementar na nova tabela
+    pessoas_selecionadas = []
+
     # Iterar em cada vaga, buscando o papel
     for vaga in vagas_projeto:
 
-        #ignora o dono da vaga
-        pessoas_ignoradas = get_pessoa_ignorada_by_vaga(db, vaga.id)
-
-        pessoas_ignoradas_ids = []
-
-        for pessoa_ignorada in pessoas_ignoradas:
-            pessoas_ignoradas_ids.append(pessoa_ignorada.pessoa_id)
+        # ignora o dono da vaga
+        pessoas_ignoradas_ids = get_pessoa_ignorada_by_vaga(db, vaga.id)
 
         papel = vaga.papel_id
 
@@ -98,13 +95,13 @@ async def get_similaridade_pessoas_projeto(
         habilidades_areas_vaga = []
 
         habilidades_projeto = vaga.habilidades
-        
+
         areas_projeto = vaga.areas
 
         for habilidade_projeto in habilidades_projeto:
             habilidades_areas_vaga.append(habilidade_projeto.nome)
 
-        #organiza somente as habilidades em ordem alfabética
+        # organiza somente as habilidades em ordem alfabética
         habilidades_areas_vaga.sort()
 
         areas_vaga = []
@@ -112,24 +109,25 @@ async def get_similaridade_pessoas_projeto(
         for area_projeto in areas_projeto:
             areas_vaga.append(area_projeto.descricao)
 
-        #organiza somente as areas em ordem alfabética
+        # organiza somente as areas em ordem alfabética
         areas_vaga.sort()
 
-        #junta as áreas e habilidades 
+        # junta as áreas e habilidades
         habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
         # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
         pessoas = get_pessoas_by_papel(db, papel, pessoas_ignoradas_ids)
-        
+
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
-            if pessoa not in similaridades_pessoa:
+            print(similaridades_pessoa)
+            if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_selecionadas:
                 habilidades_areas_pessoa = []
 
                 habilidades = pessoa.habilidades
                 areas = pessoa.areas
-                
+
                 for habilidade in habilidades:
                     habilidades_areas_pessoa.append(habilidade.nome)
 
@@ -145,9 +143,9 @@ async def get_similaridade_pessoas_projeto(
                 similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
                     habilidades_areas_vaga,
                     habilidades_areas_pessoa
-                    )
+                )
 
-        ##adicionar sort by random aqui
+        # adicionar sort by random aqui
 
         similaridades_retorno = dict(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
@@ -156,8 +154,9 @@ async def get_similaridade_pessoas_projeto(
         await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
 
         pessoas_vagas[vaga.id] = pessoa_selecionada
-        
+
         add_pessoa_ignorada(db, pessoa_selecionada.id, vaga.id)
+        pessoas_selecionadas.append(pessoa_selecionada.id)
 
     if not pessoas:
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
@@ -242,7 +241,8 @@ async def create_pessoa_projeto(
     db.add(db_pessoa_projeto)
     db.commit()
     db.refresh(db_pessoa_projeto)
-    add_pessoa_ignorada(db, db_pessoa_projeto.projeto.pessoa_id, db_pessoa_projeto.id)
+    add_pessoa_ignorada(
+        db, db_pessoa_projeto.projeto.pessoa_id, db_pessoa_projeto.id)
 
     return db_pessoa_projeto
     # db_vaga = db_pessoa_projeto.__dict__

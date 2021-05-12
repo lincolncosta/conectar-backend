@@ -36,7 +36,7 @@ def get_pessoa_ignorada_by_vaga(
     pessoa_projeto_id: int
     ) -> t.List[schemas.PessoaIgnoradaVaga]:
 
-    pessoas_ignoradas = db.query(models.PessoaIgnoradaVaga)\
+    pessoas_ignoradas = db.query(models.PessoaIgnoradaVaga.pessoa_id)\
         .filter(models.PessoaIgnoradaVaga.pessoa_projeto_id == pessoa_projeto_id)\
         .all()
 

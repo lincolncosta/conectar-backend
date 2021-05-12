@@ -146,7 +146,7 @@ def get_pessoas(
 def get_pessoas_by_papel(
     db: Session,
     papel_id: int,
-    pessoas_selecionadas: t.List[schemas.Pessoa]
+    pessoas_selecionadas: t.List[int]
     ) -> t.List[schemas.Pessoa]:
 
     '''
@@ -165,19 +165,19 @@ def get_pessoas_by_papel(
             .filter(models.Pessoa.aliado == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
             .order_by(func.random())\
-            .all()
+            .distinct()
     elif (papel_id == 37):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.colaborador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
             .order_by(func.random())\
-            .all()
+            .distinct()
     elif (papel_id == 38):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.idealizador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas))\
             .order_by(func.random())\
-            .all()
+            .distinct()
 
 
 def create_pessoa(
