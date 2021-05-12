@@ -9,7 +9,7 @@ from db.projeto.crud import get_projeto
 from db.notificacao.crud import create_notificacao_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from db.utils import similaridade
+from db.utils.similaridade import calcula_similaridade_vaga_pessoa
 
 
 def get_pessoa_projeto(
@@ -71,13 +71,7 @@ async def get_similaridade_pessoas_projeto(
 ) -> schemas.Pessoa:
 
     '''
-        Busca pessoa pelo ID
-
-        Entrada: ID
-
-        Saída: Esquema da Pessoa referente
-
-        Exceções: Não existe Pessoa correspondente ao ID inserido
+     
     '''
 
     pessoas_vagas = {}
@@ -95,32 +89,56 @@ async def get_similaridade_pessoas_projeto(
         habilidades_areas_vaga = []
 
         habilidades_projeto = vaga.habilidades
+        
         areas_projeto = vaga.areas
 
         for habilidade_projeto in habilidades_projeto:
             habilidades_areas_vaga.append(habilidade_projeto.nome)
 
+        #organiza somente as habilidades em ordem alfabética
+        habilidades_areas_vaga.sort()
+
+        areas_vaga = []
+
         for area_projeto in areas_projeto:
-            habilidades_areas_vaga.append(area_projeto.descricao)
+            areas_vaga.append(area_projeto.descricao)
+
+        #organiza somente as areas em ordem alfabética
+        areas_vaga.sort()
+
+        #junta as áreas e habilidades 
+        habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
         # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
         pessoas = get_pessoas_by_papel(db, papel, pessoas_selecionadas)
-        habilidades_areas = []
+        
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
             if pessoa not in similaridades_pessoa:
+                habilidades_areas_pessoa = []
+
                 habilidades = pessoa.habilidades
                 areas = pessoa.areas
-
+                
                 for habilidade in habilidades:
-                    habilidades_areas.append(habilidade.nome)
+                    habilidades_areas_pessoa.append(habilidade.nome)
 
+                habilidades_areas_pessoa.sort()
+
+                areas_pessoa = []
                 for area in areas:
-                    habilidades_areas.append(area.descricao)
+                    areas_pessoa.append(area.descricao)
 
-                similaridades_pessoa[pessoa] = similaridade.calcula_similaridade_vaga_pessoa(
-                    '. '.join(habilidades_areas_vaga), '. '.join(habilidades_areas))
+                areas_pessoa.sort()
+                habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
+
+                similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
+                    habilidades_areas_vaga,
+                    habilidades_areas_pessoa
+                    )
+
+        ##adicionar sort by random aqui
 
         similaridades_retorno = dict(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
