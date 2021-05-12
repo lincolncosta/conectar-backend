@@ -89,16 +89,25 @@ async def get_similaridade_pessoas_projeto(
         habilidades_areas_vaga = []
 
         habilidades_projeto = vaga.habilidades
-        habilidades_projeto.sort()
         
         areas_projeto = vaga.areas
-        areas_projeto.sort()
 
         for habilidade_projeto in habilidades_projeto:
             habilidades_areas_vaga.append(habilidade_projeto.nome)
 
+        #organiza somente as habilidades em ordem alfabética
+        habilidades_areas_vaga.sort()
+
+        areas_vaga = []
+
         for area_projeto in areas_projeto:
-            habilidades_areas_vaga.append(area_projeto.descricao)
+            areas_vaga.append(area_projeto.descricao)
+
+        #organiza somente as areas em ordem alfabética
+        areas_vaga.sort()
+
+        #junta as áreas e habilidades 
+        habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
         # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
         pessoas = get_pessoas_by_papel(db, papel, pessoas_selecionadas)
@@ -110,16 +119,19 @@ async def get_similaridade_pessoas_projeto(
                 habilidades_areas_pessoa = []
 
                 habilidades = pessoa.habilidades
-                habilidades.sort()
-
                 areas = pessoa.areas
-                areas.sort()
-
+                
                 for habilidade in habilidades:
                     habilidades_areas_pessoa.append(habilidade.nome)
 
+                habilidades_areas_pessoa.sort()
+
+                areas_pessoa = []
                 for area in areas:
-                    habilidades_areas_pessoa.append(area.descricao)
+                    areas_pessoa.append(area.descricao)
+
+                areas_pessoa.sort()
+                habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
                 similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
                     habilidades_areas_vaga,
