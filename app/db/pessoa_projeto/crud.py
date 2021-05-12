@@ -79,22 +79,18 @@ async def get_similaridade_pessoas_projeto(
 
     # Com o id do projeto, buscar as vagas disponíveis
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
-    pessoas_selecionadas = [pessoa_logada.id]
     similaridades_retorno = {}
 
     # Iterar em cada vaga, buscando o papel
     for vaga in vagas_projeto:
 
         #ignora o dono da vaga
-        add_pessoa_ignorada(db, pessoa_logada.id, vaga.id)
         pessoas_ignoradas = get_pessoa_ignorada_by_vaga(db, vaga.id)
 
         pessoas_ignoradas_ids = []
 
         for pessoa_ignorada in pessoas_ignoradas:
             pessoas_ignoradas_ids.append(pessoa_ignorada.pessoa_id)
-
-        print(pessoas_ignoradas_ids)
 
         papel = vaga.papel_id
 
@@ -123,12 +119,12 @@ async def get_similaridade_pessoas_projeto(
         habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
         # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
-        pessoas = get_pessoas_by_papel(db, papel, pessoas_selecionadas)
+        pessoas = get_pessoas_by_papel(db, papel, pessoas_ignoradas_ids)
         
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
-            if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_ignoradas_ids:
+            if pessoa not in similaridades_pessoa:
                 habilidades_areas_pessoa = []
 
                 habilidades = pessoa.habilidades
@@ -160,8 +156,7 @@ async def get_similaridade_pessoas_projeto(
         await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
 
         pessoas_vagas[vaga.id] = pessoa_selecionada
-        pessoas_selecionadas.append(pessoa_selecionada.id)
-
+        
         add_pessoa_ignorada(db, pessoa_selecionada.id, vaga.id)
 
     if not pessoas:
@@ -170,12 +165,12 @@ async def get_similaridade_pessoas_projeto(
     return pessoas_vagas
 
 
-async def atualiza_match_vaga(db, vaga, pessoa, pessoa_logada):
+async def atualiza_match_vaga(db, vaga, pessoa, pessoa_logada_id):
     vagaEdit = schemas.PessoaProjetoEdit()
     vagaEdit.pessoa_id = pessoa.id
     vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
 
-    await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa_logada)
+    await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa_logada_id)
 
 
 async def get_vagas_by_projeto(
@@ -211,7 +206,8 @@ async def get_pessoa_projeto_by_projeto(
 
 
 async def create_pessoa_projeto(
-    db: Session, pessoa_projeto: schemas.PessoaProjetoCreate
+    db: Session,
+    pessoa_projeto: schemas.PessoaProjetoCreate
 ) -> schemas.PessoaProjeto:
 
     try:
@@ -246,6 +242,7 @@ async def create_pessoa_projeto(
     db.add(db_pessoa_projeto)
     db.commit()
     db.refresh(db_pessoa_projeto)
+    add_pessoa_ignorada(db, db_pessoa_projeto.projeto.pessoa_id, db_pessoa_projeto.id)
 
     return db_pessoa_projeto
     # db_vaga = db_pessoa_projeto.__dict__
@@ -256,7 +253,7 @@ async def edit_pessoa_projeto(
     db: Session,
     pessoa_projeto_id: int,
     pessoa_projeto: schemas.PessoaProjetoEdit,
-    pessoa_logada: int
+    pessoa_logada_id: int
 ) -> schemas.PessoaProjeto:
 
     db_pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
@@ -277,7 +274,7 @@ async def edit_pessoa_projeto(
     db.refresh(db_pessoa_projeto)
 
     if "situacao" in update_data.keys():
-        create_notificacao_vaga(db, pessoa_logada, db_pessoa_projeto)
+        create_notificacao_vaga(db, pessoa_logada_id, db_pessoa_projeto)
 
     return db_pessoa_projeto
 

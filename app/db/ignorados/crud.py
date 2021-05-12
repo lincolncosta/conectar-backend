@@ -77,9 +77,9 @@ def add_pessoa_ignorada(
     return db_pessoa_ignorada
 
 
-def delete_pessoa_ignorada(
+def delete_pessoa_ignorada_by_vaga(
     db: Session,
-    pessoa_ignorada_id: int
+    pessoa_projeto_id: int
     ):
 
     '''
@@ -92,9 +92,10 @@ def delete_pessoa_ignorada(
         Exceções: pessoa_ignorada não encontrada
     '''
 
-    pessoa_ignorada = get_pessoa_ignorada_by_id(db, pessoa_ignorada_id)
+    pessoas_ignoradas = get_pessoa_ignorada_by_vaga(db, pessoa_projeto_id)
     
-    db.delete(pessoa_ignorada)
-    db.commit()
+    for pessoa_ignorada in pessoas_ignoradas:
+        db.delete(pessoa_ignorada)
+        db.commit()
 
-    return pessoa_ignorada
+    return pessoas_ignoradas
