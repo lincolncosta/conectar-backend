@@ -8,7 +8,7 @@ from app.db.notificacao import schemas
 from app.db.pessoa_projeto.schemas import PessoaProjeto
 from app.db.pessoa.crud import get_pessoa_by_id
 from app.db.projeto.crud import get_projeto
-from app.db.ignorados.crud import delete_pessoa_ignorada_by_vaga
+from app.db.ignorados.crud import delete_pessoas_ignoradas_by_vaga
 from app.db.utils.pdfs import createPDF
 
 
@@ -282,7 +282,7 @@ def notificacao_finalizado(
 
     notificacao.append(db_notificacao)
 
-    delete_pessoa_ignorada_by_vaga(db, pessoa_projeto.id)
+    delete_pessoas_ignoradas_by_vaga(db, pessoa_projeto.id)
 
     return notificacao
 

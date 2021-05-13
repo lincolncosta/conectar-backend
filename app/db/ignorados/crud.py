@@ -42,7 +42,7 @@ def get_ids_pessoa_ignorada_by_vaga(
 
     return pessoas_ignoradas_ids
 
-def get_pessoa_ignorada_by_vaga(
+def get_pessoas_ignoradas_by_vaga(
     db: Session,
     pessoa_projeto_id: int
     ) -> t.List[schemas.PessoaIgnoradaVaga]:
@@ -88,7 +88,7 @@ def add_pessoa_ignorada(
     return db_pessoa_ignorada
 
 
-def delete_pessoa_ignorada_by_vaga(
+def delete_pessoas_ignoradas_by_vaga(
     db: Session,
     pessoa_projeto_id: int
     ):
@@ -103,7 +103,7 @@ def delete_pessoa_ignorada_by_vaga(
         Exceções: pessoa_ignorada não encontrada
     '''
 
-    pessoas_ignoradas = get_pessoa_ignorada_by_vaga(db, pessoa_projeto_id)
+    pessoas_ignoradas = get_pessoas_ignoradas_by_vaga(db, pessoa_projeto_id)
     
     for pessoa_ignorada in pessoas_ignoradas:
         db.delete(pessoa_ignorada)
