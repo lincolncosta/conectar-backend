@@ -183,7 +183,7 @@ client = TestClient(app)
 @repeat_every(seconds=60*60*24)
 def test_read_main():
     print("Verificação Diária")
-    client.post("api/v1/notificacao/check")
+    client.post("api/v1/notificacao/checagem")
 
 
 if __name__ == "__main__":
