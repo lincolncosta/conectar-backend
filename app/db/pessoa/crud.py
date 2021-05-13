@@ -148,7 +148,7 @@ def get_pessoas_by_papel(
     papel_id: int,
     pessoas_selecionadas_ids: t.List[int]
     ) -> t.List[schemas.Pessoa]:
-8
+
     '''
         Busca pessoas pelo papel
 
