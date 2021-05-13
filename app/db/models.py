@@ -501,6 +501,15 @@ class TipoAcordo(Base):
     pessoa_projeto = relationship("PessoaProjeto", back_populates="tipo_acordo")
 
 
+class PessoaIgnoradaVaga(Base):
+
+    __tablename__ = "tb_pessoa_ignorada_vaga"
+
+    id = Column(Integer, primary_key=True, index=True)
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
+
+
 class Reacoes(Base):
     """
     Represents table "tb_reacoes"
