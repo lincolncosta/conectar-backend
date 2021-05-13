@@ -6,8 +6,12 @@ from db import models
 from . import schemas
 from db.pessoa.crud import get_pessoa_by_id, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
-from db.notificacao.crud import create_notificacao_vaga
-from db.ignorados.crud import add_pessoa_ignorada, get_pessoa_ignorada_by_vaga
+from db.notificacao.crud import (
+    notificacao_pendente_colaborador,
+    notificacao_aceito_recusado,
+    notificacao_finalizado
+    )
+from db.ignorados.crud import add_pessoa_ignorada, get_ids_pessoa_ignorada_by_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from db.utils.similaridade import calcula_similaridade_vaga_pessoa
@@ -87,7 +91,7 @@ async def get_similaridade_pessoas_projeto(
     for vaga in vagas_projeto:
 
         # ignora o dono da vaga
-        pessoas_ignoradas_ids = get_pessoa_ignorada_by_vaga(db, vaga.id)
+        pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga.id)
 
         papel = vaga.papel_id
 
@@ -121,7 +125,6 @@ async def get_similaridade_pessoas_projeto(
         similaridades_pessoa = {}
 
         for pessoa in pessoas:
-            print(similaridades_pessoa)
             if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_selecionadas:
                 habilidades_areas_pessoa = []
 
@@ -164,17 +167,27 @@ async def get_similaridade_pessoas_projeto(
     return pessoas_vagas
 
 
-async def atualiza_match_vaga(db, vaga, pessoa, pessoa_logada_id):
+async def atualiza_match_vaga(
+    db: Session,
+    vaga: schemas.PessoaProjeto,
+    pessoa: schemas.Pessoa,
+    pessoa_logada_id: int
+):
+
+    '''
+    Insere a pessoa selecionada na vaga respectiva E 
+    altera a situação para pendente_idealizador
+    '''
     vagaEdit = schemas.PessoaProjetoEdit()
-    vagaEdit.pessoa_id = pessoa.id
     vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
+    vagaEdit.pessoa_id = pessoa.id
 
     await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa_logada_id)
 
 
 async def get_vagas_by_projeto(
-    db: Session, id_projeto: int
-
+    db: Session,
+    id_projeto: int,
 ) -> t.List[schemas.PessoaProjeto]:
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
@@ -274,12 +287,21 @@ async def edit_pessoa_projeto(
     db.refresh(db_pessoa_projeto)
 
     if "situacao" in update_data.keys():
-        create_notificacao_vaga(db, pessoa_logada_id, db_pessoa_projeto)
+        if update_data["situacao"] == "PENDENTE_COLABORADOR":
+            notificacao_pendente_colaborador(db, pessoa_logada_id, db_pessoa_projeto)
+        elif update_data["situacao"] == "ACEITO" or update_data["situacao"] == "RECUSADO":
+            notificacao_aceito_recusado(db, pessoa_logada_id, db_pessoa_projeto)
+        elif update_data["situacao"] == "FINALIZADO":
+            notificacao_finalizado(db, db_pessoa_projeto)
 
     return db_pessoa_projeto
 
 
-def delete_pessoa_projeto(db: Session, pessoa_projeto_id: int):
+def delete_pessoa_projeto(
+    db: Session,
+    pessoa_projeto_id: int
+):
+
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
     if not pessoa_projeto:
         raise HTTPException(

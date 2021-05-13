@@ -31,12 +31,23 @@ def get_pessoa_ignorada_by_id(
     return pessoa_ignorada
 
 
+def get_ids_pessoa_ignorada_by_vaga(
+    db: Session,
+    pessoa_projeto_id: int
+    ) -> t.List[int]:
+
+    pessoas_ignoradas_ids = db.query(models.PessoaIgnoradaVaga.pessoa_id)\
+        .filter(models.PessoaIgnoradaVaga.pessoa_projeto_id == pessoa_projeto_id)\
+        .all()
+
+    return pessoas_ignoradas_ids
+
 def get_pessoa_ignorada_by_vaga(
     db: Session,
     pessoa_projeto_id: int
     ) -> t.List[schemas.PessoaIgnoradaVaga]:
 
-    pessoas_ignoradas = db.query(models.PessoaIgnoradaVaga.pessoa_id)\
+    pessoas_ignoradas = db.query(models.PessoaIgnoradaVaga)\
         .filter(models.PessoaIgnoradaVaga.pessoa_projeto_id == pessoa_projeto_id)\
         .all()
 

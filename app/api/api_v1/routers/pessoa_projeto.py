@@ -150,7 +150,7 @@ async def pessoa_projeto_edit(
     Update pessoa_projeto
     """
 
-    return await edit_pessoa_projeto(db, pessoa_projeto_id, pessoa_projeto, pessoa)
+    return await edit_pessoa_projeto(db, pessoa_projeto_id, pessoa_projeto, pessoa.id)
 
 
 @r.delete(
