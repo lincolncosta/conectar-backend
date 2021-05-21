@@ -184,6 +184,7 @@ client = TestClient(app)
 def test_read_main():
     print("Verificação Diária")
     client.post("api/v1/notificacao/checagem")
+    client.post("api/v1/notificacao/pendente_idealizador")
 
 
 if __name__ == "__main__":
