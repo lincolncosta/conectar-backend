@@ -190,9 +190,9 @@ async def get_vagas_by_projeto(
     id_projeto: int,
 ) -> t.List[schemas.PessoaProjeto]:
     pessoa_projeto = (
-        db.query(models.PessoaProjeto)
-        .filter(models.PessoaProjeto.projeto_id == id_projeto)
-        .filter(models.PessoaProjeto.pessoa_id == None)
+        db.query(models.PessoaProjeto)\
+        .filter(models.PessoaProjeto.projeto_id == id_projeto)\
+        .filter(models.PessoaProjeto.pessoa_id == None)\
         .all()
     )
     if not pessoa_projeto:

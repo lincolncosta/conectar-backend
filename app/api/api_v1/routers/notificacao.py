@@ -10,6 +10,7 @@ from app.db.notificacao.crud import (
     notificacao_finalizado,
     notificacao_checagem,
     get_notificacao_by_destinatario,
+    get_notificacao_lida_by_destinatario,
     get_notificacao_by_id,
     edit_notificacao,
     delete_notificacao,
@@ -30,23 +31,18 @@ notificacao_router = r = APIRouter()
 
 @r.post(
     "/notificacao/pendente_idealizador",
-    response_model=NotificacaoCreate,
+    response_model=t.List[Notificacao],
     response_model_exclude_none=True,
 )
 async def pendente_idealizador_notificacao(
     request: Request,
-    pessoa_projeto_id: int,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Create notificacao to pendente idealizador
     """
 
-    pessoaProjeto = get_pessoa_projeto(db, pessoa_projeto_id)
-
-    notificacao = notificacao_pendente_idealizador(
-        db, current_pessoa.id, pessoaProjeto)
+    notificacao = notificacao_pendente_idealizador(db)
 
     return notificacao
 
@@ -173,6 +169,25 @@ async def get_notificacao_destinatario(
     """
 
     notificacao = get_notificacao_by_destinatario(db, destinatario_id)
+
+    return notificacao
+
+@r.get(
+    "/notificacao/destinatario/lidas",
+    response_model=t.List[Notificacao],
+    response_model_exclude_none=True,
+)
+async def get_notificacao_lida_destinatario(
+    request: Request,
+    destinatario_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get any notificacao lida details by destinatario
+    """
+
+    notificacao = get_notificacao_lida_by_destinatario(db, destinatario_id)
 
     return notificacao
 
