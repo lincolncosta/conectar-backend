@@ -22,7 +22,7 @@ class PDF(FPDF):
 
     def header(self):
         self.set_margins(20, 20, 20)
-        self.image('app/db/utils/logoConectar.png', x=20, y=15, w=50)
+        self.image('app/logoConectar.png', x=20, y=15, w=50)
         self.set_font("Arial", size=28)
 
     def footer(self):

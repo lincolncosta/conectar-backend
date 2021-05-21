@@ -61,53 +61,87 @@ def get_notificacao_by_destinatario(
 
     return notificacao
 
-
-def notificacao_pendente_idealizador(
+def get_notificacao_lida_by_destinatario(
     db: Session,
-    idealizador_id: int,
-    pessoa_projeto: PessoaProjeto
+    destinatario_id: int
 ):
     '''
-        Cria uma notificacao baseada na situacao PENDENTE_IDEALIZADOR da PessoaProjeto
+        Busca uma notificacao a partir do ID do destinatario e se foi lida
 
-        Entrada: Esquema de PessoaProjeto, ID do idealizador
+        Entrada: ID
 
-        Saída: Esquemas da notificaca criada
+        Saída: Esquema da notificacao correspondente
 
-        Exceções: PessoaProjeto não pendente_idealizador
-                  Item Necessário faltante
+        Exceções: Não existe notificacao correspondente ao ID inserido
     '''
 
-    if (pessoa_projeto.situacao != "PENDENTE_IDEALIZADOR"):
+    notificacao = db.query(models.Notificacao)\
+                    .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                    .filter(models.Notificacao.lido == False)\
+                    .all()
+
+    if not notificacao:
         raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            detail="PessoaProjeto não pendente_idealizador",
-        )
+            status_code=404, detail="notificacao não encontrada")
 
-    projeto_id = pessoa_projeto.projeto_id
-    projeto = get_projeto(db, projeto_id)
+    return notificacao
 
-    try:
-        db_notificacao = models.Notificacao(
-            remetente_id=idealizador_id,
-            destinatario_id=idealizador_id,
-            projeto_id=projeto_id,
-            pessoa_projeto_id=pessoa_projeto.id,
-            situacao="<strong>Finalize o cadastro do projeto "\
-                     + projeto.nome + "</strong> e encontre o time ideal",
-            foto=projeto.foto_capa,
-            lido=False,
-        )
-    except:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            detail="Item necessário faltante")
 
-    db.add(db_notificacao)
-    db.commit()
-    db.refresh(db_notificacao)
+def notificacao_pendente_idealizador(
+    db: Session
+):
+    '''
+        Cria notificacoes periodicamente para PessoaProjetos com situacao PENDENTE_IDEALIZADOR
 
-    return db_notificacao
+        Entrada:
+
+        Saída: lista de Esquemas das notificacoes criadas
+
+        Exceções: Item Necessário Faltante
+    '''
+
+
+    pessoa_projetos = db.query(models.PessoaProjeto)\
+        .filter(models.PessoaProjeto.situacao == "PENDENTE_IDEALIZADOR")\
+        .all()
+
+    #garante que somente uma notificacao será enviada para cada projeto
+    projetos = []
+
+    notificacao = []
+
+    for pessoa_projeto in pessoa_projetos:
+        if pessoa_projeto.projeto_id in projetos:
+            continue
+
+        projeto_id = pessoa_projeto.projeto_id
+        projeto = get_projeto(db, projeto_id)
+
+        projetos.append(pessoa_projeto.projeto_id)
+
+        try:
+            db_notificacao = models.Notificacao(
+                remetente_id=projeto.pessoa_id,
+                destinatario_id=projeto.pessoa_id,
+                projeto_id=projeto_id,
+                pessoa_projeto_id=pessoa_projeto.id,
+                situacao="<strong>Existem pessoas a serem avaliadas para o projeto "\
+                        + projeto.nome + "</strong>. Dê uma olhada!",
+                foto=projeto.foto_capa,
+                lido=False,
+            )
+        except:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                detail="Item necessário faltante")
+
+        db.add(db_notificacao)
+        db.commit()
+        db.refresh(db_notificacao)
+
+        notificacao.append(db_notificacao)
+
+    return notificacao
 
 
 def notificacao_pendente_colaborador(
