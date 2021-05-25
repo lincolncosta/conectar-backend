@@ -261,13 +261,14 @@ class Notificacao(Base):
     remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
+    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
     situacao = Column(String, nullable = False)
     link = Column(String, nullable = True)
     foto = Column(String, nullable = True)
     lido = Column(Boolean, nullable = False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_visualizacao = Column(DateTime(timezone=True), onupdate=func.now())
+
 
 class ExperienciaProf(Base):
     """
@@ -507,7 +508,8 @@ class PessoaIgnoradaVaga(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id"))
+    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
+    
 
 
 class Reacoes(Base):
