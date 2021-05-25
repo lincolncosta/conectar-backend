@@ -4,13 +4,16 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.notificacao.crud import (
-    create_notificacao_vaga,
-    check_notificacao_vaga,
+    notificacao_pendente_idealizador,
+    notificacao_pendente_colaborador,
+    notificacao_aceito_recusado,
+    notificacao_finalizado,
+    notificacao_checagem,
     get_notificacao_by_destinatario,
+    get_notificacao_lida_by_destinatario,
     get_notificacao_by_id,
     edit_notificacao,
     delete_notificacao,
-    finaliza_notificacao_vaga,
 )
 from app.db.notificacao.schemas import (
     Notificacao,
@@ -27,34 +30,75 @@ notificacao_router = r = APIRouter()
 
 
 @r.post(
-    "/notificacao",
+    "/notificacao/pendente_idealizador",
+    response_model=t.List[Notificacao],
+    response_model_exclude_none=True,
+)
+async def pendente_idealizador_notificacao(
+    request: Request,
+    db=Depends(get_db)
+):
+    """
+    Create notificacao to pendente idealizador
+    """
+
+    notificacao = notificacao_pendente_idealizador(db)
+
+    return notificacao
+
+
+@r.post(
+    "/notificacao/pendente_colaborador",
     response_model=NotificacaoCreate,
     response_model_exclude_none=True,
 )
-async def notificacao_create_vaga(
+async def pendente_colaborador_notificacao(
     request: Request,
     pessoa_projeto_id: int,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
-    Create notificacao
+    Create notificacao to pendente colaborador
     """
-
 
     pessoaProjeto = get_pessoa_projeto(db, pessoa_projeto_id)
 
-    notificacao = create_notificacao_vaga(db, current_pessoa.id, pessoaProjeto)
+    notificacao = notificacao_pendente_colaborador(
+        db, current_pessoa.id, pessoaProjeto)
 
     return notificacao
 
 
 @r.post(
-    "/notificacao/finaliza",
+    "/notificacao/aceito_recusado",
+    response_model=NotificacaoCreate,
+    response_model_exclude_none=True,
+)
+async def aceito_recusado_notificacao(
+    request: Request,
+    pessoa_projeto_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Create notificacao to pendente colaborador
+    """
+
+    pessoaProjeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
+    notificacao = notificacao_aceito_recusado(
+        db, current_pessoa.id, pessoaProjeto)
+
+    return notificacao
+
+
+@r.post(
+    "/notificacao/finalizado",
     response_model=t.List[Notificacao],
     response_model_exclude_none=True,
 )
-async def notificacao_finaliza_vaga(
+async def finalizado_notificacao(
     request: Request,
     pessoa_projeto_id: int,
     db=Depends(get_db),
@@ -66,18 +110,17 @@ async def notificacao_finaliza_vaga(
 
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
 
-    notificacao = finaliza_notificacao_vaga(db, pessoa_projeto)
-
+    notificacao = notificacao_finalizado(db, pessoa_projeto)
 
     return notificacao
 
 
 @r.post(
-    "/notificacao/check",
+    "/notificacao/checagem",
     response_model=t.List[Notificacao],
     response_model_exclude_none=True,
 )
-async def notificacao_checagem(
+async def checagem_notificacao(
     request: Request,
     db=Depends(get_db)
 ):
@@ -85,7 +128,7 @@ async def notificacao_checagem(
     Create notificacao
     """
 
-    notificacao = check_notificacao_vaga(db)
+    notificacao = notificacao_checagem(db)
 
     return notificacao
 
@@ -126,6 +169,25 @@ async def get_notificacao_destinatario(
     """
 
     notificacao = get_notificacao_by_destinatario(db, destinatario_id)
+
+    return notificacao
+
+@r.get(
+    "/notificacao/destinatario/lidas",
+    response_model=t.List[Notificacao],
+    response_model_exclude_none=True,
+)
+async def get_notificacao_lida_destinatario(
+    request: Request,
+    destinatario_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get any notificacao lida details by destinatario
+    """
+
+    notificacao = get_notificacao_lida_by_destinatario(db, destinatario_id)
 
     return notificacao
 

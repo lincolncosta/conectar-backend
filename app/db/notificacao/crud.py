@@ -8,14 +8,14 @@ from app.db.notificacao import schemas
 from app.db.pessoa_projeto.schemas import PessoaProjeto
 from app.db.pessoa.crud import get_pessoa_by_id
 from app.db.projeto.crud import get_projeto
-from app.db.utils.pdfs import createPDF 
+from app.db.ignorados.crud import delete_pessoas_ignoradas_by_vaga
+from app.db.utils.pdfs import createPDF
 
 
 def get_notificacao_by_id(
     db: Session,
     notificacao_id: int
-    ):
-
+):
     '''
         Busca uma notificacao a partir do ID da mesma
 
@@ -40,8 +40,7 @@ def get_notificacao_by_id(
 def get_notificacao_by_destinatario(
     db: Session,
     destinatario_id: int
-    ):
-
+):
     '''
         Busca uma notificacao a partir do ID do destinatario
 
@@ -62,62 +61,131 @@ def get_notificacao_by_destinatario(
 
     return notificacao
 
-
-def create_notificacao_vaga(
+def get_notificacao_lida_by_destinatario(
     db: Session,
-    remetente_id: int,
+    destinatario_id: int
+):
+    '''
+        Busca uma notificacao a partir do ID do destinatario e se foi lida
+
+        Entrada: ID
+
+        Saída: Esquema da notificacao correspondente
+
+        Exceções: Não existe notificacao correspondente ao ID inserido
+    '''
+
+    notificacao = db.query(models.Notificacao)\
+                    .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                    .filter(models.Notificacao.lido == False)\
+                    .all()
+
+    if not notificacao:
+        raise HTTPException(
+            status_code=404, detail="notificacao não encontrada")
+
+    return notificacao
+
+
+def notificacao_pendente_idealizador(
+    db: Session
+):
+    '''
+        Cria notificacoes periodicamente para PessoaProjetos com situacao PENDENTE_IDEALIZADOR
+
+        Entrada:
+
+        Saída: lista de Esquemas das notificacoes criadas
+
+        Exceções: Item Necessário Faltante
+    '''
+
+
+    pessoa_projetos = db.query(models.PessoaProjeto)\
+        .filter(models.PessoaProjeto.situacao == "PENDENTE_IDEALIZADOR")\
+        .all()
+
+    #garante que somente uma notificacao será enviada para cada projeto
+    projetos = []
+
+    notificacao = []
+
+    for pessoa_projeto in pessoa_projetos:
+        if pessoa_projeto.projeto_id in projetos:
+            continue
+
+        projeto_id = pessoa_projeto.projeto_id
+        projeto = get_projeto(db, projeto_id)
+
+        projetos.append(pessoa_projeto.projeto_id)
+
+        try:
+            db_notificacao = models.Notificacao(
+                remetente_id=projeto.pessoa_id,
+                destinatario_id=projeto.pessoa_id,
+                projeto_id=projeto_id,
+                pessoa_projeto_id=pessoa_projeto.id,
+                situacao="<strong>Existem pessoas a serem avaliadas para o projeto "\
+                        + projeto.nome + "</strong>. Dê uma olhada!",
+                foto=projeto.foto_capa,
+                lido=False,
+            )
+        except:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                detail="Item necessário faltante")
+
+        db.add(db_notificacao)
+        db.commit()
+        db.refresh(db_notificacao)
+
+        notificacao.append(db_notificacao)
+
+    return notificacao
+
+
+def notificacao_pendente_colaborador(
+    db: Session,
+    idealizador_id: int,
     pessoa_projeto: PessoaProjeto
-    ):
-
+):
     '''
-        Cria uma notificacao baseada na situação de PessoaProjeto
+        Cria uma notificacao baseada na situacao PENDENTE_COLABORADOR da PessoaProjeto
 
-        Entrada: ID, esquema de PessoaProjeto
+        Entrada: Esquema de PessoaProjeto, ID do idealizador
 
-        Saída: Esquema da notificacao criada
+        Saída: Esquemas da notificaca criada
 
-        Exceções: 
+        Exceções: PessoaProjeto não pendente_colaborador
+                  Item Necessário faltante
     '''
+
+    if (pessoa_projeto.situacao != "PENDENTE_COLABORADOR"):
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="PessoaProjeto não pendente_colaborador",
+        )
 
     projeto_id = pessoa_projeto.projeto_id
     projeto = get_projeto(db, projeto_id)
-    pessoa = get_pessoa_by_id(db, remetente_id)
+    idealizador = get_pessoa_by_id(db, idealizador_id)
 
-
-    if pessoa_projeto.situacao == "PENDENTE_IDEALIZADOR":
-        situacao = "<strong>Finalize o cadastro do projeto " + \
-            projeto.nome + "</strong><p> e encontre o time ideal</p>"
-        destinatario_id = remetente_id
-        foto = projeto.foto_capa
-
-    elif pessoa_projeto.situacao == "RECUSADO":
-        situacao = "<strong>" + pessoa.nome + " recusou seu convite</strong><p> para o projeto " + \
-            projeto.nome + ". Realize uma nova busca</p>"
-        destinatario_id = projeto.pessoa_id
-        foto = pessoa.foto_perfil
-
-    elif pessoa_projeto.situacao == "ACEITO":
-        situacao = "<strong>" + pessoa.nome + " aceitou seu convite</strong><p> para o projeto " + \
-            projeto.nome + ". Finalize o acordo e preencha essa vaga!</p>"
-        destinatario_id = projeto.pessoa_id
-        foto = pessoa.foto_perfil
-
-    elif pessoa_projeto.situacao == "PENDENTE_COLABORADOR":
-        situacao = "<strong>" + pessoa.nome + " te fez um convite</strong><p> para o projeto " + \
-            projeto.nome + ". Confira!</p>"
-        destinatario_id = pessoa_projeto.pessoa_id
-        foto = projeto.foto_capa
-
-
-    db_notificacao = models.Notificacao(
-        remetente_id=remetente_id,
-        destinatario_id=destinatario_id,
-        projeto_id=projeto_id,
-        pessoa_projeto_id=pessoa_projeto.id,
-        situacao=situacao,
-        foto=foto,
-        lido=False,
-    )
+    try:
+        db_notificacao = models.Notificacao(
+            remetente_id=idealizador_id,
+            destinatario_id=pessoa_projeto.pessoa_id,
+            projeto_id=projeto_id,
+            pessoa_projeto_id=pessoa_projeto.id,
+            situacao="<strong>" + idealizador.nome +\
+                " te fez um convite</strong> para o projeto " + \
+                projeto.nome + ". Confira!",
+            foto=projeto.foto_capa,
+            lido=False,
+        )
+    except:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="Item necessário faltante")
 
     db.add(db_notificacao)
     db.commit()
@@ -126,11 +194,68 @@ def create_notificacao_vaga(
     return db_notificacao
 
 
-def finaliza_notificacao_vaga(
+def notificacao_aceito_recusado(
+    db: Session,
+    colaborador_id: int,
+    pessoa_projeto: PessoaProjeto
+):
+    '''
+        Cria uma notificacao baseada na situação de PessoaProjeto
+
+        Entrada: ID do remetente, esquema de PessoaProjeto
+
+        Saída: Esquema da notificacao criada
+
+        Exceções: PessoaProjeto não recusado/aceito
+                  Item Necessário faltante
+    '''
+
+    if pessoa_projeto.situacao != "RECUSADO" and pessoa_projeto.situacao != "ACEITO":
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="PessoaProjeto não recusado/aceito",
+        )
+
+    projeto_id = pessoa_projeto.projeto_id
+    projeto = get_projeto(db, projeto_id)
+    colaborador = get_pessoa_by_id(db, colaborador_id)
+
+    if pessoa_projeto.situacao == "RECUSADO":
+        situacao = "<strong>" + colaborador.nome + \
+            " recusou seu convite</strong>  para o projeto " + \
+            projeto.nome + ". Realize uma nova busca."
+
+    elif pessoa_projeto.situacao == "ACEITO":
+        situacao = "<strong>" + colaborador.nome + \
+            " aceitou seu convite</strong> para o projeto " + \
+            projeto.nome + ". Finalize o acordo e preencha essa vaga!"
+
+    try:
+        db_notificacao = models.Notificacao(
+            remetente_id=colaborador_id,
+            destinatario_id=projeto.pessoa_id,
+            projeto_id=projeto_id,
+            pessoa_projeto_id=pessoa_projeto.id,
+            situacao=situacao,
+            foto=colaborador.foto_perfil,
+            lido=False,
+        )
+    except:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="Item necessário faltante")
+
+    db.add(db_notificacao)
+    db.commit()
+    db.refresh(db_notificacao)
+
+    return db_notificacao
+
+
+def notificacao_finalizado(
     db: Session,
     pessoa_projeto: PessoaProjeto
-    ):
-
+):
     '''
         Cria uma notificacao baseada na situacao FINALIZADO da PessoaProjeto
 
@@ -155,49 +280,50 @@ def finaliza_notificacao_vaga(
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
     idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
 
-    #notificacao idealizador
+    # notificacao idealizador
     db_notificacao = models.Notificacao(
-                    remetente_id = colaborador.id,
-                    destinatario_id = idealizador.id,
-                    projeto_id = pessoa_projeto.projeto_id,
-                    pessoa_projeto_id = pessoa_projeto.id,
-                    situacao = "<strong>Seu acordo foi finalizado!</strong><p> Clique aqui e veja seu PDF top!</p>",
-                    foto = projeto.foto_capa,
-                    link = link,
-                    lido = False,
-                    )
-                    
+        remetente_id=colaborador.id,
+        destinatario_id=idealizador.id,
+        projeto_id=pessoa_projeto.projeto_id,
+        pessoa_projeto_id=pessoa_projeto.id,
+        situacao="<strong>Seu acordo foi finalizado!</strong> Clique aqui e veja seu PDF top!",
+        foto=projeto.foto_capa,
+        link=link,
+        lido=False,
+    )
+
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
 
     notificacao.append(db_notificacao)
 
-    #notificacao colab
+    # notificacao colab
     db_notificacao = models.Notificacao(
-                    remetente_id = idealizador.id,
-                    destinatario_id = colaborador.id,
-                    projeto_id = pessoa_projeto.projeto_id,
-                    pessoa_projeto_id = pessoa_projeto.id,
-                    situacao = "<strong>Seu acordo foi finalizado!</strong><p> Clique aqui e veja seu PDF top!</p>",
-                    foto = projeto.foto_capa,
-                    link = link,
-                    lido = False,
-                    )
+        remetente_id=idealizador.id,
+        destinatario_id=colaborador.id,
+        projeto_id=pessoa_projeto.projeto_id,
+        pessoa_projeto_id=pessoa_projeto.id,
+        situacao="<strong>Seu acordo foi finalizado!</strong> aqui e veja seu PDF top!",
+        foto=projeto.foto_capa,
+        link=link,
+        lido=False,
+    )
 
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
 
     notificacao.append(db_notificacao)
+
+    delete_pessoas_ignoradas_by_vaga(db, pessoa_projeto.id)
 
     return notificacao
 
 
-def check_notificacao_vaga(
+def notificacao_checagem(
     db: Session
-    ):
-
+):
     '''
         Cria notificacoes periodicamente para PessoaProjetos com situacao PENDENTE_COLABORADOR
 
@@ -218,15 +344,16 @@ def check_notificacao_vaga(
 
     for pessoa_projeto in pessoa_projetos:
         projeto = get_projeto(db, pessoa_projeto.projeto_id)
-        att_str = datetime.strftime(pessoa_projeto.data_atualizacao, "%Y-%m-%d")
+        att_str = datetime.strftime(
+            pessoa_projeto.data_atualizacao, "%Y-%m-%d")
         att = datetime.strptime(att_str, "%Y-%m-%d")
 
         diff = hoje - att
 
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
-            situacao = "<strong>Se liga:</strong><p> você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
-                remetente.nome + " para o projeto " + projeto.nome + ".<\p>",
+            situacao = "<strong>Se liga:</strong> você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
+                remetente.nome + " para o projeto " + projeto.nome + ".",
             destinatario_id = pessoa_projeto.pessoa_id
 
             filtro = db.query(models.Notificacao)\
@@ -254,7 +381,7 @@ def check_notificacao_vaga(
         elif(diff.days == 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
             situacao = "<strong>O prazo de resposta de " + \
-                remetente.nome + " expirou!</strong><p> Realize uma nova busca e complete seu time!</p>"
+                remetente.nome + " expirou!</strong> Realize uma nova busca e complete seu time!"
             destinatario_id = projeto.pessoa_id
 
             filtro = db.query(models.Notificacao)\
@@ -286,8 +413,7 @@ def edit_notificacao(
     db: Session,
     notificacao_id: int,
     notificacao: schemas.NotificacaoEdit
-    ) -> schemas.Notificacao:
-
+) -> schemas.Notificacao:
     '''
         Edita notificacao 
 
@@ -315,8 +441,7 @@ def edit_notificacao(
 def delete_notificacao(
     db: Session,
     notificacao_id: int
-    ):
-
+):
     '''
         Deleta notificacao 
 
@@ -328,7 +453,7 @@ def delete_notificacao(
     '''
 
     notificacao = get_notificacao_by_id(db, notificacao_id)
-    
+
     db.delete(notificacao)
     db.commit()
 

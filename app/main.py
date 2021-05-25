@@ -51,6 +51,7 @@ app = FastAPI(
 
 app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+
 # Go to localhost:8000/api/coverage/index.html to see coverage report
 # app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
 
@@ -183,7 +184,8 @@ client = TestClient(app)
 @repeat_every(seconds=60*60*24)
 def test_read_main():
     print("Verificação Diária")
-    client.post("api/v1/notificacao/check")
+    client.post("api/v1/notificacao/checagem")
+    client.post("api/v1/notificacao/pendente_idealizador")
 
 
 if __name__ == "__main__":

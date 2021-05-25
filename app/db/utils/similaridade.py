@@ -1,6 +1,5 @@
-import nltk
+import jellyfish as jf
 import re
-# nltk.download('stopwords')
 
 stop_words = set(
     """
@@ -29,19 +28,16 @@ def pre_processing(text):
     return text_clean
 
 
-def similaridade_jaccard(texto_projeto, texto_pessoa):
-    set_projeto = set(texto_projeto)
-    set_pessoa = set(texto_pessoa)
+def calcula_similaridade_vaga_pessoa(caracteristicas_vaga, caracteristicas_pessoa):
 
-    if float(len(set_projeto.intersection(set_pessoa))) > 0:
-        return float(len(set_projeto.intersection(set_pessoa)) / len(set_projeto.union(set_pessoa)))
-    else:
-        return 0
+  caracteristicas_vaga_concatenada = " ".join(caracteristicas_vaga)
+  caracteristicas_pessoa_concatenada = " ".join(caracteristicas_pessoa)
 
 
-def calcula_similaridade_vaga_pessoa(caracteristica_projeto, caracteristica_pessoa):
-    texto_projeto = pre_processing(caracteristica_projeto)
-    texto_pessoa = pre_processing(caracteristica_pessoa)
+  texto_vaga = pre_processing(caracteristicas_vaga_concatenada)
+ 
+  texto_pessoa = pre_processing(caracteristicas_pessoa_concatenada)
+  
+  similaridade = jf.levenshtein_distance(texto_vaga, texto_pessoa)
 
-    similaridade = similaridade_jaccard(texto_projeto, texto_pessoa)
-    return similaridade
+  return similaridade

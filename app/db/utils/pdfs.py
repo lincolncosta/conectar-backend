@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
 from fpdf import FPDF
 from datetime import datetime
 from pathlib import Path
@@ -22,7 +21,7 @@ class PDF(FPDF):
 
     def header(self):
         self.set_margins(20, 20, 20)
-        self.image('app/db/utils/logoConectar.png', x=20, y=15, w=50)
+        #self.image('app/db/utils/logo.png', x=20, y=15, w=50)
         self.set_font("Arial", size=28)
 
     def footer(self):
