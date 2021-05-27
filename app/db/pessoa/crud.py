@@ -164,30 +164,27 @@ def get_pessoas_by_papel(
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.aliado == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas_ids))\
-            .join(models.Habilidades, models.Pessoa.habilidades)\
-            .filter(models.Habilidades != '')\
-            .join(models.Area, models.Pessoa.areas)\
-            .filter(models.Area != '')\
+            .filter((models.Area != '') | (models.Habilidades != ''))\
+            .join(models.Habilidades, models.Pessoa.habilidades, full=True, isouter=True)\
+            .join(models.Area, models.Pessoa.areas, full=True, isouter=True)\
             .order_by(func.random())\
             .distinct()
     elif (papel_id == 37):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.colaborador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas_ids))\
-            .join(models.Habilidades, models.Pessoa.habilidades)\
-            .filter(models.Habilidades != '')\
-            .join(models.Area, models.Pessoa.areas)\
-            .filter(models.Area != '')\
+            .filter((models.Area != '') | (models.Habilidades != ''))\
+            .join(models.Habilidades, models.Pessoa.habilidades, full=True, isouter=True)\
+            .join(models.Area, models.Pessoa.areas, full=True, isouter=True)\
             .order_by(func.random())\
             .distinct()
     elif (papel_id == 38):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.idealizador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas_ids))\
-            .join(models.Habilidades, models.Pessoa.habilidades)\
-            .filter(models.Habilidades != '')\
-            .join(models.Area, models.Pessoa.areas)\
-            .filter(models.Area != '')\
+            .filter((models.Area != '') | (models.Habilidades != ''))\
+            .join(models.Habilidades, models.Pessoa.habilidades, full=True, isouter=True)\
+            .join(models.Area, models.Pessoa.areas, full=True, isouter=True)\
             .order_by(func.random())\
             .distinct()
 

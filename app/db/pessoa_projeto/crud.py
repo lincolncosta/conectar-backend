@@ -10,7 +10,7 @@ from db.notificacao.crud import (
     notificacao_pendente_colaborador,
     notificacao_aceito_recusado,
     notificacao_finalizado
-    )
+)
 from db.ignorados.crud import add_pessoa_ignorada, get_ids_pessoa_ignorada_by_vaga
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
@@ -68,11 +68,11 @@ async def get_all_pessoas_projeto(
     return pessoas_projeto
 
 
-async def get_similaridade_pessoas_projeto(
+async def get_similaridade_projeto(
     db: Session,
     pessoa_logada: schemas.Pessoa,
     id_projeto: int
-) -> schemas.Pessoa:
+):
 
     '''
 
@@ -92,8 +92,6 @@ async def get_similaridade_pessoas_projeto(
 
         # ignora o dono da vaga
         pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga.id)
-
-        papel = vaga.papel_id
 
         # Extração de informações de habilidades e áreas da vaga
         habilidades_areas_vaga = []
@@ -120,7 +118,8 @@ async def get_similaridade_pessoas_projeto(
         habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
         # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
-        pessoas = get_pessoas_by_papel(db, papel, pessoas_ignoradas_ids)
+        pessoas = get_pessoas_by_papel(
+            db, vaga.papel_id, pessoas_ignoradas_ids)
 
         similaridades_pessoa = {}
 
@@ -167,6 +166,102 @@ async def get_similaridade_pessoas_projeto(
     return pessoas_vagas
 
 
+async def get_similaridade_vaga(
+    db: Session,
+    pessoa_logada: schemas.Pessoa,
+    vaga_id: int
+):
+
+    pessoas_vagas = {}
+
+    # busca a vaga solicitada
+    vaga = get_pessoa_projeto(db, vaga_id)
+
+    if vaga.situacao == "PENDENTE_COLABORADOR" or vaga.situacao == "ACEITO" or vaga.situacao == "FINALIZADO":
+        return {}
+
+    similaridades_retorno = {}
+
+    # futuramente implementar na nova tabela
+    pessoas_selecionadas = []
+
+    # ignora o dono da vaga
+    pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga_id)
+
+    # Extração de informações de habilidades e áreas da vaga
+    habilidades_areas_vaga = []
+
+    habilidades_vaga = vaga.habilidades
+
+    areas_vaga = vaga.areas
+
+    for habilidade_vaga in habilidades_vaga:
+        habilidades_areas_vaga.append(habilidade_vaga.nome)
+
+    # organiza somente as habilidades em ordem alfabética
+    habilidades_areas_vaga.sort()
+
+    areas_vaga = []
+
+    for area_vaga in areas_vaga:
+        areas_vaga.append(area_vaga.descricao)
+
+    # organiza somente as areas em ordem alfabética
+    areas_vaga.sort()
+
+    # junta as áreas e habilidades
+    habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
+
+    # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
+    pessoas = get_pessoas_by_papel(db, vaga.papel_id, pessoas_ignoradas_ids)
+
+    similaridades_pessoa = {}
+
+    print(pessoas)
+
+    for pessoa in pessoas:
+        if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_selecionadas:
+            habilidades_areas_pessoa = []
+
+            habilidades = pessoa.habilidades
+            areas = pessoa.areas
+
+            for habilidade in habilidades:
+                habilidades_areas_pessoa.append(habilidade.nome)
+
+            habilidades_areas_pessoa.sort()
+
+            areas_pessoa = []
+            for area in areas:
+                areas_pessoa.append(area.descricao)
+
+            areas_pessoa.sort()
+            habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
+
+            similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
+                habilidades_areas_vaga,
+                habilidades_areas_pessoa
+            )
+
+    # adicionar sort by random aqui
+
+    similaridades_retorno = dict(
+        sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
+
+    pessoa_selecionada = next(iter(similaridades_retorno))
+    await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
+
+    pessoas_vagas[vaga.id] = pessoa_selecionada
+
+    add_pessoa_ignorada(db, pessoa_selecionada.id, vaga.id)
+    pessoas_selecionadas.append(pessoa_selecionada.id)
+
+    if not pessoas:
+        raise HTTPException(status_code=404, detail="pessoas não encontradas")
+
+    return pessoas_vagas
+
+
 async def atualiza_match_vaga(
     db: Session,
     vaga: schemas.PessoaProjeto,
@@ -189,10 +284,11 @@ async def get_vagas_by_projeto(
     db: Session,
     id_projeto: int,
 ) -> t.List[schemas.PessoaProjeto]:
+
     pessoa_projeto = (
-        db.query(models.PessoaProjeto)\
-        .filter(models.PessoaProjeto.projeto_id == id_projeto)\
-        .filter(models.PessoaProjeto.pessoa_id == None)\
+        db.query(models.PessoaProjeto)
+        .filter(models.PessoaProjeto.projeto_id == id_projeto)
+        .filter(models.PessoaProjeto.pessoa_id == None)
         .all()
     )
     if not pessoa_projeto:
@@ -288,9 +384,11 @@ async def edit_pessoa_projeto(
 
     if "situacao" in update_data.keys():
         if update_data["situacao"] == "PENDENTE_COLABORADOR":
-            notificacao_pendente_colaborador(db, pessoa_logada_id, db_pessoa_projeto)
+            notificacao_pendente_colaborador(
+                db, pessoa_logada_id, db_pessoa_projeto)
         elif update_data["situacao"] == "ACEITO" or update_data["situacao"] == "RECUSADO":
-            notificacao_aceito_recusado(db, pessoa_logada_id, db_pessoa_projeto)
+            notificacao_aceito_recusado(
+                db, pessoa_logada_id, db_pessoa_projeto)
         elif update_data["situacao"] == "FINALIZADO":
             notificacao_finalizado(db, db_pessoa_projeto)
 
