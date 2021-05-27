@@ -20,7 +20,8 @@ from app.db.pessoa_projeto.crud import (
     get_pessoa_projeto,
     get_all_pessoas_projeto,
     get_pessoa_projeto_by_projeto,
-    get_similaridade_pessoas_projeto,
+    get_similaridade_projeto,
+    get_similaridade_vaga,
     edit_pessoa_projeto,
     delete_pessoa_projeto,
 )
@@ -78,11 +79,11 @@ async def get_pessoas_projeto(
 
 
 @r.get(
-    "/pessoa_projeto/similaridade/{projeto_id}",
+    "/pessoa_projeto/similaridade_projeto/{projeto_id}",
     response_model=t.Dict[int, Pessoa],
     response_model_exclude_none=True
 )
-async def get_pessoas_vagas(
+async def similaridade_projeto(
     request: Request,
     projeto_id: int,
     db=Depends(get_db),
@@ -93,10 +94,29 @@ async def get_pessoas_vagas(
     Get pessoas mais similares dado um projeto específico
     """
 
-    pessoas = await get_similaridade_pessoas_projeto(db, pessoa_logada, projeto_id)
+    pessoas = await get_similaridade_projeto(db, pessoa_logada, projeto_id)
 
     return pessoas
 
+@r.get(
+    "/pessoa_projeto/similaridade_vaga/{pessoa_projeto_id}",
+    response_model=t.Dict[int, Pessoa],
+    response_model_exclude_none=True
+)
+async def similaridade_vaga(
+    request: Request,
+    pessoa_projeto_id: int,
+    db=Depends(get_db),
+    pessoa_logada=Depends(get_current_active_pessoa),
+):
+
+    """
+    Get similaridade to only one vaga
+    """
+
+    pessoa = await get_similaridade_vaga(db, pessoa_logada, pessoa_projeto_id)
+
+    return pessoa
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
