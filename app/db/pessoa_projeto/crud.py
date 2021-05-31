@@ -90,9 +90,6 @@ async def get_similaridade_projeto(
     # Iterar em cada vaga, buscando o papel
     for vaga in vagas_projeto:
 
-        # ignora o dono da vaga
-        pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga.id)
-
         # Extração de informações de habilidades e áreas da vaga
         habilidades_areas_vaga = []
 
@@ -117,7 +114,13 @@ async def get_similaridade_projeto(
         # junta as áreas e habilidades
         habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
-        # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
+        if not habilidades_areas_vaga:
+            raise HTTPException(
+                status_code=404, detail="Areas e Habilidades não encontradas para vaga")
+
+        # ignora o dono da vaga
+        pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga.id)
+
         pessoas = get_pessoas_by_papel(
             db, vaga.papel_id, pessoas_ignoradas_ids)
 
@@ -212,12 +215,14 @@ async def get_similaridade_vaga(
     # junta as áreas e habilidades
     habilidades_areas_vaga = habilidades_areas_vaga + areas_vaga
 
+    if not habilidades_areas_vaga:
+        raise HTTPException(
+            status_code=404, detail="Areas e Habilidades não encontradas para vaga")
+
     # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
     pessoas = get_pessoas_by_papel(db, vaga.papel_id, pessoas_ignoradas_ids)
 
     similaridades_pessoa = {}
-
-    print(pessoas)
 
     for pessoa in pessoas:
         if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_selecionadas:
