@@ -120,7 +120,7 @@ async def finalizado_notificacao(
     response_model=t.List[Notificacao],
     response_model_exclude_none=True,
 )
-async def checagem_notificacao(
+def checagem_notificacao(
     request: Request,
     db=Depends(get_db)
 ):
