@@ -184,7 +184,7 @@ client = TestClient(app)
 @repeat_every(seconds=60*60*24)
 def test_read_main():
     print("Verificação Diária")
-    print(client.post("https://boraconectar.com/api/v1/notificacao/checagem"))
+    client.post("https://boraconectar.com/api/v1/notificacao/checagem")
     client.post("https://boraconectar.com/api/v1/notificacao/pendente_idealizador")
 
 if __name__ == "__main__":
