@@ -6,6 +6,7 @@ from db.pessoa.crud import (
     get_rand_pessoas,
     get_pessoas,
     get_pessoa_by_username,
+    get_pessoa_by_id,
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
@@ -52,14 +53,17 @@ async def pessoa_me(current_pessoa=Depends(get_current_active_pessoa)):
 )
 async def pessoa_details(
     request: Request,
-    usuario: str,
+    identificador: str,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Get any pessoa details
     """
-    pessoa = get_pessoa_by_username(db, usuario)
+    if identificador.isnumeric():
+        pessoa = get_pessoa_by_id(db, identificador)
+    else:
+        pessoa = get_pessoa_by_username(db, identificador)
     return pessoa
     # return encoders.jsonable_encoder(
     #     pessoa, skip_defaults=True, exclude_none=True,
