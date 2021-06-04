@@ -180,10 +180,12 @@ app.include_router(
 
 client = TestClient(app)
 
+
 @app.on_event("startup")
 @repeat_every(seconds=60)
 def test_read_main():
     print("Verificação Diária")
+    print(client)
     client.post("api/v1/notificacao/checagem")
     client.post("api/v1/notificacao/pendente_idealizador")
   
