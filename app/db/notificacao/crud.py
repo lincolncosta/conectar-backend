@@ -274,7 +274,7 @@ def notificacao_finalizado(
 
     notificacao = []
 
-    link = createPDF(db, pessoa_projeto)
+    anexo = createPDF(db, pessoa_projeto)
 
     colaborador = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
@@ -288,7 +288,7 @@ def notificacao_finalizado(
         pessoa_projeto_id=pessoa_projeto.id,
         situacao="<strong>Seu acordo foi finalizado!</strong> Clique aqui e veja seu PDF top!",
         foto=projeto.foto_capa,
-        link=link,
+        anexo=anexo,
         lido=False,
     )
 
@@ -306,7 +306,7 @@ def notificacao_finalizado(
         pessoa_projeto_id=pessoa_projeto.id,
         situacao="<strong>Seu acordo foi finalizado!</strong> aqui e veja seu PDF top!",
         foto=projeto.foto_capa,
-        link=link,
+        anexo=anexo,
         lido=False,
     )
 
