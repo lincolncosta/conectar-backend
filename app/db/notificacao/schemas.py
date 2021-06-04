@@ -6,12 +6,12 @@ class NotificacaoBase(BaseModel):
     remetente_id: int
     destinatario_id: int
     projeto_id: int
-    pessoa_projeto_id: int
+    pessoa_projeto_id: t.Optional[int]
     situacao: str
     foto: t.Optional[str]
-    link: t.Optional[str]
+    anexo: t.Optional[str]
     lido: bool
-
+     
 class NotificacaoCreate(NotificacaoBase):
     situacao: t.Optional[str]
     link: t.Optional[str] = None
