@@ -109,7 +109,7 @@ def get_pessoa_by_username(
 
         Saída: Esquema da Pessoa referente
 
-        Exceções: Não existe Pessoa correspondente ao email inserido
+        Exceções: 
     '''
 
     pessoa = db.query(models.Pessoa)\
