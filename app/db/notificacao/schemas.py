@@ -9,7 +9,7 @@ class NotificacaoBase(BaseModel):
     pessoa_projeto_id: t.Optional[int]
     situacao: str
     foto: t.Optional[str]
-    link: t.Optional[str]
+    anexo: t.Optional[str]
     lido: bool
      
 class NotificacaoCreate(NotificacaoBase):
