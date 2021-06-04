@@ -61,6 +61,7 @@ def get_notificacao_by_destinatario(
 
     return notificacao
 
+
 def get_notificacao_lida_by_destinatario(
     db: Session,
     destinatario_id: int
@@ -100,12 +101,11 @@ def notificacao_pendente_idealizador(
         Exceções: Item Necessário Faltante
     '''
 
-
     pessoa_projetos = db.query(models.PessoaProjeto)\
         .filter(models.PessoaProjeto.situacao == "PENDENTE_IDEALIZADOR")\
         .all()
 
-    #garante que somente uma notificacao será enviada para cada projeto
+    # garante que somente uma notificacao será enviada para cada projeto
     projetos = []
 
     notificacao = []
@@ -125,8 +125,8 @@ def notificacao_pendente_idealizador(
                 destinatario_id=projeto.pessoa_id,
                 projeto_id=projeto_id,
                 pessoa_projeto_id=pessoa_projeto.id,
-                situacao="<strong>Existem pessoas a serem avaliadas para o projeto "\
-                        + projeto.nome + "</strong>. Dê uma olhada!",
+                situacao="<strong>Existem pessoas a serem avaliadas para o projeto "
+                + projeto.nome + "</strong>. Dê uma olhada!",
                 foto=projeto.foto_capa,
                 lido=False,
             )
@@ -176,9 +176,9 @@ def notificacao_pendente_colaborador(
             destinatario_id=pessoa_projeto.pessoa_id,
             projeto_id=projeto_id,
             pessoa_projeto_id=pessoa_projeto.id,
-            situacao="<strong>" + idealizador.nome +\
-                " te fez um convite</strong> para o projeto " + \
-                projeto.nome + ". Confira!",
+            situacao="<strong>" + idealizador.nome +
+            " te fez um convite</strong> para o projeto " +
+            projeto.nome + ". Confira!",
             foto=projeto.foto_capa,
             lido=False,
         )
@@ -349,7 +349,6 @@ def notificacao_checagem(
         att = datetime.strptime(att_str, "%Y-%m-%d")
 
         diff = hoje - att
-        print(diff)
 
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
