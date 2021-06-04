@@ -532,19 +532,19 @@ class Reacoes(Base):
 
     __tablename__ = "tb_reacoes"
 
-    id = Column(Integer, primary_key=True, index=True)
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
+    pessoa_id = Column(
+        Integer, ForeignKey("tb_pessoa.id"), primary_key=True, index=True
+    )
+    projeto_id = Column(
+        Integer, ForeignKey("tb_projeto.id"), primary_key=True, index=True
+    )
     reacao = Column(String)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
-
-    pessoa = relationship(
-        Pessoa, 
-        backref=backref("pessoa_reacoes", cascade="all, delete-orphan")
-        )
 
     projeto = relationship(
         Projeto,
         backref=backref("projeto_reacoes", cascade="all, delete-orphan"),
     )
+
+    pessoa = relationship("Pessoa")
