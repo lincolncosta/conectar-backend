@@ -350,6 +350,8 @@ def notificacao_checagem(
 
         diff = hoje - att
 
+        print(diff)
+
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
             situacao = "<strong>Se liga:</strong> você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
