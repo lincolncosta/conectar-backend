@@ -181,12 +181,12 @@ app.include_router(
 client = TestClient(app)
 
 @app.on_event("startup")
-@repeat_every(seconds=60*60*24)
+@repeat_every(seconds=60)
 def test_read_main():
     print("Verificação Diária")
     client.post("api/v1/notificacao/checagem")
     client.post("api/v1/notificacao/pendente_idealizador")
-
+  
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)
