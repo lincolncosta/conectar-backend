@@ -118,12 +118,18 @@ PessoaHabilidadesProjeto = Table(
 class Pessoa(Base):
     """
     Represents table "tb_pessoa"
+
+
     1. Recursive One to One relationship - colaborador
     One Pessoa can only be one colaborador
+
     2. Recursive One to One relationship - idealizador
     One Pessoa can only be one idealizador
+
     3. Recursive One to One relationship - aliado
     One Pessoa can only be one aliado
+
+
     Attributes:
         id: Integer, Primary key
         usuario: String
@@ -184,6 +190,8 @@ class Pessoa(Base):
 class Projeto(Base):
     """
     Represents table "tb_projeto"
+
+
     Attributes:
         id: Integer, Primary key
         pessoa_id: Integer, Foreign Key
@@ -253,11 +261,12 @@ class Notificacao(Base):
     remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
-    situacao = Column(String, nullable = False)
-    anexo = Column(String, nullable = True)
-    foto = Column(String, nullable = True)
-    lido = Column(Boolean, nullable = False)
+    pessoa_projeto_id = Column(Integer, ForeignKey(
+        "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
+    situacao = Column(String, nullable=False)
+    anexo = Column(String, nullable=True)
+    foto = Column(String, nullable=True)
+    lido = Column(Boolean, nullable=False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_visualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -265,12 +274,17 @@ class Notificacao(Base):
 class ExperienciaProf(Base):
     """
     Represents table "tb_experiencia_profissional"
+
+
     1. Many to Many relationship - Area
     Many experiencias may be in may Areas
     Many Areas may have many experiences
+
     2. One to Many relationship - Pessoa
     One Pessoa can have many Experience
     One experience can only have one Pessoa
+
+
     Attributes:
         id: Integer, Primary key
         descricao: String
@@ -299,12 +313,17 @@ class ExperienciaProf(Base):
 class ExperienciaAcad(Base):
     """
     Represents table "tb_experiencia_academica"
+
+
     1. Many to Many relationship - Area
     Many experiencias may be in may Areas
     Many Areas may have many experiences
+
     2. One to Many relationship - Pessoa
     One Pessoa can have many Experience
     One experience can only have one Pessoa
+
+
     Attributes:
         id: Integer, Primary key
         descricao: String
@@ -335,12 +354,17 @@ class ExperienciaAcad(Base):
 class ExperienciaProj(Base):
     """
     Represents table "tb_experiencia_projetos"
+
+
     1. Many to Many relationship - Area
     Many experiencias may be in may Areas
     Many Areas may have many experiences
+
     2. One to Many relationship - Pessoa
     One Pessoa can have many Experience
     One experience can only have one Pessoa
+
+
     Attributes:
         id: Integer, Primary key
         nome: String
@@ -369,9 +393,12 @@ class ExperienciaProj(Base):
 class Area(Base):
     """
     Represents table "tb_area"
+
+
     Recursive Many To Many Relationship
     One Area can have many subareas,
     And subarea can have many
+
     Attributes:
         id: Integer, Primary key
         descricao: String
@@ -407,12 +434,16 @@ class Area(Base):
 class Habilidades(Base):
     """
     Represents table "tb_habilidades"
+
+
     Many to Many Relationship
     One Habilidade can have many Projetos,
     one Projeto can have many Habilidades as well.
+
     Many to Many Relationship
     One Habilidade can have many Pessoa,
     one Pessoa can have many Habilidades as well.
+
     Attributes:
         id: Integer, Primary key
         nome: String
@@ -429,9 +460,13 @@ class Habilidades(Base):
 class Papel(Base):
     """
     Represents table "tb_papel"
+
+
     Many to One relationship
     One pessoa_projeto has one Papel, meanwhile
     One Papel may be in may PessoaProjeto
+
+
     Attributes:
         id: Integer, Primary key
         descricao: String
@@ -448,9 +483,13 @@ class Papel(Base):
 class TipoAcordo(Base):
     """
     Represents table "tb_tipo_acordo"
+
+
     Many to One relationship
     One pessoa_projeto has one TipoAcordo, meanwhile
     One TipoAcordo may be in may PessoaProjeto
+
+
     Attributes:
         id: Integer, Primary key
         descricao: String
@@ -461,7 +500,8 @@ class TipoAcordo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     descricao = Column(String)
-    pessoa_projeto = relationship("PessoaProjeto", back_populates="tipo_acordo")
+    pessoa_projeto = relationship(
+        "PessoaProjeto", back_populates="tipo_acordo")
 
 
 class PessoaIgnoradaVaga(Base):
@@ -470,16 +510,20 @@ class PessoaIgnoradaVaga(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
-    
+    pessoa_projeto_id = Column(Integer, ForeignKey(
+        "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
 
 
 class Reacoes(Base):
     """
     Represents table "tb_reacoes"
+
+
     Many to Many relationship
     One Projeto has many Reacoes,
     One Reacao is exclusively from some pessoa in some projeto
+
+
     Attributes:
         id_projeto: Integer, Primary key, Foreign Key
         id_pessoa: Integer, Primary key, Foreign Key
@@ -490,19 +534,19 @@ class Reacoes(Base):
 
     __tablename__ = "tb_reacoes"
 
-    pessoa_id = Column(
-        Integer, ForeignKey("tb_pessoa.id"), primary_key=True, index=True
-    )
-    projeto_id = Column(
-        Integer, ForeignKey("tb_projeto.id"), primary_key=True, index=True
-    )
+    id = Column(Integer, primary_key=True, index=True)
+    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
     reacao = Column(String)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
+
+    pessoa = relationship(
+        Pessoa,
+        backref=backref("pessoa_reacoes", cascade="all, delete-orphan")
+    )
 
     projeto = relationship(
         Projeto,
         backref=backref("projeto_reacoes", cascade="all, delete-orphan"),
     )
-
-    pessoa = relationship("Pessoa")
