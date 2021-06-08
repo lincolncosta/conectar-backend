@@ -17,6 +17,7 @@ from db.projeto.crud import (
     create_projeto,
     get_projetos,
     get_projeto,
+    get_projeto_reacao,
     delete_projeto,
     edit_projeto,
 )
@@ -64,6 +65,23 @@ async def projeto_details(
     """
     projeto = get_projeto(db, projeto_id)
     return projeto
+
+@r.get(
+    "/projeto/reacao/{pessoa_id}",
+    response_model=t.List[Projeto],
+    response_model_exclude_none=True,
+)
+async def projeto_reacoes(
+    request: Request,
+    pessoa_id: int,
+    reacao: str,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    
+    projetos = get_projeto_reacao(db, pessoa_id, reacao)
+    
+    return projetos
 
 
 @r.post("/projeto", response_model_exclude_none=True)
