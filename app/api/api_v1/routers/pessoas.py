@@ -47,7 +47,7 @@ async def pessoa_me(current_pessoa=Depends(get_current_active_pessoa)):
 
 
 @r.get(
-    "/pessoas/{usuario}",
+    "/pessoas/{identificador}",
     response_model=PessoaOut,
     response_model_exclude_none=True,
 )

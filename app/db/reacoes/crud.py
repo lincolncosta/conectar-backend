@@ -29,15 +29,17 @@ def create_reacao(
         return delete_reacao(db, reacao.pessoa_id, reacao.projeto_id)
 
 
-def get_reacao(db: Session, pessoa_id: int, projeto_id: int):
+def get_reacao(
+    db: Session,
+    pessoa_id: int,
+    projeto_id: int
+):
     try:
         db_reacao = (
             db.query(models.Reacoes)
-            .filter(
-                models.Reacoes.pessoa_id == pessoa_id,
-                models.Reacoes.projeto_id == projeto_id,
-            )
-            .first()
+            .filter(models.Reacoes.pessoa_id == pessoa_id,
+                    models.Reacoes.projeto_id == projeto_id)
+            .all()
         )
         if not db_reacao:
             raise HTTPException(
@@ -49,7 +51,10 @@ def get_reacao(db: Session, pessoa_id: int, projeto_id: int):
 
 
 def edit_reacao(
-    db: Session, pessoa_id: int, projeto_id: int, reacao: schemas.ReacoesEdit
+    db: Session,
+    pessoa_id: int,
+    projeto_id: int,
+    reacao: schemas.ReacoesEdit
 ):
     try:
         db_reacao = get_reacao(db, pessoa_id, projeto_id)
@@ -74,8 +79,15 @@ def edit_reacao(
         raise e
 
 
-def delete_reacao(db: Session, pessoa_id: int, projeto_id: int):
-    db_reacao = get_reacao(db, pessoa_id, projeto_id)
+def delete_reacao(
+    db: Session,
+    reacao_id: int
+):
+
+    db_reacao = db.query(models.Reacoes)\
+                    .filter(models.Reacoes.id == reacao_id)\
+                    .first()
+
     if not db_reacao:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="reação não encontrado"
