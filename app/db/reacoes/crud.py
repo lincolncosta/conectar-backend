@@ -11,22 +11,18 @@ from . import schemas
 def create_reacao(
     db: Session, reacao: schemas.ReacoesCreate
 ) -> schemas.Reacoes:
-    try:
-        db_reacao = models.Reacoes(
+    
+    db_reacao = models.Reacoes(
             projeto_id=reacao.projeto_id,
             pessoa_id=reacao.pessoa_id,
             reacao=reacao.reacao,
-        )
+    )
 
-        db.add(db_reacao)
-        db.commit()
-        db.refresh(db_reacao)
+    db.add(db_reacao)
+    db.commit()
+    db.refresh(db_reacao)
 
-        return db_reacao
-    except IntegrityError as e:
-        # Rollback to perform delete with new transaction
-        db.rollback()
-        return delete_reacao(db, reacao.pessoa_id, reacao.projeto_id)
+    return db_reacao
 
 
 def get_reacao(
