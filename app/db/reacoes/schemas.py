@@ -4,7 +4,7 @@ from datetime import date
 
 
 class ReacoesBase(BaseModel):
-    reacao: str = "Interesse"
+    reacao: str = "FAVORITO"
 
 
 class ReacoesCreate(ReacoesBase):
@@ -21,5 +21,8 @@ class ReacoesEdit(ReacoesBase):
 
 
 class Reacoes(ReacoesCreate):
+
+    id: int
+
     class Config:
         orm_mode = True

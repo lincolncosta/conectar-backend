@@ -15,7 +15,7 @@ from core.auth import get_current_active_pessoa
 reacoes_router = r = APIRouter()
 
 
-@r.get("/reacoes", response_model=Reacoes, response_model_exclude_none=True)
+@r.get("/reacoes", response_model=t.List[Reacoes], response_model_exclude_none=True)
 def reacao_details(
     pessoa_id: int,
     projeto_id: int,
@@ -66,12 +66,11 @@ async def reacoes_edit(
 )
 async def projeto_delete(
     request: Request,
-    pessoa_id: int,
-    projeto_id: int,
+    reacao_id: int,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Delete existing reacao
     """
-    return delete_reacao(db, pessoa_id, projeto_id)
+    return delete_reacao(db, reacao_id)
