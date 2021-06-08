@@ -57,6 +57,27 @@ def get_projetos(
         .all()
     )
 
+def get_projeto_reacao(
+    db: Session,
+    pessoa_id: int,
+    reacao: str
+):
+
+    reacoes = db.query(models.Reacoes)\
+        .filter(models.Reacoes.pessoa_id == pessoa_id,
+                models.Reacoes.reacao == reacao)\
+        .all()
+
+    print("a")
+
+    projetos = []
+
+    print(reacoes)
+
+    for reacao in reacoes:
+        projetos.append(get_projeto(db, reacao.projeto_id))
+
+    return projetos
 
 async def edit_projeto(
     db: Session, projeto_id: int, projeto: schemas.ProjetoEdit) -> schemas.Projeto:
