@@ -68,11 +68,7 @@ def get_projeto_reacao(
                 models.Reacoes.reacao == reacao)\
         .all()
 
-    print("a")
-
     projetos = []
-
-    print(reacoes)
 
     for reacao in reacoes:
         projetos.append(get_projeto(db, reacao.projeto_id))
