@@ -64,7 +64,8 @@ def get_notificacao_by_destinatario(
 
 def get_notificacao_lida_by_destinatario(
     db: Session,
-    destinatario_id: int
+    destinatario_id: int,
+    lido: bool
 ):
     '''
         Busca uma notificacao a partir do ID do destinatario e se foi lida
@@ -78,7 +79,7 @@ def get_notificacao_lida_by_destinatario(
 
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.destinatario_id == destinatario_id)\
-                    .filter(models.Notificacao.lido == False)\
+                    .filter(models.Notificacao.lido == lido)\
                     .all()
 
     if not notificacao:

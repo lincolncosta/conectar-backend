@@ -180,6 +180,7 @@ async def get_notificacao_destinatario(
 async def get_notificacao_lida_destinatario(
     request: Request,
     destinatario_id: int,
+    lido: bool,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
@@ -187,7 +188,7 @@ async def get_notificacao_lida_destinatario(
     Get any notificacao lida details by destinatario
     """
 
-    notificacao = get_notificacao_lida_by_destinatario(db, destinatario_id)
+    notificacao = get_notificacao_lida_by_destinatario(db, destinatario_id, lido)
 
     return notificacao
 
