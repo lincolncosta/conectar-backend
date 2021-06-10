@@ -248,8 +248,7 @@ async def notificacao_delete(
 
 @r.post(
     "/notificacao/ler-todas",
-    response_model=Response,
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def notificacao_ler_todas(
     request: Request,
@@ -262,4 +261,4 @@ async def notificacao_ler_todas(
 
     notificacao_ler_todas(db, destinatario_id)
 
-    return Response(status_code=HTTP_200_OK)
+    return {}
