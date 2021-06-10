@@ -28,7 +28,7 @@ def get_notificacao_by_id(
 
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.id == notificacao_id)\
-                    .order_by(models.Notificacao.data_criacao .desc())\
+                    .order_by(models.Notificacao.data_criacao.desc())\
                     .first()
 
     if not notificacao:
