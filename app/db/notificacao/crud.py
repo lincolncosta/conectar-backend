@@ -113,7 +113,7 @@ def notificacao_pendente_idealizador(
 
     for pessoa_projeto in pessoa_projetos:
         if pessoa_projeto.projeto_id in projetos:
-            continue
+            break
 
         projeto_id = pessoa_projeto.projeto_id
         projeto = get_projeto(db, projeto_id)
@@ -453,7 +453,9 @@ def notificacao_checagem_projeto(
         .all()
 
     for vaga in vagas:
-        
+        if vaga.projeto_id in projetos_ignorados:
+            break
+
         projetos_ignorados.append(vaga.projeto_id)
 
         projeto = get_projeto(db, vaga.projeto_id)
