@@ -262,4 +262,4 @@ async def notificacao_ler_todas(
 
     notificacao_ler_todas(db, destinatario_id)
 
-    return {}
+    return Response(status_code=HTTP_200_OK)
