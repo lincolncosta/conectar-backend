@@ -186,7 +186,7 @@ def test_read_main():
     print("Verificação Diária")
     client.post("api/v1/notificacao/checagem")
     client.post("api/v1/notificacao/pendente_idealizador")
-    
+    client.post("api/v1/notificacao/checagem/projeto")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)
