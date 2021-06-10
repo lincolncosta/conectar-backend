@@ -410,8 +410,8 @@ def notificacao_checagem(
 
                 notificacao.append(db_notificacao)
 
-
     return notificacao
+
 
 def notificacao_checagem_projeto(
     db: Session
@@ -425,7 +425,7 @@ def notificacao_checagem_projeto(
 
     notificacao = []
 
-    #projetos a serem ignorados na verificação das vagas
+    # projetos a serem ignorados na verificação das vagas
     projetos_ignorados = []
 
     for projeto in projetos:
@@ -433,14 +433,15 @@ def notificacao_checagem_projeto(
         projetos_ignorados.append(projeto.id)
 
         db_notificacao = models.Notificacao(
-                    remetente_id=projeto.pessoa_id,
-                    destinatario_id=projeto.pessoa_id,
-                    projeto_id=projeto.id,
-                    pessoa_projeto_id=None,
-                    situacao="<strong>Finalize o cadastro do projeto " + projeto.nome + "</strong> e encontre o time ideal!",
-                    foto=projeto.foto_capa,
-                    lido=False,
-                )
+            remetente_id=projeto.pessoa_id,
+            destinatario_id=projeto.pessoa_id,
+            projeto_id=projeto.id,
+            pessoa_projeto_id=None,
+            situacao="<strong>Finalize o cadastro do projeto " +
+            projeto.nome + "</strong> e encontre o time ideal!",
+            foto=projeto.foto_capa,
+            lido=False,
+        )
 
         db.add(db_notificacao)
         db.commit()
@@ -464,14 +465,15 @@ def notificacao_checagem_projeto(
         projeto = get_projeto(db, vaga.projeto_id)
 
         db_notificacao = models.Notificacao(
-                    remetente_id=projeto.pessoa_id,
-                    destinatario_id=projeto.pessoa_id,
-                    projeto_id=projeto.id,
-                    pessoa_projeto_id=None,
-                    situacao="<strong>Finalize o cadastro das vagas do projeto " + projeto.nome + "</strong> e encontre o time ideal!",
-                    foto=projeto.foto_capa,
-                    lido=False,
-                )
+            remetente_id=projeto.pessoa_id,
+            destinatario_id=projeto.pessoa_id,
+            projeto_id=projeto.id,
+            pessoa_projeto_id=None,
+            situacao="<strong>Finalize o cadastro das vagas do projeto " +
+            projeto.nome + "</strong> e encontre o time ideal!",
+            foto=projeto.foto_capa,
+            lido=False,
+        )
 
         db.add(db_notificacao)
         db.commit()
@@ -480,6 +482,7 @@ def notificacao_checagem_projeto(
         notificacao.append(db_notificacao)
 
     return notificacao
+
 
 def edit_notificacao(
     db: Session,
@@ -530,3 +533,11 @@ def delete_notificacao(
     db.commit()
 
     return notificacao
+
+
+def notificacao_ler_todas(
+    db: Session,
+    destinatario_id: int
+):
+    db.query(models.Notificacao).filter(models.Notificacao.destinatario_id ==
+                                        destinatario_id).update({models.Notificacao.lido: True})
