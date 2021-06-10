@@ -45,7 +45,7 @@ def get_projetos(
             )
             .offset(skip)
             .limit(limit)
-            .order_by(models.Notificacao.data_criacao.desc())\
+            .order_by(models.Projeto.data_criacao.desc())\
             .all()
         )
     return (
@@ -55,7 +55,7 @@ def get_projetos(
         )
         .offset(skip)
         .limit(limit)
-        .order_by(models.Notificacao.data_criacao.desc())\
+        .order_by(models.Projeto.data_criacao.desc())\
         .all()
     )
 
