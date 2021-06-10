@@ -245,3 +245,21 @@ async def notificacao_delete(
     """
 
     return delete_notificacao(db, notificacao_id)
+
+@r.post(
+    "/notificacao/ler-todas",
+    response_model=Response,
+    response_model_exclude_none=True,
+)
+async def notificacao_ler_todas(
+    request: Request,
+    db=Depends(get_db),
+    destinatario_id: int,
+):
+    """
+    Create notificacao
+    """
+
+    notificacao_ler_todas(db, destinatario_id)
+
+    return {}
