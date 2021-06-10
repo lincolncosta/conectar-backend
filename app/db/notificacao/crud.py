@@ -541,3 +541,4 @@ def ler_todas_notificacao(
 ):
     db.query(models.Notificacao).filter(models.Notificacao.destinatario_id ==
                                         destinatario_id).update({models.Notificacao.lido: True})
+    db.commit()                                            
