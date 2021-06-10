@@ -43,9 +43,9 @@ def get_projetos(
                 models.Projeto.pessoa_id == pessoa_id,
                 models.Projeto.visibilidade == visibilidade,
             )
-            .offset(skip)
-            .limit(limit)
             .order_by(models.Projeto.data_criacao.desc())\
+            .offset(skip)
+            .limit(limit)            
             .all()
         )
     return (
@@ -53,9 +53,9 @@ def get_projetos(
         .filter(
             models.Projeto.visibilidade == visibilidade,
         )
-        .offset(skip)
-        .limit(limit)
         .order_by(models.Projeto.data_criacao.desc())\
+        .offset(skip)
+        .limit(limit)        
         .all()
     )
 
