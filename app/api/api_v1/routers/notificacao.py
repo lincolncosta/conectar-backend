@@ -15,6 +15,7 @@ from app.db.notificacao.crud import (
     get_notificacao_by_id,
     edit_notificacao,
     delete_notificacao,
+    ler_todas_notificacao
 )
 from app.db.notificacao.schemas import (
     Notificacao,
@@ -259,6 +260,6 @@ async def notificacao_ler_todas(
     Create notificacao
     """
 
-    notificacao_ler_todas(db, destinatario_id)
+    ler_todas_notificacao(db, destinatario_id)
 
     return {}

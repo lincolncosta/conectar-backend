@@ -535,7 +535,7 @@ def delete_notificacao(
     return notificacao
 
 
-def notificacao_ler_todas(
+def ler_todas_notificacao(
     db: Session,
     destinatario_id: int
 ):
