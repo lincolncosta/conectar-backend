@@ -9,6 +9,7 @@ from app.db.notificacao.crud import (
     notificacao_aceito_recusado,
     notificacao_finalizado,
     notificacao_checagem,
+    notificacao_checagem_projeto,
     get_notificacao_by_destinatario,
     get_notificacao_lida_by_destinatario,
     get_notificacao_by_id,
@@ -127,8 +128,25 @@ async def checagem_notificacao(
     """
     Create notificacao
     """
-
+    
     notificacao = notificacao_checagem(db)
+
+    return notificacao
+
+@r.post(
+    "/notificacao/checagem/projeto",
+    response_model=t.List[Notificacao],
+    response_model_exclude_none=True,
+)
+async def checagem_notificacao_projeto(
+    request: Request,
+    db=Depends(get_db)
+):
+    """
+    Create notificacao
+    """
+
+    notificacao = notificacao_checagem_projeto(db)
 
     return notificacao
 
