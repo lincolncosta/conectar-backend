@@ -28,6 +28,7 @@ def get_notificacao_by_id(
 
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.id == notificacao_id)\
+                    .order_by(models.Notificacao.data_criacao .desc())\
                     .first()
 
     if not notificacao:
@@ -53,6 +54,7 @@ def get_notificacao_by_destinatario(
 
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                    .order_by(models.Notificacao.data_criacao .desc())\
                     .all()
 
     if not notificacao:
@@ -80,6 +82,7 @@ def get_notificacao_lida_by_destinatario(
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.destinatario_id == destinatario_id)\
                     .filter(models.Notificacao.lido == lido)\
+                    .order_by(models.Notificacao.data_criacao .desc())\
                     .all()
 
     if not notificacao:
