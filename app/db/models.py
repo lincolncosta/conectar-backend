@@ -261,11 +261,12 @@ class Notificacao(Base):
     remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
-    situacao = Column(String, nullable = False)
-    anexo = Column(String, nullable = True)
-    foto = Column(String, nullable = True)
-    lido = Column(Boolean, nullable = False)
+    pessoa_projeto_id = Column(Integer, ForeignKey(
+        "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
+    situacao = Column(String, nullable=False)
+    anexo = Column(String, nullable=True)
+    foto = Column(String, nullable=True)
+    lido = Column(Boolean, nullable=False)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_visualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -499,7 +500,8 @@ class TipoAcordo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     descricao = Column(String)
-    pessoa_projeto = relationship("PessoaProjeto", back_populates="tipo_acordo")
+    pessoa_projeto = relationship(
+        "PessoaProjeto", back_populates="tipo_acordo")
 
 
 class PessoaIgnoradaVaga(Base):
@@ -508,8 +510,8 @@ class PessoaIgnoradaVaga(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    pessoa_projeto_id = Column(Integer, ForeignKey("tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
-    
+    pessoa_projeto_id = Column(Integer, ForeignKey(
+        "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
 
 
 class Reacoes(Base):
@@ -540,9 +542,9 @@ class Reacoes(Base):
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
     pessoa = relationship(
-        Pessoa, 
+        Pessoa,
         backref=backref("pessoa_reacoes", cascade="all, delete-orphan")
-        )
+    )
 
     projeto = relationship(
         Projeto,
