@@ -100,7 +100,7 @@ async def similaridade_projeto(
 
 @r.get(
     "/pessoa_projeto/similaridade_vaga/{pessoa_projeto_id}",
-    response_model=t.Dict[int, Pessoa],
+    response_model=Pessoa,
     response_model_exclude_none=True
 )
 async def similaridade_vaga(
