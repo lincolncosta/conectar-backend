@@ -4,15 +4,11 @@ import typing as t
 from app.db.habilidade.schemas import PessoaHabilidadeCreate
 from app.db.area.schemas import ProjetoAreaCreate
 
-from app.db.utils.salvar_imagem import store_image
-
 from db import models
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from db.utils.salvar_imagem import store_image
+from db.utils.salvar_imagem import store_image, delete_image
 from . import schemas
-from core.security.passwords import get_password_hash
-
 
 def get_projeto_by_username(db: Session, usuario: str) -> schemas.Projeto:
     return (
@@ -78,7 +74,11 @@ def get_projeto_reacao(
     return projetos
 
 async def edit_projeto(
-    db: Session, projeto_id: int, projeto: schemas.ProjetoEdit) -> schemas.Projeto:
+    db: Session,
+    projeto_id: int,
+    projeto: schemas.ProjetoEdit,
+    foto_capa: t.Optional[UploadFile] = None,
+) -> schemas.Projeto:
 
     db_projeto = get_projeto(db, projeto_id)
     if not db_projeto:
@@ -86,6 +86,11 @@ async def edit_projeto(
             status.HTTP_404_NOT_FOUND, detail="projeto não encontrado"
         )
     update_data = projeto.dict(exclude_unset=True)
+
+    if foto_capa:
+       contents = await foto_capa.read()
+       if delete_image(db_projeto.foto_capa):
+           update_data["foto_capa"] = store_image(contents)
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
