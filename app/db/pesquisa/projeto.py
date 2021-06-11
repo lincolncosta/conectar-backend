@@ -24,9 +24,6 @@ def get_projeto_by_name(
         .filter(models.Projeto.nome.ilike(f'%{projeto_name}%'))\
         .all()
 
-    if not projeto:
-        raise HTTPException(status_code=404, detail="projeto não encontrado")
-
     return projeto
 
 
