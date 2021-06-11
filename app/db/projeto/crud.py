@@ -117,7 +117,7 @@ async def create_projeto(
     path = None
     if foto_capa:
         contents = await foto_capa.read()
-        path = store_image(contents, foto_capa.filename)
+        path = store_image(contents)
 
     db_projeto = models.Projeto(
         nome=nome,
