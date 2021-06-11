@@ -260,7 +260,8 @@ class Notificacao(Base):
     id = Column(Integer, primary_key=True, index=True)
     remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
+    projeto_id = Column(Integer, ForeignKey(
+        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
     pessoa_projeto_id = Column(Integer, ForeignKey(
         "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
     situacao = Column(String, nullable=False)

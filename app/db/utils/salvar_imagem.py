@@ -30,7 +30,8 @@ s3_client = boto3.client(
     aws_secret_access_key=getenv("AWS_KEY")
 )
 
-path = Path("uploads/")
+IMAGE_PATH = "uploads/"
+path = Path(IMAGE_PATH)
 
 path.mkdir(parents=True, exist_ok=True)
 
@@ -40,9 +41,8 @@ def store_image(image, image_id):
         pil_image = np.array(Image.open(BytesIO(image)))
         Image.fromarray(pil_image).save(path / f"{image_name}")
 
-        upload_object("uploads/" + image_name , 'conectar')
+        upload_object(IMAGE_PATH + image_name , 'conectar')
         
-
         return image_name
             
     except Exception as e:
@@ -50,8 +50,8 @@ def store_image(image, image_id):
 
 def delete_image(image_name):
     try:
-        s3_client.delete_file(Bucket='conectar', Key=image_name)
-
+        s3_client.delete_file(Bucket='conectar', Key=IMAGE_PATH + image_name)
+    
         return True
 
     except Exception as e:

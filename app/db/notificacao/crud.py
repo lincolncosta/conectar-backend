@@ -113,12 +113,18 @@ def notificacao_pendente_idealizador(
 
     for pessoa_projeto in pessoa_projetos:
         if pessoa_projeto.projeto_id in projetos:
-            break
+            continue
 
         projeto_id = pessoa_projeto.projeto_id
         projeto = get_projeto(db, projeto_id)
 
         projetos.append(pessoa_projeto.projeto_id)
+
+        situacao = "<strong>Existem pessoas a serem avaliadas para o projeto "\
+                + projeto.nome + "</strong>. Dê uma olhada!"
+
+        if existe_notificacao(db, situacao, projeto.pessoa_id):
+                continue
 
         try:
             db_notificacao = models.Notificacao(
@@ -126,11 +132,10 @@ def notificacao_pendente_idealizador(
                 destinatario_id=projeto.pessoa_id,
                 projeto_id=projeto_id,
                 pessoa_projeto_id=pessoa_projeto.id,
-                situacao="<strong>Existem pessoas a serem avaliadas para o projeto "
-                + projeto.nome + "</strong>. Dê uma olhada!",
+                situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
-            )
+            )        
         except:
             raise HTTPException(
                 status.HTTP_404_NOT_FOUND,
@@ -171,15 +176,19 @@ def notificacao_pendente_colaborador(
     projeto = get_projeto(db, projeto_id)
     idealizador = get_pessoa_by_id(db, idealizador_id)
 
+    situacao = "<strong>" + idealizador.nome + " te fez um convite</strong> para o projeto " + \
+            projeto.nome + ". Confira!",
+
+    if existe_notificacao(db, situacao, pessoa_projeto.pessoa_id):
+        return
+
     try:
         db_notificacao = models.Notificacao(
             remetente_id=idealizador_id,
             destinatario_id=pessoa_projeto.pessoa_id,
             projeto_id=projeto_id,
             pessoa_projeto_id=pessoa_projeto.id,
-            situacao="<strong>" + idealizador.nome +
-            " te fez um convite</strong> para o projeto " +
-            projeto.nome + ". Confira!",
+            situacao=situacao,
             foto=projeto.foto_capa,
             lido=False,
         )
@@ -230,6 +239,9 @@ def notificacao_aceito_recusado(
         situacao = "<strong>" + colaborador.nome + \
             " aceitou seu convite</strong> para o projeto " + \
             projeto.nome + ". Finalize o acordo e preencha essa vaga!"
+
+    if existe_notificacao(db, situacao, projeto.pessoa_id):
+        return
 
     try:
         db_notificacao = models.Notificacao(
@@ -357,27 +369,24 @@ def notificacao_checagem(
                 remetente.nome + " para o projeto " + projeto.nome + ".",
             destinatario_id = pessoa_projeto.pessoa_id
 
-            filtro = db.query(models.Notificacao)\
-                .filter(models.Notificacao.destinatario_id == destinatario_id)\
-                .filter(models.Notificacao.situacao == situacao)\
-                .first()
+            if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+                continue
 
-            if not filtro:
-                db_notificacao = models.Notificacao(
-                    remetente_id=remetente.id,
-                    destinatario_id=destinatario_id,
-                    projeto_id=pessoa_projeto.projeto_id,
-                    pessoa_projeto_id=pessoa_projeto.id,
-                    situacao=situacao,
-                    foto=remetente.foto_perfil,
-                    lido=False,
-                )
+            db_notificacao = models.Notificacao(
+                remetente_id=remetente.id,
+                destinatario_id=destinatario_id,
+                projeto_id=pessoa_projeto.projeto_id,
+                pessoa_projeto_id=pessoa_projeto.id,
+                situacao=situacao,
+                foto=remetente.foto_perfil,
+                lido=False,
+            )
 
-                db.add(db_notificacao)
-                db.commit()
-                db.refresh(db_notificacao)
+            db.add(db_notificacao)
+            db.commit()
+            db.refresh(db_notificacao)
 
-                notificacao.append(db_notificacao)
+            notificacao.append(db_notificacao)
 
         elif(diff.days == 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
@@ -385,10 +394,8 @@ def notificacao_checagem(
                 remetente.nome + " expirou!</strong> Realize uma nova busca e complete seu time!"
             destinatario_id = projeto.pessoa_id
 
-            filtro = db.query(models.Notificacao)\
-                .filter(models.Notificacao.destinatario_id == destinatario_id)\
-                .filter(models.Notificacao.situacao == situacao)\
-                .first()
+            if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+                continue
 
             if not filtro:
                 db_notificacao = models.Notificacao(
@@ -439,6 +446,9 @@ def notificacao_checagem_projeto(
                     lido=False,
                 )
 
+        if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+            continue
+
         db.add(db_notificacao)
         db.commit()
         db.refresh(db_notificacao)
@@ -470,6 +480,9 @@ def notificacao_checagem_projeto(
                     lido=False,
                 )
 
+        if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+            continue
+
         db.add(db_notificacao)
         db.commit()
         db.refresh(db_notificacao)
@@ -477,6 +490,42 @@ def notificacao_checagem_projeto(
         notificacao.append(db_notificacao)
 
     return notificacao
+
+def existe_notificacao(
+    db: Session,
+    situacao: str,
+    destinatario_id: int
+):
+
+    '''
+    Verifica se existe uma notificacao com mais de 4 dias com aquela mesma situação
+    para a mesma pessoa
+    '''
+
+    filtro = db.query(models.Notificacao)\
+                .filter(models.Notificacao.situacao == situacao)\
+                .filter(models.Notificacao.destinatario_id == destinatario_id)\
+                .filter(models.Notificacao.lido == False)\
+                .order_by(models.Notificacao.data_criacao.desc())\
+                .first()
+
+
+    if filtro:
+        
+        data1 = datetime.date(filtro.data_criacao)
+
+        data2 = datetime.date(datetime.today())
+
+        data2-data1
+
+        diferenca = data2-data1
+
+        if diferenca.days > 4:
+            return False
+        return True
+    else:
+        return False
+
 
 def edit_notificacao(
     db: Session,
