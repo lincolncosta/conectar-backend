@@ -31,18 +31,20 @@ s3_client = boto3.client(
 )
 
 IMAGE_PATH = "uploads/"
-path = Path(IMAGE_PATH)
 
 if getenv("DEV_ENV"):
+    path = Path(IMAGE_PATH)
     path.mkdir(parents=True, exist_ok=True)
 
 def store_image(image):
     image_name = str(uuid.uuid4().hex) + ".png"
     try:
-        pil_image = np.array(Image.open(BytesIO(image)))
-        Image.fromarray(pil_image).save(path / f"{image_name}")
+        if getenv("DEV_ENV"):
+            pil_image = np.array(Image.open(BytesIO(image)))
+            Image.fromarray(pil_image).save(path / f"{image_name}")
 
-        upload_object(IMAGE_PATH + image_name , 'conectar')
+        else:
+            upload_object(IMAGE_PATH + image_name , 'conectar')
         
         return image_name
             
