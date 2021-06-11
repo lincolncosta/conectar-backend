@@ -254,7 +254,8 @@ async def notificacao_delete(
 async def notificacao_ler_todas(
     request: Request,
     destinatario_id: int,
-    db=Depends(get_db)
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Create notificacao
