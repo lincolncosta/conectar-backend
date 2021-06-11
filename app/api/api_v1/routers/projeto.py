@@ -20,6 +20,7 @@ from db.projeto.crud import (
     get_projeto_reacao,
     delete_projeto,
     edit_projeto,
+    edit_foto_projeto,
 )
 from db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
 from core.auth import get_current_active_pessoa
@@ -128,6 +129,19 @@ async def projeto_edit(
 
     return await edit_projeto(db, projeto_id, projeto)
 
+@r.put(
+    "/projeto/foto/{projeto_id}",
+    response_model=Projeto,
+    response_model_exclude_none=True,
+)
+async def projeto_foto_edit(
+    request: Request,
+    projeto_id: int,
+    foto_capa: UploadFile = File(...),
+    db=Depends(get_db)
+):
+
+    return await edit_foto_projeto(db, projeto_id, foto_capa)
 
 @r.delete(
     "/projeto/{projeto_id}",
