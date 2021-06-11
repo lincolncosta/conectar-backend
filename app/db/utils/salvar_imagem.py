@@ -33,7 +33,8 @@ s3_client = boto3.client(
 IMAGE_PATH = "uploads/"
 path = Path(IMAGE_PATH)
 
-path.mkdir(parents=True, exist_ok=True)
+if getenv("DEV_ENV"):
+    path.mkdir(parents=True, exist_ok=True)
 
 def store_image(image):
     image_name = str(uuid.uuid4().hex) + ".png"
