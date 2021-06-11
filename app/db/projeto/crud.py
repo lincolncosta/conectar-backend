@@ -87,10 +87,6 @@ async def edit_projeto(
         )
     update_data = projeto.dict(exclude_unset=True)
 
-    if foto_capa:
-       contents = await foto_capa.read()
-       if delete_image(db_projeto.foto_capa):
-           update_data["foto_capa"] = store_image(contents)
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
@@ -103,6 +99,22 @@ async def edit_projeto(
     db.refresh(db_projeto)
     return db_projeto
 
+async def edit_foto_projeto(
+    db: Session,
+    projeto_id: int,
+    foto_capa: UploadFile
+):
+
+    contents = await foto_capa.read()
+    db_projeto = get_projeto(db, projeto_id)
+
+    if delete_image(db_projeto.foto_capa):
+        db_projeto.foto_capa = store_image(contents)
+
+    db.add(db_projeto)
+    db.commit()
+    db.refresh(db_projeto)
+    return db_projeto
 
 async def create_projeto(
     db: Session,
@@ -142,6 +154,10 @@ def delete_projeto(db: Session, projeto_id: int):
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="projeto não encontrado"
         )
+
+    if projeto.foto_capa:
+        delete_image(projeto.foto_capa)
+
     db.delete(projeto)
     db.commit()
     return projeto

@@ -50,8 +50,7 @@ def store_image(image):
 
 def delete_image(image_name):
     try:
-        s3_client.delete_file(Bucket='conectar', Key=IMAGE_PATH + image_name)
-    
+        response = s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
         return True
 
     except Exception as e:
