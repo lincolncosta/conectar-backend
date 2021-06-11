@@ -15,6 +15,7 @@ from app.db.notificacao.crud import (
     get_notificacao_by_id,
     edit_notificacao,
     delete_notificacao,
+    ler_todas_notificacao
 )
 from app.db.notificacao.schemas import (
     Notificacao,
@@ -245,3 +246,21 @@ async def notificacao_delete(
     """
 
     return delete_notificacao(db, notificacao_id)
+
+@r.post(
+    "/notificacao/ler-todas",
+    status_code=200
+)
+async def notificacao_ler_todas(
+    request: Request,
+    destinatario_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Create notificacao
+    """
+
+    ler_todas_notificacao(db, destinatario_id)
+
+    return {}

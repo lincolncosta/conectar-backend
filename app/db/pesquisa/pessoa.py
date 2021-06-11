@@ -24,9 +24,6 @@ def get_pessoa_by_name(
         .filter(models.Pessoa.nome.ilike(f'%{pessoa_name}%'))\
         .all()
 
-    if not pessoa:
-        raise HTTPException(status_code=404, detail="pessoa não encontrado")
-
     return pessoa
 
 def get_pessoa_by_username(
