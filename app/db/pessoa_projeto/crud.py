@@ -185,8 +185,6 @@ async def get_similaridade_vaga(
 
     similaridades_retorno = {}
 
-    # futuramente implementar na nova tabela
-    pessoas_selecionadas = []
 
     # ignora o dono da vaga
     pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga_id)
@@ -225,7 +223,7 @@ async def get_similaridade_vaga(
     similaridades_pessoa = {}
 
     for pessoa in pessoas:
-        if pessoa not in similaridades_pessoa and pessoa.id not in pessoas_selecionadas:
+        if pessoa not in similaridades_pessoa:
             habilidades_areas_pessoa = []
 
             habilidades = pessoa.habilidades
@@ -256,15 +254,12 @@ async def get_similaridade_vaga(
     pessoa_selecionada = next(iter(similaridades_retorno))
     await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
 
-    pessoas_vagas[vaga.id] = pessoa_selecionada
-
     add_pessoa_ignorada(db, pessoa_selecionada.id, vaga.id)
-    pessoas_selecionadas.append(pessoa_selecionada.id)
 
     if not pessoas:
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
-    return pessoas_vagas
+    return pessoa_selecionada
 
 
 async def atualiza_match_vaga(
