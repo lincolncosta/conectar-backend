@@ -1,5 +1,5 @@
 from pathlib import Path
-from os import chdir, getenv
+import os
 from PIL import Image
 
 import numpy as np
@@ -26,26 +26,23 @@ def upload_object(file_name, bucket, object_name=None):
 
 s3_client = boto3.client(
     's3',
-    aws_access_key_id=getenv("AWS_ID"),
-    aws_secret_access_key=getenv("AWS_KEY")
+    aws_access_key_id=os.getenv("AWS_ID"),
+    aws_secret_access_key=os.getenv("AWS_KEY")
 )
 
 IMAGE_PATH = "uploads/"
-
-if getenv("DEV_ENV"):
-    path = Path(IMAGE_PATH)
-    path.mkdir(parents=True, exist_ok=True)
+path = Path(IMAGE_PATH)
+path.mkdir(parents=True, exist_ok=True)
 
 def store_image(image):
     image_name = str(uuid.uuid4().hex) + ".png"
     try:
-        if getenv("DEV_ENV"):
-            pil_image = np.array(Image.open(BytesIO(image)))
-            Image.fromarray(pil_image).save(path / f"{image_name}")
+       
+        pil_image = np.array(Image.open(BytesIO(image)))
+        Image.fromarray(pil_image).save(path / f"{image_name}")
 
-        else:
-            upload_object(IMAGE_PATH + image_name , 'conectar')
-        
+        upload_object(IMAGE_PATH + image_name , 'conectar')
+        os.remove(IMAGE_PATH + image_name)        
         return image_name
             
     except Exception as e:
