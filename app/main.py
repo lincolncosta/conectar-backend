@@ -49,8 +49,8 @@ app = FastAPI(
     title=config.PROJECT_NAME, docs_url="/api/docs", openapi_url="/api"
 )
 
-app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
-
+if DEV_ENV:
+    app.mount("/api/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Go to localhost:8000/api/coverage/index.html to see coverage report
 # app.mount("/api/coverage", StaticFiles(directory="htmlcov"), name="htmlcov")
