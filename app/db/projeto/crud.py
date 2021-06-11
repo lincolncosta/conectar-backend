@@ -88,7 +88,7 @@ async def edit_projeto(
     if foto_capa:
        contents = await foto_capa.read()
        if delete_image(db_projeto.foto_capa):
-           update_data["foto_capa"] = store_image(contents, foto_capa.filename)
+           update_data["foto_capa"] = store_image(contents)
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)

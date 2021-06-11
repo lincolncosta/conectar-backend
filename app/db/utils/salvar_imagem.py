@@ -35,7 +35,7 @@ path = Path(IMAGE_PATH)
 
 path.mkdir(parents=True, exist_ok=True)
 
-def store_image(image, image_id):
+def store_image(image):
     image_name = str(uuid.uuid4().hex) + ".png"
     try:
         pil_image = np.array(Image.open(BytesIO(image)))
