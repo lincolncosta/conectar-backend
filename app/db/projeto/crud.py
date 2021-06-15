@@ -24,7 +24,7 @@ def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:
     return projeto
 
 def get_projetos_destaque(db: Session, qtd_projeto: int) -> schemas.Projeto:
-    projetos = db.query(models.Reacoes, func.count(models.Reacoes.projeto_id).label('qtd'))\
+    projetos = db.query(models.Reacoes.projeto_id, func.count(models.Reacoes.projeto_id).label('qtd'))\
                 .group_by(models.Reacoes.projeto_id)\
                 .order_by('qtd')\
                 .limit(qtd_projeto)\
