@@ -71,6 +71,7 @@ def get_projeto_reacao(
     reacoes = db.query(models.Reacoes)\
         .filter(models.Reacoes.pessoa_id == pessoa_id,
                 models.Reacoes.reacao == reacao)\
+        .order_by(models.Reacoes.data_criacao.desc())\
         .all()
 
     projetos = []
