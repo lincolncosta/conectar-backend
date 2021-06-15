@@ -150,8 +150,6 @@ async def get_similaridade_projeto(
                     habilidades_areas_pessoa
                 )
 
-        # adicionar sort by random aqui
-
         similaridades_retorno = dict(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
@@ -184,7 +182,6 @@ async def get_similaridade_vaga(
         return {}
 
     similaridades_retorno = {}
-
 
     # ignora o dono da vaga
     pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga_id)
@@ -245,8 +242,6 @@ async def get_similaridade_vaga(
                 habilidades_areas_vaga,
                 habilidades_areas_pessoa
             )
-
-    # adicionar sort by random aqui
 
     similaridades_retorno = dict(
         sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
