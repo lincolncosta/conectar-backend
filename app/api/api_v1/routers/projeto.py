@@ -70,7 +70,8 @@ async def projeto_details(
 
 @r.get(
     "/projeto/destaque/{qtd_projetos}",
-    status_code=200
+    response_model=t.List[Projeto],
+    response_model_exclude_none=True,
 )
 async def projetos_destaque(
     request: Request,
@@ -82,8 +83,8 @@ async def projetos_destaque(
     Get N projetos destaque
     """
     projetos = get_projetos_destaque(db, qtd_projetos)
-    # print(projetos)
-    # return projeto
+    print(projetos)
+    return projetos
 
 @r.get(
     "/projeto/reacao/{pessoa_id}",

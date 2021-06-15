@@ -30,13 +30,14 @@ def get_projetos_destaque(db: Session, qtd_projetos: int):
                 .limit(10)\
                 .all()
 
-    print(projetos)
     shuffle(projetos)
 
     projetos_return = []
 
     for i in range(qtd_projetos):
-        projetos_return.append(projetos[i])
+        projeto_id = projetos[i][0]
+        projeto = get_projeto(db, projeto_id)
+        projetos_return.append(projeto)
 
     return projetos_return
 
