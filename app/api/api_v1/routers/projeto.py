@@ -21,6 +21,7 @@ from db.projeto.crud import (
     delete_projeto,
     edit_projeto,
     edit_foto_projeto,
+    get_projetos_destaque
 )
 from db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
 from core.auth import get_current_active_pessoa
@@ -65,6 +66,23 @@ async def projeto_details(
     Get any pessoa details
     """
     projeto = get_projeto(db, projeto_id)
+    return projeto
+
+@r.get(
+    "/projeto/destaque/{qtd_projetos}",
+    response_model=Projeto,
+    response_model_exclude_none=True,
+)
+async def projeto_details(
+    request: Request,
+    qtd_projetos: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get N projetos destaque
+    """
+    projeto = get_projetos_destaque(db, qtd_projetos)
     return projeto
 
 @r.get(

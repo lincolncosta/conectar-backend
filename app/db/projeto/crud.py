@@ -1,8 +1,7 @@
 from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.orm import Session
 import typing as t
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
+from sqlalchemy.sql import func
 
 from db import models
 from db.utils.extract_areas import append_areas
@@ -24,6 +23,14 @@ def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:
         raise HTTPException(status_code=404, detail="projeto não encontrado")
     return projeto
 
+def get_projetos_destaque(db: Session, qtd_projeto: int) -> schemas.Projeto:
+    projetos = db.query(models.Reacoes, func.count(models.Reacoes.projeto_id).label('qtd'))\
+                .group_by(models.Reacoes.projeto_id)\
+                .order_by('qtd')\
+                .limit(qtd_projeto)\
+                .all()
+
+    return projetos
 
 def get_projetos(
     db: Session,
