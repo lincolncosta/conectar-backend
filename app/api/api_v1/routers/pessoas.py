@@ -73,7 +73,7 @@ async def pessoa_details(
 
 
 @r.get(
-    "/pessoas/destaque/{qtd_projetos}",
+    "/pessoas/destaque/{qtd_pessoas}",
     response_model=t.List[Pessoa],
     response_model_exclude_none=True,
 )
