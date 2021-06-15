@@ -2,7 +2,7 @@ from fastapi import HTTPException, status, UploadFile
 from sqlalchemy.orm import Session
 import typing as t
 from sqlalchemy.sql import func
-
+from random import shuffle
 from db import models
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
@@ -23,14 +23,22 @@ def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:
         raise HTTPException(status_code=404, detail="projeto não encontrado")
     return projeto
 
-def get_projetos_destaque(db: Session, qtd_projeto: int) -> schemas.Projeto:
+def get_projetos_destaque(db: Session, qtd_projetos: int):
     projetos = db.query(models.Reacoes.projeto_id, func.count(models.Reacoes.projeto_id).label('qtd'))\
                 .group_by(models.Reacoes.projeto_id)\
                 .order_by('qtd')\
-                .limit(qtd_projeto)\
+                .limit(10)\
                 .all()
 
-    return projetos
+    print(projetos)
+    shuffle(projetos)
+
+    projetos_return = []
+
+    for i in range(qtd_projetos):
+        projetos_return.append(projetos[i])
+
+    return projetos_return
 
 def get_projetos(
     db: Session,
