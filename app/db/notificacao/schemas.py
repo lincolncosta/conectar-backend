@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 import typing as t
 
+
 class NotificacaoBase(BaseModel):
     remetente_id: int
     destinatario_id: int
@@ -11,13 +12,16 @@ class NotificacaoBase(BaseModel):
     foto: t.Optional[str]
     anexo: t.Optional[str]
     lido: bool
-     
+    link: t.Optional[str]
+
+
 class NotificacaoCreate(NotificacaoBase):
     situacao: t.Optional[str]
     link: t.Optional[str] = None
 
     class Config:
         orm_mode = True
+
 
 class Notificacao(NotificacaoBase):
     id: int
@@ -27,6 +31,7 @@ class Notificacao(NotificacaoBase):
     class Config:
         orm_mode = True
 
+
 class NotificacaoOut(NotificacaoBase):
     situacao: str
     foto: t.Optional[str]
@@ -34,6 +39,7 @@ class NotificacaoOut(NotificacaoBase):
 
     class Config:
         orm_mode = True
+
 
 class NotificacaoEdit(NotificacaoBase):
     remetente_id: t.Optional[int]
