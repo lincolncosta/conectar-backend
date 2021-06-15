@@ -31,7 +31,6 @@ def get_projetos_destaque(db: Session, qtd_projetos: int):
                 .all()
 
     shuffle(projetos)
-
     projetos_return = []
 
     for i in range(qtd_projetos):

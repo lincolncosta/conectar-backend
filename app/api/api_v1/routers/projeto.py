@@ -82,8 +82,7 @@ async def projetos_destaque(
     """
     Get N projetos destaque
     """
-    projetos = get_projetos_destaque(db, qtd_projetos)
-    print(projetos)
+    projetos = get_projetos_destaque(db, qtd_projetos)    
     return projetos
 
 @r.get(
