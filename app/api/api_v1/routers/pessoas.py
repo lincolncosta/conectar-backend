@@ -91,7 +91,7 @@ async def projetos_destaque(
 
     for projeto in projetos:
         pessoa_id = projeto.pessoa_id
-        pessoa = get_pessoa_by_id(pessoa_id)
+        pessoa = get_pessoa_by_id(db, pessoa_id)
         pessoas.append(pessoa)
 
     return pessoas
