@@ -86,7 +86,7 @@ async def projetos_destaque(
     """
     Get N pessoas destaque
     """
-    projetos: Projeto = get_projetos_destaque(db, qtd_pessoas)
+    projetos = get_projetos_destaque(db, qtd_pessoas)
     pessoas = []
 
     for projeto in projetos:

@@ -23,7 +23,7 @@ def get_projeto(db: Session, projeto_id: int) -> schemas.Projeto:
         raise HTTPException(status_code=404, detail="projeto não encontrado")
     return projeto
 
-def get_projetos_destaque(db: Session, qtd_projetos: int):
+def get_projetos_destaque(db: Session, qtd_projetos: int) -> t.List[schemas.Projeto]: 
     projetos = db.query(models.Reacoes.projeto_id, func.count(models.Reacoes.projeto_id).label('qtd'))\
                 .group_by(models.Reacoes.projeto_id)\
                 .order_by('qtd')\
