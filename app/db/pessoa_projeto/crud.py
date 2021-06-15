@@ -184,7 +184,9 @@ async def get_similaridade_vaga(
     similaridades_retorno = {}
 
     # ignora o dono da vaga
-    pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga_id)
+    vagas_projeto = await get_vagas_by_projeto(db, vaga.projeto_id)
+    vagas_ids = [vaga.id for vaga in vagas_projeto]
+    pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vagas(db, vagas_ids)
 
     # Extração de informações de habilidades e áreas da vaga
     habilidades_areas_vaga = []
