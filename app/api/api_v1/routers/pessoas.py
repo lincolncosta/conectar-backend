@@ -1,7 +1,9 @@
+from app.db.models import Projeto
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from db.session import get_db
+from db.projeto.crud import get_projetos_destaque
 from db.pessoa.crud import (
     get_rand_pessoas,
     get_pessoas,
@@ -70,6 +72,31 @@ async def pessoa_details(
     # )
 
 
+@r.get(
+    "/projeto/destaque/{qtd_projetos}",
+    response_model=t.List[Pessoa],
+    response_model_exclude_none=True,
+)
+async def projetos_destaque(
+    request: Request,
+    qtd_pessoas: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get N pessoas destaque
+    """
+    projetos: Projeto = get_projetos_destaque(db, qtd_pessoas)
+    pessoas = []
+
+    for projeto in projetos:
+        pessoa_id = projeto.pessoa_id
+        pessoa = get_pessoa_by_id(pessoa_id)
+        pessoas.append(pessoa)
+
+    return pessoas
+
+
 @r.post("/pessoas/random", response_model=t.List[Pessoa], response_model_exclude_none=True)
 async def random_pessoas(
     request: Request,
@@ -84,6 +111,7 @@ async def random_pessoas(
     pessoas = get_rand_pessoas(db, qtde)
 
     return pessoas
+
 
 @r.post("/pessoas", response_model=Pessoa, response_model_exclude_none=True)
 async def pessoa_create(
