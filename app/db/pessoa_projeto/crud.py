@@ -187,6 +187,7 @@ async def get_similaridade_vaga(
     vagas_projeto = await get_vagas_by_projeto(db, vaga.projeto_id)
     vagas_ids = [vaga.id for vaga in vagas_projeto]
     pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vagas(db, vagas_ids)
+    print(pessoas_ignoradas_ids)
 
     # Extração de informações de habilidades e áreas da vaga
     habilidades_areas_vaga = []
@@ -256,6 +257,7 @@ async def get_similaridade_vaga(
     if not pessoas:
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
+    print(pessoa_selecionada)
     return pessoa_selecionada
 
 
