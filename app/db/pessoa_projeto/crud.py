@@ -1,3 +1,4 @@
+from app.db.ignorados.crud import get_ids_pessoa_ignorada_by_vagas
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 import typing as t
@@ -82,6 +83,8 @@ async def get_similaridade_projeto(
 
     # Com o id do projeto, buscar as vagas disponíveis
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
+    vagas_ids = [vaga.id for vaga in vagas_projeto]
+    pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vagas(db, vagas_ids)
     similaridades_retorno = {}
 
     # futuramente implementar na nova tabela
@@ -117,9 +120,6 @@ async def get_similaridade_projeto(
         if not habilidades_areas_vaga:
             raise HTTPException(
                 status_code=404, detail="Areas e Habilidades não encontradas para vaga")
-
-        # ignora o dono da vaga
-        pessoas_ignoradas_ids = get_ids_pessoa_ignorada_by_vaga(db, vaga.id)
 
         pessoas = get_pessoas_by_papel(
             db, vaga.papel_id, pessoas_ignoradas_ids)

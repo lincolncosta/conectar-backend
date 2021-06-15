@@ -42,6 +42,18 @@ def get_ids_pessoa_ignorada_by_vaga(
 
     return pessoas_ignoradas_ids
 
+def get_ids_pessoa_ignorada_by_vagas(
+    db: Session,
+    pessoa_projeto_ids: t.List[int]
+    ) -> t.List[int]:
+
+    pessoas_ignoradas_ids = db.query(models.PessoaIgnoradaVaga.pessoa_id)\
+        .filter(models.PessoaIgnoradaVaga.pessoa_projeto_id.in_(pessoa_projeto_ids))\
+        .all()
+
+    return pessoas_ignoradas_ids
+    
+
 def get_pessoas_ignoradas_by_vaga(
     db: Session,
     pessoa_projeto_id: int
