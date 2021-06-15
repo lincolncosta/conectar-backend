@@ -8,9 +8,10 @@ import uuid
 
 from core.security.passwords import get_password_hash
 
-import boto3
-from botocore.exceptions import ClientError
-import logging
+if not os.getenv("DEV_ENV"):
+    import boto3
+    from botocore.exceptions import ClientError
+    import logging
 
 def upload_object(file_name, bucket, object_name=None):
     if object_name is None:
@@ -24,11 +25,12 @@ def upload_object(file_name, bucket, object_name=None):
       
     return True
 
-s3_client = boto3.client(
-    's3',
-    aws_access_key_id=os.getenv("AWS_ID"),
-    aws_secret_access_key=os.getenv("AWS_KEY")
-)
+if not os.getenv("DEV_ENV"):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=os.getenv("AWS_ID"),
+        aws_secret_access_key=os.getenv("AWS_KEY")
+    )
 
 IMAGE_PATH = "uploads/"
 path = Path(IMAGE_PATH)
@@ -41,7 +43,8 @@ def store_image(image):
         pil_image = np.array(Image.open(BytesIO(image)))
         Image.fromarray(pil_image).save(path / f"{image_name}")
 
-        upload_object(IMAGE_PATH + image_name , 'conectar')
+        if not os.getenv("DEV_ENV"):
+            upload_object(IMAGE_PATH + image_name , 'conectar')
         os.remove(IMAGE_PATH + image_name)        
         return image_name
             
@@ -50,7 +53,8 @@ def store_image(image):
 
 def delete_image(image_name):
     try:
-        response = s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
+        if not os.getenv("DEV_ENV"):
+            response = s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
         return True
 
     except Exception as e:

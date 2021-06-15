@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import select, func
+from sqlalchemy.sql import func
 import typing as t
 
 from db import models
