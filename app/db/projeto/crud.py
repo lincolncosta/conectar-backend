@@ -124,9 +124,12 @@ async def edit_foto_projeto(
     contents = await foto_capa.read()
     db_projeto = get_projeto(db, projeto_id)
 
-    if delete_image(db_projeto.foto_capa):
+    if db_projeto.foto_capa:
+        if delete_image(db_projeto.foto_capa):
+            db_projeto.foto_capa = store_image(contents)
+    else:
         db_projeto.foto_capa = store_image(contents)
-
+        
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
