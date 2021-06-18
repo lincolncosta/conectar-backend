@@ -152,10 +152,10 @@ async def pessoa_edit(
 
 @r.put(
     "/pessoas/foto/{projeto_id}",
-    response_model=Projeto,
+    response_model=PessoaOut,
     response_model_exclude_none=True,
 )
-async def projeto_foto_edit(
+async def pessoa_foto_edit(
     request: Request,
     pessoa_id: int,
     foto_perfil: UploadFile = File(...),
