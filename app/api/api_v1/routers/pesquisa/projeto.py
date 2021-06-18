@@ -1,5 +1,4 @@
-from fastapi import (APIRouter, Request, Depends, Response,
-                     encoders, UploadFile, File, Form)
+from fastapi import (APIRouter, Request, Depends)
 import typing as t
 
 from app.db.session import get_db
@@ -9,7 +8,7 @@ from app.db.pesquisa.projeto import (
     get_projeto_by_name,
     get_projeto_by_objective,
 )
-from app.db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
+from app.db.projeto.schemas import Projeto
 
 pesquisa_projeto_router = r = APIRouter()
 

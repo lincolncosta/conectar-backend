@@ -6,7 +6,6 @@ import numpy as np
 from io import BytesIO
 import uuid
 
-from core.security.passwords import get_password_hash
 
 if not os.getenv("DEV_ENV"):
     import boto3
@@ -18,7 +17,7 @@ def upload_object(file_name, bucket, object_name=None):
         object_name = file_name
 
     try:
-        response = s3_client.upload_file(file_name, bucket, object_name)
+        s3_client.upload_file(file_name, bucket, object_name)
     except ClientError as e:
         logging.error(e)
         return False
@@ -54,7 +53,7 @@ def store_image(image):
 def delete_image(image_name):
     try:
         if not os.getenv("DEV_ENV"):
-            response = s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
+            s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
         return True
 
     except Exception as e:

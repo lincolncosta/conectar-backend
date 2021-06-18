@@ -15,8 +15,7 @@ from db.habilidade.schemas import (
     HabilidadesEdit
 )
 from core.auth import (
-    get_current_active_pessoa,
-    get_current_active_superuser,
+    get_current_active_pessoa
 )
 
 habilidades_router = r = APIRouter()

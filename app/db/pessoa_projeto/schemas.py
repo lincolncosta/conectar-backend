@@ -1,10 +1,8 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import datetime
-from db.area.schemas import Area, PessoaAreaCreate
-from db.habilidade.schemas import Habilidades, PessoaHabilidadeCreate
-from db.pessoa.schemas import Pessoa
-from db.projeto.schemas import Projeto
+from db.area.schemas import PessoaAreaCreate
+from db.habilidade.schemas import PessoaHabilidadeCreate
 
 
 class PessoaProjetoBase(BaseModel):

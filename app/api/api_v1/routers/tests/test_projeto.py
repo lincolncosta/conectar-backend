@@ -1,6 +1,3 @@
-from db import models
-
-
 def test_get_projeto_by_id(client, test_projeto, fake_login_superuser):
     response = client.get(f"/api/v1/projeto/{test_projeto.id}")
 
