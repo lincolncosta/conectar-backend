@@ -179,7 +179,7 @@ def get_pessoas_by_papel(
     '''
 
     # Refatorar futuramente para não utilizarmos números fixos no código.
-    if (papel_id == 36):
+    if (papel_id == 1):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.aliado == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas_ids))\
@@ -188,7 +188,7 @@ def get_pessoas_by_papel(
             .join(models.Area, models.Pessoa.areas, full=True, isouter=True)\
             .order_by(func.random())\
             .distinct()
-    elif (papel_id == 37):
+    elif (papel_id == 2):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.colaborador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas_ids))\
@@ -197,7 +197,7 @@ def get_pessoas_by_papel(
             .join(models.Area, models.Pessoa.areas, full=True, isouter=True)\
             .order_by(func.random())\
             .distinct()
-    elif (papel_id == 38):
+    elif (papel_id == 3):
         return db.query(models.Pessoa)\
             .filter(models.Pessoa.idealizador == True)\
             .filter(models.Pessoa.id.notin_(pessoas_selecionadas_ids))\
