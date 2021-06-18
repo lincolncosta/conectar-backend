@@ -3,14 +3,11 @@ from fastapi import (
     Request,
     Depends,
     Response,
-    encoders,
     UploadFile,
     File,
     Form,
 )
 import typing as t
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
 
 from db.session import get_db
 from db.projeto.crud import (
@@ -23,7 +20,7 @@ from db.projeto.crud import (
     edit_foto_projeto,
     get_projetos_destaque
 )
-from db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
+from db.projeto.schemas import Projeto, ProjetoEdit
 from core.auth import get_current_active_pessoa
 
 projeto_router = r = APIRouter()
@@ -68,6 +65,7 @@ async def projeto_details(
     projeto = get_projeto(db, projeto_id)
     return projeto
 
+
 @r.get(
     "/projeto/destaque/{qtd_projetos}",
     response_model=t.List[Projeto],
@@ -82,8 +80,9 @@ async def projetos_destaque(
     """
     Get N projetos destaque
     """
-    projetos = get_projetos_destaque(db, qtd_projetos)    
+    projetos = get_projetos_destaque(db, qtd_projetos)
     return projetos
+
 
 @r.get(
     "/projeto/reacao/{pessoa_id}",
@@ -97,9 +96,9 @@ async def projeto_reacoes(
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
-    
+
     projetos = get_projeto_reacao(db, pessoa_id, reacao)
-    
+
     return projetos
 
 
@@ -147,6 +146,7 @@ async def projeto_edit(
 
     return await edit_projeto(db, projeto_id, projeto)
 
+
 @r.put(
     "/projeto/foto/{projeto_id}",
     response_model=Projeto,
@@ -160,6 +160,7 @@ async def projeto_foto_edit(
 ):
 
     return await edit_foto_projeto(db, projeto_id, foto_capa)
+
 
 @r.delete(
     "/projeto/{projeto_id}",

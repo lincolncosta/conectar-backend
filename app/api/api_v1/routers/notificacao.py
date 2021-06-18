@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends
 from app.db.pessoa_projeto.crud import get_pessoa_projeto
 import typing as t
 
@@ -19,13 +19,11 @@ from app.db.notificacao.crud import (
 )
 from app.db.notificacao.schemas import (
     Notificacao,
-    NotificacaoBase,
     NotificacaoCreate,
     NotificacaoEdit,
 )
 from app.core.auth import (
     get_current_active_pessoa,
-    get_current_active_superuser,
 )
 
 notificacao_router = r = APIRouter()

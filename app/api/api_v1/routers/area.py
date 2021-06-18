@@ -7,8 +7,7 @@ from db.area.crud import (
     delete_area,
     edit_area,
     get_area_by_id,
-    get_areas,
-    get_area_and_subareas
+    get_areas    
 )
 from db.pesquisa.area_habilidade import search_area_by_name
 from db.area.schemas import (

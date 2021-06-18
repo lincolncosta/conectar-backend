@@ -1,16 +1,9 @@
 from fastapi import (
     APIRouter,
     Request,
-    Depends,
-    Response,
-    encoders,
-    UploadFile,
-    File,
-    Form,
+    Depends
 )
 import typing as t
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.session import get_db
 from app.db.projeto.crud import get_projeto
@@ -28,9 +21,7 @@ from app.db.pessoa_projeto.crud import (
 from app.db.pessoa_projeto.schemas import (
     Pessoa,
     PessoaProjeto,
-    PessoaProjetoBase,
     PessoaProjetoEdit,
-    PessoaProjetoOut,
     PessoaProjetoCreate,
 )
 
@@ -98,6 +89,7 @@ async def similaridade_projeto(
 
     return pessoas
 
+
 @r.get(
     "/pessoa_projeto/similaridade_vaga/{pessoa_projeto_id}",
     response_model=Pessoa,
@@ -117,6 +109,7 @@ async def similaridade_vaga(
     pessoa = await get_similaridade_vaga(db, pessoa_logada, pessoa_projeto_id)
 
     return pessoa
+
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
