@@ -265,6 +265,7 @@ def delete_pessoa(
     pessoa = get_pessoa_by_id(db, pessoa_id)
     
     db.delete(pessoa)
+    delete_image(pessoa.foto_perfil)
     db.commit()
 
     return pessoa
