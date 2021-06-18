@@ -58,7 +58,10 @@ async def edit_foto_pessoa(
     contents = await foto_perfil.read()
     db_pessoa = get_pessoa_by_id(db, pessoa_id)
 
-    if delete_image(db_pessoa.foto_perfil):
+    if db_pessoa.foto_perfil:
+        if delete_image(db_pessoa.foto_perfil):
+            db_pessoa.foto_perfil = store_image(contents)
+    else:
         db_pessoa.foto_perfil = store_image(contents)
 
     db.add(db_pessoa)
