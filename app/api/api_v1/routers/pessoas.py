@@ -130,11 +130,11 @@ async def pessoa_create(
     return create_pessoa(db, pessoa)
 
 @r.put(
-    "/pessoas/foto/{pessoa_id}",
-    response_model=PessoaOut,
+    "/pessoas/foto/{projeto_id}",
+    response_model=Projeto,
     response_model_exclude_none=True,
 )
-async def pessoa_foto_edit(
+async def projeto_foto_edit(
     request: Request,
     pessoa_id: int,
     foto_perfil: UploadFile = File(...),
