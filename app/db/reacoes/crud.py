@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-import typing as t
+from db.notificacao.crud import notificacao_interesse, notificacao_favorito
 
 from db import models
 from . import schemas
@@ -19,6 +19,12 @@ def create_reacao(
     db.add(db_reacao)
     db.commit()
     db.refresh(db_reacao)
+
+    if db_reacao.reacao == 'FAVORITO':
+        notificacao_favorito(db, db_reacao.pessoa_id, db_reacao.projeto_id)
+
+    if db_reacao.reacao == 'INTERESSE':
+        notificacao_interesse(db, db_reacao.pessoa_id, db_reacao.projeto_id)
 
     return db_reacao
 
