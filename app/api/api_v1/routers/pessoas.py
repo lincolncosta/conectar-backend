@@ -86,13 +86,16 @@ async def projetos_destaque(
     """
     Get N pessoas destaque
     """
-    projetos = get_projetos_destaque(db, qtd_pessoas)
+    projetos = get_projetos_destaque(db, 10)
     pessoas = []
 
     for projeto in projetos:
         pessoa_id = projeto.pessoa_id
         pessoa = get_pessoa_by_id(db, pessoa_id)
-        pessoas.append(pessoa)
+        if pessoa not in pessoas:
+            pessoas.append(pessoa)
+        if len(pessoas) == qtd_pessoas:
+            break
 
     return pessoas
 
