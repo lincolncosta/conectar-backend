@@ -1,12 +1,7 @@
 from fastapi import (
     APIRouter,
     Request,
-    Depends,
-    Response,
-    encoders,
-    UploadFile,
-    File,
-    Form,
+    Depends
 )
 import typing as t
 
@@ -21,10 +16,8 @@ from db.tipo_acordo.crud import (
 
 from db.tipo_acordo.schemas import (
     TipoAcordo,
-    TipoAcordoBase,
     TipoAcordoCreate,
     TipoAcordoEdit,
-    TipoAcordoOut,
 )
 
 tipo_acordo_router = r = APIRouter()
