@@ -151,7 +151,7 @@ async def pessoa_edit(
     return await edit_pessoa(db, pessoa_id, pessoa)
 
 @r.put(
-    "/pessoas/foto/{projeto_id}",
+    "/pessoas/foto/{pessoa_id}",
     response_model=PessoaOut,
     response_model_exclude_none=True,
 )
