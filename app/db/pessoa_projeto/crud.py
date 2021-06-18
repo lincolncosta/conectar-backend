@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import typing as t
 
 from db import models
+from db.pessoa.schemas import Pessoa
 from . import schemas
 from db.pessoa.crud import get_pessoa_by_id, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
@@ -70,7 +71,7 @@ async def get_all_pessoas_projeto(
 
 async def get_similaridade_projeto(
     db: Session,
-    pessoa_logada: schemas.Pessoa,
+    pessoa_logada: Pessoa,
     id_projeto: int
 ):
 
@@ -169,7 +170,7 @@ async def get_similaridade_projeto(
 
 async def get_similaridade_vaga(
     db: Session,
-    pessoa_logada: schemas.Pessoa,
+    pessoa_logada: Pessoa,
     vaga_id: int
 ):
 
@@ -260,7 +261,7 @@ async def get_similaridade_vaga(
 async def atualiza_match_vaga(
     db: Session,
     vaga: schemas.PessoaProjeto,
-    pessoa: schemas.Pessoa,
+    pessoa: Pessoa,
     pessoa_logada_id: int
 ):
 
