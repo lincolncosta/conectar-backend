@@ -496,6 +496,58 @@ def notificacao_checagem_projeto(
 
     return notificacao
 
+def notificacao_favorito(
+    db: Session,
+    remetente_id: int,
+    projeto_id: int
+):
+
+    projeto = get_projeto(db, projeto_id)
+    remetente = get_pessoa_by_id(db, remetente_id)
+
+    db_notificacao = models.Notificacao(
+        remetente_id=remetente_id,
+        destinatario_id=projeto.pessoa_id,
+        projeto_id=projeto.id,
+        pessoa_projeto_id=None,
+        situacao = "<strong>" + remetente.nome + " favoritou</strong> o projeto " + projeto.nome + "!",
+        foto=projeto.foto_capa,
+        lido=False,
+    )
+
+    if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+        return
+
+    db.add(db_notificacao)
+    db.commit()
+    db.refresh(db_notificacao)
+
+def notificacao_interesse(
+    db: Session,
+    remetente_id: int,
+    projeto_id: int
+):
+
+    projeto = get_projeto(db, projeto_id)
+    remetente = get_pessoa_by_id(db, remetente_id)
+
+    db_notificacao = models.Notificacao(
+        remetente_id=remetente_id,
+        destinatario_id=projeto.pessoa_id,
+        projeto_id=projeto.id,
+        pessoa_projeto_id=None,
+        situacao = "<strong>" + remetente.nome + " demonstrou interesse</strong> no projeto " + projeto.nome + "!",
+        foto=projeto.foto_capa,
+        lido=False,
+    )
+
+    if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+        return
+
+    db.add(db_notificacao)
+    db.commit()
+    db.refresh(db_notificacao)
+
 def existe_notificacao(
     db: Session,
     situacao: str,
