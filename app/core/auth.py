@@ -80,6 +80,8 @@ async def get_current_pessoa(
     pessoa = get_pessoa_by_email(db, token_data.email)
     if pessoa is None:
         raise credentials_exception
+    S3_URL = os.getenv("S3_URL")
+    pessoa.foto_perfil = S3_URL + pessoa.foto_perfil
     return pessoa
 
 
