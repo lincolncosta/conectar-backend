@@ -35,6 +35,9 @@ from app.api.api_v1.routers.reacoes import reacoes_router
 from app.api.api_v1.routers.notificacao import notificacao_router
 ############################# Routers ###########################################
 
+# from app.core import config
+# from app.db.session import SessionLocal
+# from app.core.auth import get_current_active_pessoa
 from core import config
 from db.session import SessionLocal
 from core.auth import get_current_active_pessoa

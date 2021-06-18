@@ -11,7 +11,8 @@ from app.db.papel.crud import (
 )
 from app.db.papel.schemas import PapelCreate, Papel, PapelEdit
 from app.core.auth import (
-    get_current_active_pessoa
+    get_current_active_pessoa,
+    get_current_active_superuser,
 )
 
 papel_router = r = APIRouter()
