@@ -1,5 +1,5 @@
 from app.db.models import Projeto
-from fastapi import APIRouter, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
 import typing as t
 
 from db.session import get_db
@@ -12,6 +12,7 @@ from db.pessoa.crud import (
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
+    edit_foto_pessoa
 )
 from db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa, PessoaOut
 from core.auth import (
@@ -128,6 +129,19 @@ async def pessoa_create(
     """
     return create_pessoa(db, pessoa)
 
+@r.put(
+    "/pessoas/foto/{projeto_id}",
+    response_model=Projeto,
+    response_model_exclude_none=True,
+)
+async def projeto_foto_edit(
+    request: Request,
+    pessoa_id: int,
+    foto_perfil: UploadFile = File(...),
+    db=Depends(get_db)
+):
+
+    return await edit_foto_pessoa(db, pessoa_id, foto_perfil)
 
 @r.put(
     "/pessoas",

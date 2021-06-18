@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-import typing as t
-from datetime import date
+
 
 class PapelBase(BaseModel):
   descricao: str

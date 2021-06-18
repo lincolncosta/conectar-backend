@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 import typing as t
@@ -8,6 +8,7 @@ from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from core.security.passwords import get_password_hash
+from db.utils.salvar_imagem import store_image, delete_image
 
 
 def get_rand_pessoas(
@@ -250,6 +251,22 @@ def delete_pessoa(
 
     return pessoa
 
+async def edit_foto_pessoa(
+    db: Session,
+    pessoa_id: int,
+    foto_perfil: UploadFile
+):
+
+    contents = await foto_perfil.read()
+    db_pessoa = get_pessoa_by_id(db, pessoa_id)
+
+    if delete_image(db_pessoa.foto_perfil):
+        db_pessoa.foto_perfil = store_image(contents)
+
+    db.add(db_pessoa)
+    db.commit()
+    db.refresh(db_pessoa)
+    return db_pessoa
 
 async def edit_pessoa(
     db: Session,

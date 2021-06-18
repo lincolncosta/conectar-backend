@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from sqlalchemy.exc import IntegrityError
 import typing as t
 
 from db import models
