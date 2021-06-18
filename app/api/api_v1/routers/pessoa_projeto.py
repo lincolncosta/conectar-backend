@@ -17,11 +17,11 @@ from app.db.pessoa_projeto.crud import (
     delete_pessoa_projeto,
 )
 from app.db.pessoa_projeto.schemas import (
-    Pessoa,
     PessoaProjeto,
     PessoaProjetoEdit,
     PessoaProjetoCreate,
 )
+from app.db.pessoa.schemas import Pessoa
 
 from core.auth import get_current_active_pessoa
 
