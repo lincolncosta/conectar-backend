@@ -4,7 +4,6 @@ import typing as t
 
 from db import models
 from . import schemas
-from db.pessoa.schemas import Pessoa
 from db.pessoa.crud import get_pessoa_by_id, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
 from db.notificacao.crud import (
@@ -71,7 +70,7 @@ async def get_all_pessoas_projeto(
 
 async def get_similaridade_projeto(
     db: Session,
-    pessoa_logada: Pessoa,
+    pessoa_logada: schemas.Pessoa,
     id_projeto: int
 ):
 
@@ -170,7 +169,7 @@ async def get_similaridade_projeto(
 
 async def get_similaridade_vaga(
     db: Session,
-    pessoa_logada: Pessoa,
+    pessoa_logada: schemas.Pessoa,
     vaga_id: int
 ):
 
@@ -261,7 +260,7 @@ async def get_similaridade_vaga(
 async def atualiza_match_vaga(
     db: Session,
     vaga: schemas.PessoaProjeto,
-    pessoa: Pessoa,
+    pessoa: schemas.Pessoa,
     pessoa_logada_id: int
 ):
 
