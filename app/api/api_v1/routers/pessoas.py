@@ -1,4 +1,3 @@
-from app.db.models import Projeto
 from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
 import typing as t
 

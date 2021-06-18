@@ -2,19 +2,10 @@ from fastapi import (
     APIRouter,
     Request,
     Depends,
-    Response,
-    encoders,
-    UploadFile,
-    File,
-    Form,
 )
 import typing as t
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
 
 from app.db.session import get_db
-from app.db.projeto.crud import get_projeto
-from app.db.pessoa.crud import get_pessoas
 from app.db.pessoa_projeto.crud import (
     create_pessoa_projeto,
     get_pessoa_projeto,
@@ -28,9 +19,7 @@ from app.db.pessoa_projeto.crud import (
 from app.db.pessoa_projeto.schemas import (
     Pessoa,
     PessoaProjeto,
-    PessoaProjetoBase,
     PessoaProjetoEdit,
-    PessoaProjetoOut,
     PessoaProjetoCreate,
 )
 

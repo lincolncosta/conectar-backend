@@ -1,10 +1,8 @@
-from fastapi import File, UploadFile
 from pydantic import BaseModel
 import typing as t
 from datetime import datetime
 from db.habilidade.schemas import PessoaHabilidadeCreate
 from db.area.schemas import ProjetoAreaCreate
-from db.pessoa.schemas import Pessoa
 from db.reacoes.schemas import Reacoes
 
 

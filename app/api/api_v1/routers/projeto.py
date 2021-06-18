@@ -3,14 +3,11 @@ from fastapi import (
     Request,
     Depends,
     Response,
-    encoders,
     UploadFile,
     File,
     Form,
 )
 import typing as t
-from app.db.habilidade.schemas import PessoaHabilidadeCreate
-from app.db.area.schemas import ProjetoAreaCreate
 
 from db.session import get_db
 from db.projeto.crud import (
@@ -23,7 +20,7 @@ from db.projeto.crud import (
     edit_foto_projeto,
     get_projetos_destaque
 )
-from db.projeto.schemas import ProjetoCreate, Projeto, ProjetoOut, ProjetoEdit
+from db.projeto.schemas import Projeto, ProjetoEdit
 from core.auth import get_current_active_pessoa
 
 projeto_router = r = APIRouter()

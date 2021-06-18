@@ -1,6 +1,5 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response, File, UploadFile
-from fastapi.encoders import jsonable_encoder
 
 from db.session import get_db
 from core.security import handle_jwt

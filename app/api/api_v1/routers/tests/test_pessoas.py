@@ -1,5 +1,4 @@
 from db import models
-from core.security import passwords
 from datetime import date
 
 def test_get_pessoas(client, test_superuser, fake_login_superuser):
