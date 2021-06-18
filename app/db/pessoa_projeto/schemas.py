@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 import typing as t
 from datetime import datetime
-from db.area.schemas import PessoaAreaCreate
-from db.habilidade.schemas import PessoaHabilidadeCreate
+from db.area.schemas import Area, PessoaAreaCreate
+from db.habilidade.schemas import Habilidades, PessoaHabilidadeCreate
+from db.pessoa.schemas import Pessoa
+from db.projeto.schemas import Projeto
 
 
 class PessoaProjetoBase(BaseModel):
@@ -35,7 +37,7 @@ class PessoaProjetoEdit(PessoaProjetoOut):
     remunerado: t.Optional[bool] = None
     titulo: t.Optional[str] = None
     pessoa_id: t.Optional[int] = None
-
+    
     class Config:
         orm_mode = True
 
