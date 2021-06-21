@@ -7,7 +7,8 @@ from app.db.pessoa import schemas
 
 def get_pessoa_by_name(
     db: Session,
-    pessoa_name: str
+    pessoa_name: str,
+    area_id: int
     ) -> t.List[schemas.Pessoa]:
 
     '''
@@ -20,9 +21,16 @@ def get_pessoa_by_name(
         Exceções: Não existe Pessoa correspondente à string inserida
     '''
 
-    pessoa = db.query(models.Pessoa)\
-        .filter(models.Pessoa.nome.ilike(f'%{pessoa_name}%'))\
-        .all()
+    if not area_id:
+        pessoa = db.query(models.Pessoa)\
+            .filter(models.Pessoa.nome.ilike(f'%{pessoa_name}%'))\
+            .all()
+    else:
+        pessoa = db.query(models.Pessoa)\
+            .join(models.Area, models.Pessoa.areas)\
+            .filter(models.Pessoa.nome.ilike(f'%{pessoa_name}%'))\
+            .filter(models.Area.id == area_id)\
+            .all()
 
     return pessoa
 
