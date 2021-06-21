@@ -381,7 +381,7 @@ def notificacao_checagem(
                 projeto_id=pessoa_projeto.projeto_id,
                 pessoa_projeto_id=pessoa_projeto.id,
                 situacao=situacao,
-                foto=remetente.foto_perfil,
+                foto=projeto.foto_capa,
                 lido=False,
             )
 
@@ -407,7 +407,7 @@ def notificacao_checagem(
                     projeto_id=pessoa_projeto.projeto_id,
                     pessoa_projeto_id=pessoa_projeto.id,
                     situacao=situacao,
-                    foto=remetente.foto_perfil,
+                    foto=projeto.foto_capa,
                     lido=False,
                 )
 
