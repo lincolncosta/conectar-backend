@@ -17,12 +17,13 @@ pesquisa_pessoa_router = r = APIRouter()
 async def pessoa_by_name(
     request: Request,
     pessoa_name: str,
+    area_id: int = 0,
     db=Depends(get_db)
 ):
     """
     Search pessoa by name
     """
-    pessoa = get_pessoa_by_name(db, pessoa_name)
+    pessoa = get_pessoa_by_name(db, pessoa_name, area_id)
     return pessoa
 
 
