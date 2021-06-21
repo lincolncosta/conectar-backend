@@ -268,6 +268,7 @@ class Notificacao(Base):
     anexo = Column(String, nullable=True)
     foto = Column(String, nullable=True)
     lido = Column(Boolean, nullable=False)
+    link = Column(String, nullable=True)
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
     data_visualizacao = Column(DateTime(timezone=True), onupdate=func.now())
 
