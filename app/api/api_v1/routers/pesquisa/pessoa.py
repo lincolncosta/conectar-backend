@@ -12,7 +12,7 @@ from app.db.pessoa.schemas import Pessoa
 pesquisa_pessoa_router = r = APIRouter()
 
 @r.get(
-    "/pessoa/nome/{pessoa_name}/{area_id}", response_model=t.List[Pessoa], response_model_exclude_none=True,
+    "/pessoa/nome/{pessoa_name}", response_model=t.List[Pessoa], response_model_exclude_none=True,
 )
 async def pessoa_by_name(
     request: Request,
