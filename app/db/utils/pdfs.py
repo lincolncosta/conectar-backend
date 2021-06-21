@@ -10,7 +10,9 @@ if not os.getenv("DEV_ENV"):
     from botocore.exceptions import ClientError
     import logging
 
+from app.db import models
 from app.db.pessoa_projeto.schemas import PessoaProjeto
+from app.db.pessoa.schemas import Pessoa
 from app.db.pessoa.crud import get_pessoa_by_id
 from app.db.projeto.crud import get_projeto
 from app.db.tipo_acordo.crud import get_tipo_acordo_by_id
@@ -119,6 +121,121 @@ def createPDFacordo(db: Session, vaga: PessoaProjeto):
         upload_object(PDF_PATH + saida , 'conectar')
     os.remove(PDF_PATH + saida)        
 
-    
-
     return saida
+
+def createPDFcurriculo(db: Session, pessoa: Pessoa):
+
+    pdf = FPDF()
+    pdf.add_page(orientation='P')
+
+    espacamento = 7
+
+    pdf.set_margins(20,20,20)
+    pdf.set_font("Arial", 'B', size=16)
+    # Espaço de formatação
+    pdf.cell(20, 20, txt='', ln=1)
+    pdf.cell(175, 10, txt=pessoa.nome, ln=1, align="C")
+    pdf.set_font("Arial", size=12)
+    pdf.cell(175, 10, txt='https://boraconectar.com/perfil/{}'.format(pessoa.usuario), ln=1, align='C')
+
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(40, espacamento, txt='» Dados Pessoais', ln=1, align="L")
+
+    pdf.set_font("Arial", size=12)
+    nascimento = datetime.strftime(pessoa.data_nascimento, "%d/%m/%Y")
+    pdf.cell(0, espacamento, txt='Data de Nascimento: ' + nascimento, ln=1, align="L")
+    pdf.cell(0, espacamento, txt='Email: ' + pessoa.email, ln=1, align="L")
+    if pessoa.telefone:
+        pdf.cell(0, espacamento, txt='Telefone: ' + pessoa.telefone, ln=1, align="L")
+    
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(0, espacamento, txt='» Áreas', ln=1, align="L", border='T')
+
+    pdf.set_fill_color(r=246, g=210, b=174)
+
+    pdf.set_font("Arial", size=12)
+    for area in pessoa.areas:
+        pdf.cell(pdf.get_string_width(area.descricao)+5, 7, txt=area.descricao, ln=0, align="C", border=1, fill = True)
+        pdf.cell(3, 8, txt='', ln=0)
+
+
+    pdf.cell(20, 8, txt='', ln=1)
+
+    pdf.set_font("Arial", 'B', size=12)
+    pdf.cell(0, espacamento, txt='» Habilidades', ln=1, align="L")
+
+    pdf.set_font("Arial", size=12)
+    for habilidade in pessoa.habilidades:
+        pdf.cell(pdf.get_string_width(habilidade.nome)+5, 7, txt=habilidade.nome, ln=0, align="C", border=1, fill = True)
+        pdf.cell(3, 8, txt='', ln=0)
+
+    pdf.cell(20, 8, txt='', ln=1)
+
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(0, espacamento, txt='» Experiências Acadêmicas', ln=1, align="L", border='T')
+
+    experienciasAcademicas = (
+        db.query(models.ExperienciaAcad)
+        .filter(models.ExperienciaAcad.pessoa_id == pessoa.id)
+        .order_by(models.ExperienciaAcad.data_inicio.desc())
+        .all()
+    )
+
+    pdf.set_font("Arial", size=12)
+    for exp in experienciasAcademicas:
+        if exp.situacao == "Em andamento":
+            situacao = "Em andamento"
+        else:
+            inicio = datetime.strftime(exp.data_inicio, "%d/%m/%Y")
+            fim = nascimento = datetime.strftime(exp.data_fim, "%d/%m/%Y")
+            situacao = "De " + inicio + " até " + fim
+        pdf.multi_cell(0, 7, txt=exp.instituicao + '\n' + exp.curso + '\n' + situacao, align='L', border='B')
+    
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(0, espacamento, txt='» Experiências Profissionais', ln=1, align="L")
+
+    experienciasProfissionais = (
+        db.query(models.ExperienciaProf)
+        .filter(models.ExperienciaProf.pessoa_id == pessoa.id)
+        .order_by(models.ExperienciaProf.data_inicio.desc())
+        .all()
+    )
+
+    pdf.set_font("Arial", size=12)
+    for exp in experienciasProfissionais:
+        inicio = datetime.strftime(exp.data_inicio, "%d/%m/%Y")
+        if not exp.data_fim:
+            situacao = "De " + inicio + " até o momento atual"
+        else:
+            fim = nascimento = datetime.strftime(exp.data_fim, "%d/%m/%Y")
+            situacao = "De " + inicio + " até " + fim
+        pdf.multi_cell(0, 7, txt=exp.organizacao + '\n' + exp.cargo + ' | ' + exp.vinculo + '\n' + situacao, align='L', border='B')
+
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(0, espacamento, txt='» Projetos e Pesquisas', ln=1, align="L")
+
+    experienciasProjeto = (
+        db.query(models.ExperienciaProj)
+        .filter(models.ExperienciaProj.pessoa_id == pessoa.id)
+        .order_by(models.ExperienciaProj.data_inicio.desc())
+        .all()
+    )
+
+    pdf.set_font("Arial", size=12)
+    for exp in experienciasProjeto:
+        if exp.situacao == "Em andamento":
+            situacao = "Em andamento"
+        else:
+            inicio = datetime.strftime(exp.data_inicio, "%d/%m/%Y")
+            fim = nascimento = datetime.strftime(exp.data_fim, "%d/%m/%Y")
+            situacao = "De " + inicio + " até " + fim
+        pdf.multi_cell(0, 7, txt=exp.nome + '\n' + exp.cargo + '\n' + situacao, align='L', border='B')
+
+    saida = str(uuid.uuid4().hex) + ".pdf"
+
+    pdf.output(PDF_PATH + saida)
+
+    return PDF_PATH + saida
+       
+
+
