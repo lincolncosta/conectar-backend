@@ -17,13 +17,14 @@ pesquisa_projeto_router = r = APIRouter()
 )
 async def projeto_by_name(
     request: Request,
-    projeto_name: str,
+    projeto_name: str,,
+    area_id: int = 0,
     db=Depends(get_db)
 ):
     """
     Search project by name
     """
-    projetos = get_projeto_by_name(db, projeto_name)
+    projetos = get_projeto_by_name(db, projeto_name, area_id)
     return projetos
 
 @r.get(

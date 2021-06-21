@@ -7,7 +7,8 @@ from app.db.projeto import schemas
 
 def get_projeto_by_name(
     db: Session,
-    projeto_name: str
+    projeto_name: str,
+    area_id: int,
     ) -> t.List[schemas.Projeto]:
 
     '''
@@ -20,9 +21,16 @@ def get_projeto_by_name(
         Exceções: Não existem Projetos correspondentes à string inserida
     '''
 
-    projeto = db.query(models.Projeto)\
-        .filter(models.Projeto.nome.ilike(f'%{projeto_name}%'))\
-        .all()
+    if not area_id:
+        projeto = db.query(models.Projeto)\
+            .filter(models.Projeto.nome.ilike(f'%{projeto_name}%'))\
+            .all()
+    else:
+        projeto = db.query(models.Projeto)\
+            .join(models.Area, models.Projeto.areas)\
+            .filter(models.Projeto.nome.ilike(f'%{projeto_name}%'))\
+            .filter(models.Area.id == area_id)\
+            .all()
 
     return projeto
 
