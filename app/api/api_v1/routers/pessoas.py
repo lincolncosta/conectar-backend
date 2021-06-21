@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
+from fastapi.responses import FileResponse
 import typing as t
 
 from db.session import get_db
 from db.projeto.crud import get_projetos_destaque
+from db.utils.pdfs import createPDFcurriculo
 from db.pessoa.crud import (
     get_rand_pessoas,
     get_pessoas,
@@ -71,6 +73,20 @@ async def pessoa_details(
     #     pessoa, skip_defaults=True, exclude_none=True,
     # )
 
+@r.get(
+    "/pessoas/curriculo/{pessoa_id}",
+    status_code=202
+)
+async def gera_curriculo(
+    request: Request,
+    pessoa_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+
+    pessoa = get_pessoa_by_id(db, pessoa_id)
+
+    return FileResponse(createPDFcurriculo(db, pessoa))
 
 @r.get(
     "/pessoas/destaque/{qtd_pessoas}",

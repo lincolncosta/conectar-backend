@@ -9,7 +9,7 @@ from app.db.pessoa_projeto.schemas import PessoaProjeto
 from app.db.pessoa.crud import get_pessoa_by_id
 from app.db.projeto.crud import get_projeto
 from app.db.ignorados.crud import delete_pessoas_ignoradas_by_vaga
-from app.db.utils.pdfs import createPDF
+from app.db.utils.pdfs import createPDFacordo
 
 
 def get_notificacao_by_id(
@@ -290,7 +290,7 @@ def notificacao_finalizado(
 
     notificacao = []
 
-    anexo = createPDF(db, pessoa_projeto)
+    anexo = createPDFacordo(db, pessoa_projeto)
 
     colaborador = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
