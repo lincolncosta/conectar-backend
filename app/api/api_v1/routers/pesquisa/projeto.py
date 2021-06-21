@@ -17,7 +17,7 @@ pesquisa_projeto_router = r = APIRouter()
 )
 async def projeto_by_name(
     request: Request,
-    projeto_name: str,,
+    projeto_name: str,
     area_id: int = 0,
     db=Depends(get_db)
 ):
