@@ -1,4 +1,4 @@
-from app.db.utils.salvar_imagem import delete_image
+from app.db.utils.salvar_imagem import delete_file
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
@@ -407,8 +407,7 @@ def delete_pessoa_projeto(
 
     notificacao = get_notificacao_by_pessoa_projeto(db, pessoa_projeto_id)
     if notificacao.anexo:
-        PDF_PATH = "PDF/"
-        if delete_image(PDF_PATH + notificacao.anexo):
+        if delete_file(notificacao.anexo):
             db.delete(pessoa_projeto)
             db.commit()
         else:
