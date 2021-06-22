@@ -27,7 +27,7 @@ def get_projetos_destaque(db: Session, qtd_projetos: int) -> t.List[schemas.Proj
     projetos = db.query(models.Reacoes.projeto_id, func.count(models.Reacoes.projeto_id).label('qtd'))\
                 .group_by(models.Reacoes.projeto_id)\
                 .order_by('qtd')\
-                .limit(7)\
+                .limit(5)\
                 .all()
 
     shuffle(projetos)
