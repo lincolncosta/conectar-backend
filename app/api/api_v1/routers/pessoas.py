@@ -58,8 +58,7 @@ async def pessoa_me(current_pessoa=Depends(get_current_active_pessoa)):
 async def pessoa_details(
     request: Request,
     identificador: str,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
+    db=Depends(get_db)
 ):
     """
     Get any pessoa details
