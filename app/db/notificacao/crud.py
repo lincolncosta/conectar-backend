@@ -162,6 +162,7 @@ def notificacao_pendente_idealizador(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
+                link='/projeto/{}'.format(projeto_id)
             )
         except:
             raise HTTPException(
@@ -218,6 +219,7 @@ def notificacao_pendente_colaborador(
             situacao=situacao,
             foto=projeto.foto_capa,
             lido=False,
+            link='/projeto/{}'.format(projeto_id)
         )
     except:
         raise HTTPException(
@@ -279,6 +281,7 @@ def notificacao_aceito_recusado(
             situacao=situacao,
             foto=colaborador.foto_perfil,
             lido=False,
+            link='/projeto/{}'.format(projeto_id)
         )
     except:
         raise HTTPException(
@@ -348,6 +351,7 @@ def notificacao_finalizado(
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
+        link='/projeto/{}'.format(projeto.id)
     )
 
     db.add(db_notificacao)
@@ -407,6 +411,7 @@ def notificacao_checagem(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
+                link='/projeto/{}'.format(projeto.id)
             )
 
             db.add(db_notificacao)
@@ -433,6 +438,7 @@ def notificacao_checagem(
                     situacao=situacao,
                     foto=projeto.foto_capa,
                     lido=False,
+                    link='/projeto/{}'.format(projeto.id)
                 )
 
                 db.add(db_notificacao)
@@ -472,6 +478,7 @@ def notificacao_checagem_projeto(
             projeto.nome + "</strong> e encontre o time ideal!",
             foto=projeto.foto_capa,
             lido=False,
+            link='/projeto/{}'.format(projeto.id)
         )
 
         if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
@@ -507,6 +514,7 @@ def notificacao_checagem_projeto(
             projeto.nome + "</strong> e encontre o time ideal!",
             foto=projeto.foto_capa,
             lido=False,
+            link='/projeto/{}'.format(projeto.id)
         )
 
         if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
@@ -539,6 +547,7 @@ def notificacao_favorito(
         " favoritou</strong> o projeto " + projeto.nome + "!",
         foto=projeto.foto_capa,
         lido=False,
+        link='/projeto/{}'.format(projeto_id)
     )
 
     if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
@@ -567,6 +576,7 @@ def notificacao_interesse(
         " demonstrou interesse</strong> no projeto " + projeto.nome + "!",
         foto=projeto.foto_capa,
         lido=False,
+        link='/projeto/{}'.format(projeto_id)
     )
 
     if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
