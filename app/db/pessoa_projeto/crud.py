@@ -399,15 +399,16 @@ def delete_pessoa_projeto(
 ):
 
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
     if not pessoa_projeto:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="pessoa_projeto não encontrada"
         )
-    db.delete(pessoa_projeto)
+
     notificacao = get_notificacao_by_pessoa_projeto(db, pessoa_projeto_id)
-    db.commit()
-    
     PDF_PATH = "PDF/"
-    delete_image(PDF_PATH + notificacao.anexo)
+    delete_image(PDF_PATH + notificacao.anexo)        
+    db.delete(pessoa_projeto)
+    db.commit()
     
     return pessoa_projeto
