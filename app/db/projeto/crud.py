@@ -6,7 +6,7 @@ from random import shuffle
 from db import models
 from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
-from db.utils.salvar_imagem import store_image, delete_image
+from db.utils.salvar_imagem import store_image, delete_file
 from . import schemas
 
 def get_projeto_by_username(db: Session, usuario: str) -> schemas.Projeto:
@@ -125,7 +125,7 @@ async def edit_foto_projeto(
     db_projeto = get_projeto(db, projeto_id)
 
     if db_projeto.foto_capa:
-        if delete_image(db_projeto.foto_capa):
+        if delete_file(db_projeto.foto_capa):
             db_projeto.foto_capa = store_image(contents)
     else:
         db_projeto.foto_capa = store_image(contents)
@@ -175,7 +175,7 @@ def delete_projeto(db: Session, projeto_id: int):
         )
 
     if projeto.foto_capa:
-        delete_image(projeto.foto_capa)
+        delete_file(projeto.foto_capa)
 
     db.delete(projeto)
     db.commit()

@@ -8,7 +8,7 @@ from db.utils.extract_areas import append_areas
 from db.utils.extract_habilidade import append_habilidades
 from . import schemas
 from core.security.passwords import get_password_hash
-from db.utils.salvar_imagem import store_image, delete_image
+from db.utils.salvar_imagem import store_image, delete_file
 
 def get_rand_pessoas(
     db: Session,
@@ -59,7 +59,7 @@ async def edit_foto_pessoa(
     db_pessoa = get_pessoa_by_id(db, pessoa_id)
 
     if db_pessoa.foto_perfil:
-        if delete_image(db_pessoa.foto_perfil):
+        if delete_file(db_pessoa.foto_perfil):
             db_pessoa.foto_perfil = store_image(contents)
     else:
         db_pessoa.foto_perfil = store_image(contents)
@@ -265,7 +265,7 @@ def delete_pessoa(
     pessoa = get_pessoa_by_id(db, pessoa_id)
     
     db.delete(pessoa)
-    delete_image(pessoa.foto_perfil)
+    delete_file(pessoa.foto_perfil)
     db.commit()
 
     return pessoa
