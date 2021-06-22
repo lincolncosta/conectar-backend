@@ -66,11 +66,13 @@ async def reacoes_edit(
 )
 async def projeto_delete(
     request: Request,
-    reacao_id: int,
+    pessoa_id: int,
+    projeto_id: int,
+    reacao: str,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Delete existing reacao
     """
-    return delete_reacao(db, reacao_id)
+    return delete_reacao(db, pessoa_id, projeto_id, reacao)
