@@ -26,6 +26,7 @@ path = Path(PDF_PATH)
 
 path.mkdir(parents=True, exist_ok=True)
 
+
 def upload_object(file_name, bucket, object_name=None):
     if object_name is None:
         object_name = file_name
@@ -35,8 +36,9 @@ def upload_object(file_name, bucket, object_name=None):
     except ClientError as e:
         logging.error(e)
         return False
-      
+
     return True
+
 
 if not os.getenv("DEV_ENV"):
     s3_client = boto3.client(
@@ -45,8 +47,9 @@ if not os.getenv("DEV_ENV"):
         aws_secret_access_key=os.getenv("AWS_KEY")
     )
 
+
 def createPDFacordo(db: Session, vaga: PessoaProjeto):
-    
+
     contratado = get_pessoa_by_id(db, vaga.pessoa_id)
     projeto = get_projeto(db, vaga.projeto_id)
     contratante = get_pessoa_by_id(db, projeto.pessoa_id)
@@ -64,7 +67,7 @@ def createPDFacordo(db: Session, vaga: PessoaProjeto):
 
     espacamento = 8
 
-    pdf.set_margins(20,20,20)
+    pdf.set_margins(20, 20, 20)
     pdf.set_font("Arial", 'B', size=16)
     # Espaço de formatação
     pdf.cell(20, 20, txt='', ln=1)
@@ -74,54 +77,63 @@ def createPDFacordo(db: Session, vaga: PessoaProjeto):
 
     # Corpo
     pdf.set_font("Arial", 'B', size=12)
-    pdf.cell(pdf.get_string_width('CONTRATANTE: '), espacamento, txt='CONTRATANTE: ', align="L")
+    pdf.cell(pdf.get_string_width('CONTRATANTE: '),
+             espacamento, txt='CONTRATANTE: ', align="L")
     pdf.set_font("Arial", size=12)
     w = pdf.get_x()
     pdf.cell(w, espacamento, txt=contratante.nome, ln=1, align="L")
     pdf.set_font("Arial", 'B', size=12)
-    pdf.cell(pdf.get_string_width('CONTRATADO: '), espacamento, txt='CONTRATADO: ', align="L")
+    pdf.cell(pdf.get_string_width('CONTRATADO: '),
+             espacamento, txt='CONTRATADO: ', align="L")
     pdf.set_font("Arial", size=12)
     w = pdf.get_x()
     pdf.cell(w, espacamento, txt=contratado.nome, ln=1, align="L")
     pdf.cell(20, 5, txt='', ln=1)
     pdf.multi_cell(0, espacamento, txt='As partes acima identificadas têm, entre si, justo e acertado o presente Acordo de Prestação de Serviços, que se regerá pelo objeto do acordo pelas condições de remuneração, forma e termo de pagamento descritas no presente.', align="J")
-    
+
     pdf.set_font("Arial", 'B', size=14)
-    
+
     pdf.cell(175, 15, txt='DO OBJETO DE ACORDO', ln=1, align="L")
 
     pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, espacamento, txt='É objeto do presente acordo a prestação do serviço no projeto ' + projeto.nome + ' como ' + papel + ' na vaga de ' + vaga.titulo + ' por meio de um contrato como ' + acordo.descricao + '.', align="J")
-    
+    pdf.multi_cell(0, espacamento, txt='É objeto do presente acordo a prestação do serviço no projeto ' + projeto.nome +
+                   ' como ' + papel + ' na vaga de ' + vaga.titulo + ' por meio de um contrato como ' + acordo.descricao + '.', align="J")
+
     if(vaga.remunerado):
-        pdf.multi_cell(0, espacamento, txt='Esta prestação de serviços será remunerada com valores e pagamentos a serem negociados entre ambas as partes.', align="J")
+        pdf.multi_cell(
+            0, espacamento, txt='Esta prestação de serviços será remunerada com valores e pagamentos a serem negociados entre ambas as partes.', align="J")
     else:
-        pdf.multi_cell(0, espacamento, txt='Esta prestação de serviços não será remunerada conforme anunciado na plataforma Conectar.', align="J")
-    
+        pdf.multi_cell(
+            0, espacamento, txt='Esta prestação de serviços não será remunerada conforme anunciado na plataforma Conectar.', align="J")
+
     pdf.cell(20, 10, txt='', ln=1)
 
     pdf.multi_cell(0, espacamento, txt='A execução da prestação de serviço aqui acordada será de responsabilidade das partes envolvidas, eximindo da plataforma Conectar de qualquer obrigação com o contratante ou contratado.', align="J")
 
     hoje = datetime.now()
-    data_str = 'Dois Vizinhos, ' + str(hoje.day) + " de " + MESES[hoje.month] + " de " + str(hoje.year)
+    data_str = 'Dois Vizinhos, ' + \
+        str(hoje.day) + " de " + MESES[hoje.month] + " de " + str(hoje.year)
 
     pdf.cell(20, 7, txt='', ln=1)
     pdf.cell(200, espacamento, txt=data_str, ln=1, align="L")
 
     pdf.cell(20, 20, txt='', ln=1)
 
-    pdf.cell(175, espacamento, txt='___________________            ___________________', ln=1, align="C")
-    pdf.cell(175, espacamento, txt='Contratante                            Contratado', ln=1, align="C")
+    pdf.cell(175, espacamento,
+             txt='___________________            ___________________', ln=1, align="C")
+    pdf.cell(175, espacamento,
+             txt='Contratante                            Contratado', ln=1, align="C")
 
     saida = str(uuid.uuid4().hex) + ".pdf"
 
     pdf.output(PDF_PATH + saida)
 
     if not os.getenv("DEV_ENV"):
-        upload_object(PDF_PATH + saida , 'conectar')
-    os.remove(PDF_PATH + saida)        
+        upload_object(PDF_PATH + saida, 'conectar')
+    os.remove(PDF_PATH + saida)
 
     return saida
+
 
 def createPDFcurriculo(db: Session, pessoa: Pessoa):
 
@@ -130,24 +142,27 @@ def createPDFcurriculo(db: Session, pessoa: Pessoa):
 
     espacamento = 7
 
-    pdf.set_margins(20,20,20)
+    pdf.set_margins(20, 20, 20)
     pdf.set_font("Arial", 'B', size=16)
     # Espaço de formatação
     pdf.cell(20, 20, txt='', ln=1)
     pdf.cell(175, 10, txt=pessoa.nome, ln=1, align="C")
     pdf.set_font("Arial", size=12)
-    pdf.cell(175, 10, txt='https://boraconectar.com/perfil/{}'.format(pessoa.usuario), ln=1, align='C')
+    pdf.cell(
+        175, 10, txt='https://boraconectar.com/perfil/{}'.format(pessoa.usuario), ln=1, align='C')
 
     pdf.set_font("Arial", "B", size=12)
     pdf.cell(40, espacamento, txt='» Dados Pessoais', ln=1, align="L")
 
     pdf.set_font("Arial", size=12)
     nascimento = datetime.strftime(pessoa.data_nascimento, "%d/%m/%Y")
-    pdf.cell(0, espacamento, txt='Data de Nascimento: ' + nascimento, ln=1, align="L")
+    pdf.cell(0, espacamento, txt='Data de Nascimento: ' +
+             nascimento, ln=1, align="L")
     pdf.cell(0, espacamento, txt='Email: ' + pessoa.email, ln=1, align="L")
     if pessoa.telefone:
-        pdf.cell(0, espacamento, txt='Telefone: ' + pessoa.telefone, ln=1, align="L")
-    
+        pdf.cell(0, espacamento, txt='Telefone: ' +
+                 pessoa.telefone, ln=1, align="L")
+
     pdf.set_font("Arial", "B", size=12)
     pdf.cell(0, espacamento, txt='» Áreas', ln=1, align="L", border='T')
 
@@ -155,9 +170,9 @@ def createPDFcurriculo(db: Session, pessoa: Pessoa):
 
     pdf.set_font("Arial", size=12)
     for area in pessoa.areas:
-        pdf.cell(pdf.get_string_width(area.descricao)+5, 7, txt=area.descricao, ln=0, align="C", border=1, fill = True)
+        pdf.cell(pdf.get_string_width(area.descricao)+5, 7,
+                 txt=area.descricao, ln=0, align="C", border=1, fill=True)
         pdf.cell(3, 8, txt='', ln=0)
-
 
     pdf.cell(20, 8, txt='', ln=1)
 
@@ -166,13 +181,15 @@ def createPDFcurriculo(db: Session, pessoa: Pessoa):
 
     pdf.set_font("Arial", size=12)
     for habilidade in pessoa.habilidades:
-        pdf.cell(pdf.get_string_width(habilidade.nome)+5, 7, txt=habilidade.nome, ln=0, align="C", border=1, fill = True)
+        pdf.cell(pdf.get_string_width(habilidade.nome)+5, 7,
+                 txt=habilidade.nome, ln=0, align="C", border=1, fill=True)
         pdf.cell(3, 8, txt='', ln=0)
 
     pdf.cell(20, 8, txt='', ln=1)
 
     pdf.set_font("Arial", "B", size=12)
-    pdf.cell(0, espacamento, txt='» Experiências Acadêmicas', ln=1, align="L", border='T')
+    pdf.cell(0, espacamento, txt='» Experiências Acadêmicas',
+             ln=1, align="L", border='T')
 
     experienciasAcademicas = (
         db.query(models.ExperienciaAcad)
@@ -189,8 +206,9 @@ def createPDFcurriculo(db: Session, pessoa: Pessoa):
             inicio = datetime.strftime(exp.data_inicio, "%d/%m/%Y")
             fim = nascimento = datetime.strftime(exp.data_fim, "%d/%m/%Y")
             situacao = "De " + inicio + " até " + fim
-        pdf.multi_cell(0, 7, txt=exp.instituicao + '\n' + exp.curso + '\n' + situacao, align='L', border='B')
-    
+        pdf.multi_cell(0, 7, txt=exp.instituicao + '\n' +
+                       exp.curso + '\n' + situacao, align='L', border='B')
+
     pdf.set_font("Arial", "B", size=12)
     pdf.cell(0, espacamento, txt='» Experiências Profissionais', ln=1, align="L")
 
@@ -209,7 +227,8 @@ def createPDFcurriculo(db: Session, pessoa: Pessoa):
         else:
             fim = nascimento = datetime.strftime(exp.data_fim, "%d/%m/%Y")
             situacao = "De " + inicio + " até " + fim
-        pdf.multi_cell(0, 7, txt=exp.organizacao + '\n' + exp.cargo + ' | ' + exp.vinculo + '\n' + situacao, align='L', border='B')
+        pdf.multi_cell(0, 7, txt=exp.organizacao + '\n' + exp.cargo +
+                       ' | ' + exp.vinculo + '\n' + situacao, align='L', border='B')
 
     pdf.set_font("Arial", "B", size=12)
     pdf.cell(0, espacamento, txt='» Projetos e Pesquisas', ln=1, align="L")
@@ -229,13 +248,11 @@ def createPDFcurriculo(db: Session, pessoa: Pessoa):
             inicio = datetime.strftime(exp.data_inicio, "%d/%m/%Y")
             fim = nascimento = datetime.strftime(exp.data_fim, "%d/%m/%Y")
             situacao = "De " + inicio + " até " + fim
-        pdf.multi_cell(0, 7, txt=exp.nome + '\n' + exp.cargo + '\n' + situacao, align='L', border='B')
+        pdf.multi_cell(0, 7, txt=exp.nome + '\n' + exp.cargo +
+                       '\n' + situacao, align='L', border='B')
 
     saida = str(uuid.uuid4().hex) + ".pdf"
 
     pdf.output(PDF_PATH + saida)
 
     return PDF_PATH + saida
-       
-
-
