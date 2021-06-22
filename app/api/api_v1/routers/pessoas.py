@@ -102,7 +102,7 @@ async def projetos_destaque(
     """
     Get N pessoas destaque
     """
-    projetos = get_projetos_destaque(db, 10)
+    projetos = get_projetos_destaque(db, 5)
     pessoas = []
 
     for projeto in projetos:
