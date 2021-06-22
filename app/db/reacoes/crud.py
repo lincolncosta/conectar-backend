@@ -9,11 +9,11 @@ from . import schemas
 def create_reacao(
     db: Session, reacao: schemas.ReacoesCreate
 ) -> schemas.Reacoes:
-    
+
     db_reacao = models.Reacoes(
-            projeto_id=reacao.projeto_id,
-            pessoa_id=reacao.pessoa_id,
-            reacao=reacao.reacao,
+        projeto_id=reacao.projeto_id,
+        pessoa_id=reacao.pessoa_id,
+        reacao=reacao.reacao,
     )
 
     db.add(db_reacao)
@@ -81,16 +81,20 @@ def edit_reacao(
 
 def delete_reacao(
     db: Session,
-    reacao_id: int
+    pessoa_id: int,
+    projeto_id: int,
+    reacao: str,
 ):
 
     db_reacao = db.query(models.Reacoes)\
-                    .filter(models.Reacoes.id == reacao_id)\
-                    .first()
+        .filter(models.Reacoes.pessoa_id == pessoa_id)\
+        .filter(models.Reacoes.projeto_id == projeto_id)\
+        .filter(models.Reacoes.reacao == reacao)\
+        .first()
 
     if not db_reacao:
         raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="reação não encontrado"
+            status.HTTP_404_NOT_FOUND, detail="reação não encontrada"
         )
     db.delete(db_reacao)
     db.commit()
