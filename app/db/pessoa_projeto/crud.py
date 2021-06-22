@@ -1,3 +1,4 @@
+from app.db.utils.salvar_imagem import delete_image
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
@@ -10,7 +11,8 @@ from db.projeto.crud import get_projeto
 from db.notificacao.crud import (
     notificacao_pendente_colaborador,
     notificacao_aceito_recusado,
-    notificacao_finalizado
+    notificacao_finalizado,
+    get_notificacao_by_pessoa_projeto
 )
 from db.ignorados.crud import add_pessoa_ignorada, get_ids_pessoa_ignorada_by_vaga
 from db.utils.extract_areas import append_areas
@@ -402,5 +404,10 @@ def delete_pessoa_projeto(
             status.HTTP_404_NOT_FOUND, detail="pessoa_projeto não encontrada"
         )
     db.delete(pessoa_projeto)
+    notificacao = get_notificacao_by_pessoa_projeto(db, pessoa_projeto_id)
     db.commit()
+    
+    PDF_PATH = "PDF/"
+    delete_image(PDF_PATH + notificacao.anexo)
+    
     return pessoa_projeto
