@@ -406,9 +406,12 @@ def delete_pessoa_projeto(
         )
 
     notificacao = get_notificacao_by_pessoa_projeto(db, pessoa_projeto_id)
-    PDF_PATH = "PDF/"
-    delete_image(PDF_PATH + notificacao.anexo)        
-    db.delete(pessoa_projeto)
-    db.commit()
-    
+    if notificacao.anexo:
+        PDF_PATH = "PDF/"
+        if delete_image(PDF_PATH + notificacao.anexo):
+            db.delete(pessoa_projeto)
+            db.commit()
+        else:
+            raise HTTPException(500, detail="Erro ao deletar anexo da notificação.")
+
     return pessoa_projeto
