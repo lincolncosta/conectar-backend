@@ -569,3 +569,4 @@ class Seguir(Base):
     id = Column(Integer, primary_key=True, index=True)
     seguido_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     seguidor_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    data_criacao = Column(DateTime(timezone=True), server_default=func.now())

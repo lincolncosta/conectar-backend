@@ -162,7 +162,7 @@ def notificacao_pendente_idealizador(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
-                link='/projeto/{}'.format(projeto_id)
+                link='/projeto/{}/vagas'.format(projeto_id)
             )
         except:
             raise HTTPException(
@@ -219,7 +219,7 @@ def notificacao_pendente_colaborador(
             situacao=situacao,
             foto=projeto.foto_capa,
             lido=False,
-            link='/projeto/{}'.format(projeto_id)
+            link='/projeto/{}/vagas'.format(projeto_id)
         )
     except:
         raise HTTPException(
@@ -281,7 +281,7 @@ def notificacao_aceito_recusado(
             situacao=situacao,
             foto=colaborador.foto_perfil,
             lido=False,
-            link='/projeto/{}'.format(projeto_id)
+            link='/projeto/{}/vagas'.format(projeto_id)
         )
     except:
         raise HTTPException(
@@ -351,7 +351,7 @@ def notificacao_finalizado(
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
-        link='/projeto/{}'.format(projeto.id)
+        link='/projeto/{}/vagas'.format(projeto.id)
     )
 
     db.add(db_notificacao)
@@ -411,7 +411,7 @@ def notificacao_checagem(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
-                link='/projeto/{}'.format(projeto.id)
+                link='/projeto/{}/vagas'.format(projeto.id)
             )
 
             db.add(db_notificacao)
@@ -438,7 +438,7 @@ def notificacao_checagem(
                     situacao=situacao,
                     foto=projeto.foto_capa,
                     lido=False,
-                    link='/projeto/{}'.format(projeto.id)
+                    link='/projeto/{}/vagas'.format(projeto.id)
                 )
 
                 db.add(db_notificacao)
