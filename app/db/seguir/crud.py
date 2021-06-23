@@ -6,7 +6,7 @@ from . import schemas
 
 
 def create_seguir(
-    db: Session, seguir: schemas.SeguirCreate
+    db: Session, seguir: schemas.Seguir
 ) -> schemas.Seguir:
 
     db_seguir = models.Seguir(
