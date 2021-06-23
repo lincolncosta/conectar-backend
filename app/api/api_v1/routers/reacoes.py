@@ -64,7 +64,7 @@ async def reacoes_edit(
     response_model=Reacoes,
     response_model_exclude_none=True,
 )
-async def projeto_delete(
+async def reacoes_delete(
     request: Request,
     pessoa_id: int,
     projeto_id: int,
