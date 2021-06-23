@@ -33,6 +33,7 @@ from app.api.api_v1.routers.pesquisa.projeto import pesquisa_projeto_router
 from app.api.api_v1.routers.pessoa_projeto import pessoa_projeto_router
 from app.api.api_v1.routers.reacoes import reacoes_router
 from app.api.api_v1.routers.notificacao import notificacao_router
+from app.api.api_v1.routers.seguir import seguir_router
 ############################# Routers ###########################################
 
 # from app.core import config
@@ -170,6 +171,12 @@ app.include_router(
     reacoes_router,
     prefix="/api/v1",
     tags=["reacoes"]
+)
+
+app.include_router(
+    seguir_router,
+    prefix="/api/v1",
+    tags=["seguir"]
 )
 
 app.include_router(
