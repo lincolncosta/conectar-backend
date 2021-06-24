@@ -29,7 +29,7 @@ def reacao_details(
     return reacoes
 
 
-@r.post("/reacoes", response_model=Reacoes, response_model_exclude_none=True)
+@r.post("/reacoes", status_code=202)
 async def reacao_create(
     request: Request,
     reacao: ReacoesCreate,
@@ -39,7 +39,7 @@ async def reacao_create(
     """
     Create a new reacao
     """
-    return create_reacao(db, reacao)
+    create_reacao(db, reacao)
 
 
 @r.put(
