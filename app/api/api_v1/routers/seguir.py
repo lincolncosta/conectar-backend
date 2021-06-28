@@ -4,10 +4,7 @@ from db.session import get_db
 from db.seguir.crud import (
     create_seguir,
     delete_seguir,
-    get_seguidores,
-    get_qtd_seguidores,
-    get_seguindo,
-    get_qtd_seguindo
+    get_seguidores
 )
 from db.seguir.schemas import Seguir
 from db.pessoa.schemas import Pessoa
