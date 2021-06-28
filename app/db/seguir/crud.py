@@ -22,6 +22,16 @@ def create_seguir(
     return db_seguir
 
 
+def get_seguidores(
+    db: Session, seguido_id: int
+) -> schemas.Seguir:
+
+    seguidores = db.query(models.Pessoa).filter(models.Seguir.seguido_id == seguido_id).join(
+        models.Seguir, models.Seguir.seguidor_id).all()
+
+    return seguidores
+
+
 def delete_seguir(
     db: Session,
     seguido_id: int,
