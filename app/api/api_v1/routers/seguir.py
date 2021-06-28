@@ -4,7 +4,8 @@ from db.session import get_db
 from db.seguir.crud import (
     create_seguir,
     delete_seguir,
-    get_seguidores
+    get_seguidores,
+    get_seguindo
 )
 from db.seguir.schemas import Seguir
 from db.pessoa.schemas import Pessoa
@@ -27,44 +28,43 @@ def get_lista_seguidores(
     return seguidores
 
 
-# @r.get("/qtd_seguidores", response_model=t.List[Seguir], response_model_exclude_none=True)
-# def get_num_seguidores(
-#     pessoa_id: int,
-#     db=Depends(get_db),
-#     current_pessoa=Depends(get_current_active_pessoa),
-# ):
-#     """
-#     Get quantidade de seguidores que um usuário possui
-#     """
-#     reacoes = get_qtd_seguidores(db, pessoa_id)
-#     return reacoes
+@r.get("/qtd_seguidores", response_model=int, response_model_exclude_none=True)
+def get_num_seguidores(
+    pessoa_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get quantidade de seguidores que um usuário possui
+    """
+    seguidores = len(get_seguidores(db, pessoa_id))
+    return seguidores
 
 
-# @r.get("/seguindo", response_model=t.List[Seguir], response_model_exclude_none=True)
-# def get_lista_seguindo(
-#     pessoa_id: int,
-#     projeto_id: int,
-#     db=Depends(get_db),
-#     current_pessoa=Depends(get_current_active_pessoa),
-# ):
-#     """
-#     Get lista de usuários que um usuário segue
-#     """
-#     reacoes = get_seguindo(db, pessoa_id)
-#     return reacoes
+@r.get("/seguindo", response_model=t.List[Pessoa], response_model_exclude_none=True)
+def get_lista_seguindo(
+    pessoa_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get lista de usuários que um usuário segue
+    """
+    seguindo = get_seguindo(db, pessoa_id)
+    return seguindo
 
 
-# @r.get("/qtd_seguindo", response_model=t.List[Seguir], response_model_exclude_none=True)
-# def get_num_seguindo(
-#     pessoa_id: int,
-#     db=Depends(get_db),
-#     current_pessoa=Depends(get_current_active_pessoa),
-# ):
-#     """
-#     Get quantidade de usuários que um usuário segue
-#     """
-#     reacoes = get_qtd_seguindo(db, pessoa_id)
-#     return reacoes
+@r.get("/qtd_seguindo", response_model=int, response_model_exclude_none=True)
+def get_num_seguindo(
+    pessoa_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    """
+    Get quantidade de usuários que um usuário segue
+    """
+    qtd_seguindo = len(get_seguindo(db, pessoa_id))
+    return qtd_seguindo
 
 
 @r.post("/seguir", response_model=Seguir, response_model_exclude_none=True)
