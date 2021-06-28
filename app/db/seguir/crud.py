@@ -26,8 +26,11 @@ def get_seguidores(
     db: Session, seguido_id: int
 ) -> schemas.Seguir:
 
+    print(db.query(models.Pessoa).filter(models.Seguir.seguido_id == seguido_id).join(
+        models.Pessoa, models.Seguir.seguidor_id))
     seguidores = db.query(models.Pessoa).filter(models.Seguir.seguido_id == seguido_id).join(
         models.Pessoa, models.Seguir.seguidor_id).all()
+    print(seguidores)
 
     return seguidores
 
