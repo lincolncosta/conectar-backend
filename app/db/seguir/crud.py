@@ -29,6 +29,7 @@ def get_seguidores(
     query = "SELECT tp.* FROM tb_seguir join tb_pessoa tp on tb_seguir.seguidor_id = tp.id where seguido_id = {}".format(
         seguido_id)
     seguidores = db.execute(query)
+    print(seguidores)
 
     return seguidores
 
