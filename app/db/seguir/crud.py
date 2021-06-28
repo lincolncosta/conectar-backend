@@ -35,6 +35,18 @@ def get_seguidores(
 
     return seguidores
 
+def get_seguindo(
+    db: Session, seguidor_id: int
+) -> schemas.Seguir:
+
+    seguindo_tupla = db.query(models.Pessoa, models.Seguir).filter(
+        models.Seguir.seguidor_id == seguidor_id).filter(models.Seguir.seguido_id == models.Pessoa.id).all()
+
+    seguindo = []
+    for tupla in seguindo_tupla:
+        seguindo.append(tupla[0])
+
+    return seguindo
 
 def delete_seguir(
     db: Session,
