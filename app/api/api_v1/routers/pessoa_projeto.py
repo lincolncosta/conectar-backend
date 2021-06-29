@@ -21,6 +21,7 @@ from app.db.pessoa_projeto.schemas import (
     PessoaProjeto,
     PessoaProjetoEdit,
     PessoaProjetoCreate,
+    PessoaProjetoPessoaOut,
 )
 from app.db.pessoa.schemas import Pessoa
 
@@ -119,7 +120,7 @@ async def similaridade_vaga(
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
-    response_model=t.List[PessoaProjeto],
+    response_model=t.List[PessoaProjetoPessoaOut],
     response_model_exclude_none=True,
 )
 async def get_all_pessoa_projeto_by_projeto(
