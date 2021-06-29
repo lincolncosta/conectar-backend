@@ -16,13 +16,14 @@ class PessoaProjetoBase(BaseModel):
     descricao: t.Optional[str] = None
     situacao: t.Optional[str] = "CRIADO"
 
+
 class PessoaProjetoOut(PessoaProjetoBase):
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
-    pessoa: t.Optional[Pessoa] = None
 
     class Config:
         orm_mode = True
+
 
 class PessoaProjetoPessoaOut(PessoaProjetoBase):
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
@@ -44,7 +45,7 @@ class PessoaProjetoEdit(PessoaProjetoOut):
     remunerado: t.Optional[bool] = None
     titulo: t.Optional[str] = None
     pessoa_id: t.Optional[int] = None
-    
+
     class Config:
         orm_mode = True
 
