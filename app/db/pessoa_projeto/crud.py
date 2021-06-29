@@ -400,12 +400,16 @@ def delete_pessoa_projeto(
         )
 
     notificacao = get_notificacao_by_pessoa_projeto(db, pessoa_projeto_id)
-    if notificacao.anexo:
-        if delete_file(notificacao.anexo):
-            db.delete(pessoa_projeto)
-            db.commit()
-        else:
-            raise HTTPException(
-                500, detail="Erro ao deletar anexo da notificação.")
+    if notificacao:
+        if notificacao.anexo:
+            if delete_file(notificacao.anexo):
+                db.delete(pessoa_projeto)
+                db.commit()
+            else:
+                raise HTTPException(
+                    500, detail="Erro ao deletar anexo da notificação.")
+    else:
+        db.delete(pessoa_projeto)
+        db.commit()
 
     return pessoa_projeto
