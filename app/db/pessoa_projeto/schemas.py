@@ -16,8 +16,15 @@ class PessoaProjetoBase(BaseModel):
     descricao: t.Optional[str] = None
     situacao: t.Optional[str] = "CRIADO"
 
-
 class PessoaProjetoOut(PessoaProjetoBase):
+    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
+    areas: t.Optional[t.List[PessoaAreaCreate]] = None
+    pessoa: t.Optional[Pessoa] = None
+
+    class Config:
+        orm_mode = True
+
+class PessoaProjetoPessoaOut(PessoaProjetoBase):
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
     pessoa: t.Optional[Pessoa] = None
