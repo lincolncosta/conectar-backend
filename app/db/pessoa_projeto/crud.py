@@ -289,10 +289,7 @@ async def get_vagas_by_projeto(
         .filter(models.PessoaProjeto.pessoa_id == None)
         .all()
     )
-    if not pessoa_projeto:
-        raise HTTPException(
-            status_code=404, detail="pessoa_projeto não encontrada"
-        )
+
     return pessoa_projeto
 
 
@@ -304,10 +301,7 @@ async def get_pessoa_projeto_by_projeto(
         .filter(models.PessoaProjeto.projeto_id == id_projeto)
         .all()
     )
-    if not pessoa_projeto:
-        raise HTTPException(
-            status_code=404, detail="pessoa_projeto não encontrada"
-        )
+
     return pessoa_projeto
 
 
@@ -411,6 +405,7 @@ def delete_pessoa_projeto(
             db.delete(pessoa_projeto)
             db.commit()
         else:
-            raise HTTPException(500, detail="Erro ao deletar anexo da notificação.")
+            raise HTTPException(
+                500, detail="Erro ao deletar anexo da notificação.")
 
     return pessoa_projeto
