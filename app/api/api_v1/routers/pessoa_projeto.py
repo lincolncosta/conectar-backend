@@ -187,15 +187,3 @@ async def pessoa_projeto_delete(
     Delete existing pessoa_projeto
     """
     return delete_pessoa_projeto(db, pessoa_projeto)
-
-
-# Filter recommendations
-# @r.post("/positions", response_model_exclude_none=True)
-# async def pessoa_projeto_recommendations(
-#     request: Request,
-#     pessoa_projeto: PessoaProjeto,
-#     db=Depends(get_db),
-# ):
-#     experiencias, areas = pessoa_projeto.habilidades, pessoa_projeto.areas
-#     pessoas = get_pessoas()
-#     # Do algorithm here or outsource it
