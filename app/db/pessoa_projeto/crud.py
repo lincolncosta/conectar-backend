@@ -281,7 +281,7 @@ async def atualiza_match_vaga(
 async def get_vagas_by_projeto(
     db: Session,
     id_projeto: int,
-) -> t.List[schemas.PessoaProjeto]:
+) -> t.List[schemas.PessoaProjetoOut]:
 
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
