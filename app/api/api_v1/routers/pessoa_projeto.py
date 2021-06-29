@@ -2,6 +2,7 @@ from fastapi import (
     APIRouter,
     Request,
     Depends,
+    HTTPException
 )
 import typing as t
 
@@ -44,7 +45,13 @@ async def pessoa_projeto_create(
     Create a new pessoa_projeto
     """
 
-    pessoa_projeto = await create_pessoa_projeto(db, pessoa_projeto)
+    vagas = await get_pessoa_projeto_by_projeto(db, pessoa_projeto.projeto_id)
+    qtd_vagas = len(vagas)
+
+    if (qtd_vagas) < 5:
+        pessoa_projeto = await create_pessoa_projeto(db, pessoa_projeto)
+    else:
+        raise HTTPException(status_code=417, detail="Este projeto atingiu o limite de 5 vagas cadastradas.")
     return pessoa_projeto
 
 
@@ -87,6 +94,7 @@ async def similaridade_projeto(
 
     return pessoas
 
+
 @r.get(
     "/pessoa_projeto/similaridade_vaga/{pessoa_projeto_id}",
     response_model=Pessoa,
@@ -106,6 +114,7 @@ async def similaridade_vaga(
     pessoa = await get_similaridade_vaga(db, pessoa_logada, pessoa_projeto_id)
 
     return pessoa
+
 
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
