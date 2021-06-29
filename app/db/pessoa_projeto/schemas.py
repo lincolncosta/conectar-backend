@@ -7,7 +7,6 @@ from db.pessoa.schemas import Pessoa
 
 
 class PessoaProjetoBase(BaseModel):
-    id: int
     projeto_id: int
     remunerado: bool
     titulo: str
@@ -27,6 +26,7 @@ class PessoaProjetoOut(PessoaProjetoBase):
 
 
 class PessoaProjetoPessoaOut(PessoaProjetoBase):
+    id: int
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
     pessoa: t.Optional[Pessoa] = None
