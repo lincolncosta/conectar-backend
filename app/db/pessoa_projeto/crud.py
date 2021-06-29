@@ -408,6 +408,9 @@ def delete_pessoa_projeto(
             else:
                 raise HTTPException(
                     500, detail="Erro ao deletar anexo da notificação.")
+        else:
+            db.delete(pessoa_projeto)
+            db.commit()
     else:
         db.delete(pessoa_projeto)
         db.commit()
