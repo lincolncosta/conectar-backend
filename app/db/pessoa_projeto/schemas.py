@@ -7,6 +7,7 @@ from db.pessoa.schemas import Pessoa
 
 
 class PessoaProjetoBase(BaseModel):
+    id: int
     projeto_id: int
     remunerado: bool
     titulo: str
