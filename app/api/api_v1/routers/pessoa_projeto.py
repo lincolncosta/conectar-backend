@@ -51,7 +51,8 @@ async def pessoa_projeto_create(
     if (qtd_vagas) < 5:
         pessoa_projeto = await create_pessoa_projeto(db, pessoa_projeto)
     else:
-        raise HTTPException(status_code=417, detail="Este projeto atingiu o limite de 5 vagas cadastradas.")
+        raise HTTPException(
+            status_code=417, detail="Este projeto atingiu o limite de 5 vagas cadastradas.")
     return pessoa_projeto
 
 
