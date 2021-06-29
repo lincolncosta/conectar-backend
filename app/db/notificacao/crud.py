@@ -101,17 +101,11 @@ def get_notificacao_by_pessoa_projeto(
         Entrada: ID
 
         Saída: Esquema da notificacao correspondente
-
-        Exceções: Não existe notificacao correspondente ao ID inserido
     '''
 
     notificacao = db.query(models.Notificacao)\
                     .filter(models.Notificacao.pessoa_projeto_id == pessoa_projeto_id)\
                     .first()
-
-    if not notificacao:
-        raise HTTPException(
-            status_code=404, detail="notificacao não encontrada")
 
     return notificacao
 
@@ -162,7 +156,8 @@ def notificacao_pendente_idealizador(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
-                link='/projeto/{}/vagas/{}'.format(projeto_id, pessoa_projeto.id)
+                link='/projeto/{}/vagas/{}'.format(projeto_id,
+                                                   pessoa_projeto.id)
             )
         except:
             raise HTTPException(
