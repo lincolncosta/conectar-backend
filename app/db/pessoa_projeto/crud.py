@@ -298,7 +298,7 @@ async def get_vagas_by_projeto(
 
 async def get_pessoa_projeto_by_projeto(
     db: Session, id_projeto: int
-) -> t.List[schemas.PessoaProjeto]:
+) -> t.List[schemas.PessoaProjetoPessoaOut]:
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
         .filter(models.PessoaProjeto.projeto_id == id_projeto)
