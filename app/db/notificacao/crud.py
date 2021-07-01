@@ -312,11 +312,17 @@ def notificacao_finalizado(
 
     notificacao = []
 
-    anexo = createPDFacordo(db, pessoa_projeto)
-
     colaborador = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
     idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
+
+
+    situacao="<strong>Seu acordo com " + colaborador.nome + " para participação no projeto " + projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
+
+    if existe_notificacao(db, situacao, idealizador.id):
+        return notificacao
+
+    anexo = createPDFacordo(db, pessoa_projeto)
 
     # notificacao idealizador
     db_notificacao = models.Notificacao(
@@ -324,7 +330,7 @@ def notificacao_finalizado(
         destinatario_id=idealizador.id,
         projeto_id=pessoa_projeto.projeto_id,
         pessoa_projeto_id=pessoa_projeto.id,
-        situacao="<strong>Seu acordo foi finalizado!</strong> Clique aqui e veja seu PDF top!",
+        situacao=situacao,
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
@@ -342,11 +348,11 @@ def notificacao_finalizado(
         destinatario_id=colaborador.id,
         projeto_id=pessoa_projeto.projeto_id,
         pessoa_projeto_id=pessoa_projeto.id,
-        situacao="<strong>Seu acordo foi finalizado!</strong> aqui e veja seu PDF top!",
+        situacao="<strong>Seu acordo com " + idealizador.nome + " para participação no projeto " + projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
-        link='/projeto/{}/vagas/{}'.format(projeto.id)
+        link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
     )
 
     db.add(db_notificacao)
@@ -406,7 +412,7 @@ def notificacao_checagem(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
-                link='/projeto/{}/vagas/{}'.format(projeto.id)
+                link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
             )
 
             db.add(db_notificacao)
@@ -424,8 +430,8 @@ def notificacao_checagem(
             if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
                 continue
 
-            if not filtro:
-                db_notificacao = models.Notificacao(
+            
+            db_notificacao = models.Notificacao(
                     remetente_id=remetente.id,
                     destinatario_id=destinatario_id,
                     projeto_id=pessoa_projeto.projeto_id,
@@ -433,14 +439,14 @@ def notificacao_checagem(
                     situacao=situacao,
                     foto=projeto.foto_capa,
                     lido=False,
-                    link='/projeto/{}/vagas/{}'.format(projeto.id)
+                    link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
                 )
 
-                db.add(db_notificacao)
-                db.commit()
-                db.refresh(db_notificacao)
+            db.add(db_notificacao)
+            db.commit()
+            db.refresh(db_notificacao)
 
-                notificacao.append(db_notificacao)
+            notificacao.append(db_notificacao)
 
     return notificacao
 
@@ -595,7 +601,6 @@ def existe_notificacao(
     filtro = db.query(models.Notificacao)\
         .filter(models.Notificacao.situacao == situacao)\
         .filter(models.Notificacao.destinatario_id == destinatario_id)\
-        .filter(models.Notificacao.lido == False)\
         .order_by(models.Notificacao.data_criacao.desc())\
         .first()
 
