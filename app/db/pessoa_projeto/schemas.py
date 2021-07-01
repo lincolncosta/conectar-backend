@@ -3,6 +3,7 @@ import typing as t
 from datetime import datetime
 from db.area.schemas import PessoaAreaCreate
 from db.habilidade.schemas import PessoaHabilidadeCreate
+from db.pessoa.schemas import Pessoa
 
 
 class PessoaProjetoBase(BaseModel):
@@ -24,6 +25,16 @@ class PessoaProjetoOut(PessoaProjetoBase):
         orm_mode = True
 
 
+class PessoaProjetoPessoaOut(PessoaProjetoBase):
+    id: int
+    habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
+    areas: t.Optional[t.List[PessoaAreaCreate]] = None
+    pessoa: t.Optional[Pessoa] = None
+
+    class Config:
+        orm_mode = True
+
+
 class PessoaProjetoCreate(PessoaProjetoBase):
     class Config:
         orm_mode = True
@@ -35,7 +46,7 @@ class PessoaProjetoEdit(PessoaProjetoOut):
     remunerado: t.Optional[bool] = None
     titulo: t.Optional[str] = None
     pessoa_id: t.Optional[int] = None
-    
+
     class Config:
         orm_mode = True
 

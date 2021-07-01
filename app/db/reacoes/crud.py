@@ -6,27 +6,46 @@ from db import models
 from . import schemas
 
 
+def checa_existe_reacao(
+    db: Session,
+    reacao: schemas.ReacoesCreate
+) -> bool:
+
+    db_reacao = (
+        db.query(models.Reacoes)
+        .filter(models.Reacoes.pessoa_id == reacao.pessoa_id,
+                models.Reacoes.projeto_id == reacao.projeto_id,
+                models.Reacoes.reacao == reacao.reacao,)
+        .first()
+    )
+
+    if db_reacao:
+        return True
+    else:
+        return False
+
+
 def create_reacao(
     db: Session, reacao: schemas.ReacoesCreate
 ) -> schemas.Reacoes:
-    
-    db_reacao = models.Reacoes(
+
+    if not checa_existe_reacao(db, reacao):
+        db_reacao = models.Reacoes(
             projeto_id=reacao.projeto_id,
             pessoa_id=reacao.pessoa_id,
             reacao=reacao.reacao,
-    )
+        )
 
-    db.add(db_reacao)
-    db.commit()
-    db.refresh(db_reacao)
+        db.add(db_reacao)
+        db.commit()
+        db.refresh(db_reacao)
 
-    if db_reacao.reacao == 'FAVORITO':
-        notificacao_favorito(db, db_reacao.pessoa_id, db_reacao.projeto_id)
+        if db_reacao.reacao == 'FAVORITO':
+            notificacao_favorito(db, db_reacao.pessoa_id, db_reacao.projeto_id)
 
-    if db_reacao.reacao == 'INTERESSE':
-        notificacao_interesse(db, db_reacao.pessoa_id, db_reacao.projeto_id)
-
-    return db_reacao
+        if db_reacao.reacao == 'INTERESSE':
+            notificacao_interesse(db, db_reacao.pessoa_id,
+                                  db_reacao.projeto_id)
 
 
 def get_reacao(
@@ -81,16 +100,20 @@ def edit_reacao(
 
 def delete_reacao(
     db: Session,
-    reacao_id: int
+    pessoa_id: int,
+    projeto_id: int,
+    reacao: str,
 ):
 
     db_reacao = db.query(models.Reacoes)\
-                    .filter(models.Reacoes.id == reacao_id)\
-                    .first()
+        .filter(models.Reacoes.pessoa_id == pessoa_id)\
+        .filter(models.Reacoes.projeto_id == projeto_id)\
+        .filter(models.Reacoes.reacao == reacao)\
+        .first()
 
     if not db_reacao:
         raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="reação não encontrado"
+            status.HTTP_404_NOT_FOUND, detail="reação não encontrada"
         )
     db.delete(db_reacao)
     db.commit()

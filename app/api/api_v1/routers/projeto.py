@@ -6,6 +6,8 @@ from fastapi import (
     UploadFile,
     File,
     Form,
+    HTTPException,
+    status
 )
 import typing as t
 
@@ -172,4 +174,11 @@ async def projeto_delete(
     """
     Delete existing projeto
     """
-    return delete_projeto(db, projeto_id)
+    projeto = get_projeto(db, projeto_id)
+    if projeto.pessoa_id == current_pessoa.id:
+        return delete_projeto(db, projeto_id)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Este projeto não é seu!'
+        )

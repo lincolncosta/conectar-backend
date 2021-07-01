@@ -32,6 +32,7 @@ if not os.getenv("DEV_ENV"):
     )
 
 IMAGE_PATH = "uploads/"
+PDF_PATH = "PDF/"
 path = Path(IMAGE_PATH)
 path.mkdir(parents=True, exist_ok=True)
 
@@ -50,10 +51,14 @@ def store_image(image):
     except Exception as e:
         print(f'Exception from store_image {e}')
 
-def delete_image(image_name):
+def delete_file(image_name):
     try:
         if not os.getenv("DEV_ENV"):
-            s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
+            extension = image_name.split(".")[-1]
+            if extension != 'pdf':
+                s3_client.delete_object(Bucket='conectar', Key=IMAGE_PATH + image_name)
+            else: 
+                s3_client.delete_object(Bucket='conectar', Key=PDF_PATH + image_name)
         return True
 
     except Exception as e:

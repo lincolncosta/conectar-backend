@@ -2,6 +2,7 @@ from fastapi import (
     APIRouter,
     Request,
     Depends,
+    HTTPException
 )
 import typing as t
 
@@ -20,6 +21,7 @@ from app.db.pessoa_projeto.schemas import (
     PessoaProjeto,
     PessoaProjetoEdit,
     PessoaProjetoCreate,
+    PessoaProjetoPessoaOut,
 )
 from app.db.pessoa.schemas import Pessoa
 
@@ -44,7 +46,14 @@ async def pessoa_projeto_create(
     Create a new pessoa_projeto
     """
 
-    pessoa_projeto = await create_pessoa_projeto(db, pessoa_projeto)
+    vagas = await get_pessoa_projeto_by_projeto(db, pessoa_projeto.projeto_id)
+    qtd_vagas = len(vagas)
+
+    if (qtd_vagas) < 5:
+        pessoa_projeto = await create_pessoa_projeto(db, pessoa_projeto)
+    else:
+        raise HTTPException(
+            status_code=417, detail="Este projeto atingiu o limite de 5 vagas cadastradas.")
     return pessoa_projeto
 
 
@@ -87,6 +96,7 @@ async def similaridade_projeto(
 
     return pessoas
 
+
 @r.get(
     "/pessoa_projeto/similaridade_vaga/{pessoa_projeto_id}",
     response_model=Pessoa,
@@ -107,9 +117,10 @@ async def similaridade_vaga(
 
     return pessoa
 
+
 @r.get(
     "/pessoa_projeto/projeto/{projeto_id}",
-    response_model=t.List[PessoaProjeto],
+    response_model=t.List[PessoaProjetoPessoaOut],
     response_model_exclude_none=True,
 )
 async def get_all_pessoa_projeto_by_projeto(
@@ -177,15 +188,3 @@ async def pessoa_projeto_delete(
     Delete existing pessoa_projeto
     """
     return delete_pessoa_projeto(db, pessoa_projeto)
-
-
-# Filter recommendations
-# @r.post("/positions", response_model_exclude_none=True)
-# async def pessoa_projeto_recommendations(
-#     request: Request,
-#     pessoa_projeto: PessoaProjeto,
-#     db=Depends(get_db),
-# ):
-#     experiencias, areas = pessoa_projeto.habilidades, pessoa_projeto.areas
-#     pessoas = get_pessoas()
-#     # Do algorithm here or outsource it

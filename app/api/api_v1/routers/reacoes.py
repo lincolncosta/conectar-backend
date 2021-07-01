@@ -29,7 +29,7 @@ def reacao_details(
     return reacoes
 
 
-@r.post("/reacoes", response_model=Reacoes, response_model_exclude_none=True)
+@r.post("/reacoes", status_code=202)
 async def reacao_create(
     request: Request,
     reacao: ReacoesCreate,
@@ -39,7 +39,7 @@ async def reacao_create(
     """
     Create a new reacao
     """
-    return create_reacao(db, reacao)
+    create_reacao(db, reacao)
 
 
 @r.put(
@@ -64,13 +64,15 @@ async def reacoes_edit(
     response_model=Reacoes,
     response_model_exclude_none=True,
 )
-async def projeto_delete(
+async def reacoes_delete(
     request: Request,
-    reacao_id: int,
+    pessoa_id: int,
+    projeto_id: int,
+    reacao: str,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     """
     Delete existing reacao
     """
-    return delete_reacao(db, reacao_id)
+    return delete_reacao(db, pessoa_id, projeto_id, reacao)

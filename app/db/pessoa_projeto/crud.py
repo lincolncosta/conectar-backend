@@ -1,3 +1,4 @@
+from app.db.utils.salvar_imagem import delete_file
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
@@ -10,7 +11,8 @@ from db.projeto.crud import get_projeto
 from db.notificacao.crud import (
     notificacao_pendente_colaborador,
     notificacao_aceito_recusado,
-    notificacao_finalizado
+    notificacao_finalizado,
+    get_notificacao_by_pessoa_projeto
 )
 from db.ignorados.crud import add_pessoa_ignorada, get_ids_pessoa_ignorada_by_vaga
 from db.utils.extract_areas import append_areas
@@ -279,7 +281,7 @@ async def atualiza_match_vaga(
 async def get_vagas_by_projeto(
     db: Session,
     id_projeto: int,
-) -> t.List[schemas.PessoaProjeto]:
+) -> t.List[schemas.PessoaProjetoOut]:
 
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
@@ -287,25 +289,19 @@ async def get_vagas_by_projeto(
         .filter(models.PessoaProjeto.pessoa_id == None)
         .all()
     )
-    if not pessoa_projeto:
-        raise HTTPException(
-            status_code=404, detail="pessoa_projeto não encontrada"
-        )
+
     return pessoa_projeto
 
 
 async def get_pessoa_projeto_by_projeto(
     db: Session, id_projeto: int
-) -> t.List[schemas.PessoaProjeto]:
+) -> t.List[schemas.PessoaProjetoPessoaOut]:
     pessoa_projeto = (
         db.query(models.PessoaProjeto)
         .filter(models.PessoaProjeto.projeto_id == id_projeto)
         .all()
     )
-    if not pessoa_projeto:
-        raise HTTPException(
-            status_code=404, detail="pessoa_projeto não encontrada"
-        )
+
     return pessoa_projeto
 
 
@@ -397,10 +393,26 @@ def delete_pessoa_projeto(
 ):
 
     pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
+
     if not pessoa_projeto:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="pessoa_projeto não encontrada"
         )
-    db.delete(pessoa_projeto)
-    db.commit()
+
+    notificacao = get_notificacao_by_pessoa_projeto(db, pessoa_projeto_id)
+    if notificacao:
+        if notificacao.anexo:
+            if delete_file(notificacao.anexo):
+                db.delete(pessoa_projeto)
+                db.commit()
+            else:
+                raise HTTPException(
+                    500, detail="Erro ao deletar anexo da notificação.")
+        else:
+            db.delete(pessoa_projeto)
+            db.commit()
+    else:
+        db.delete(pessoa_projeto)
+        db.commit()
+
     return pessoa_projeto
