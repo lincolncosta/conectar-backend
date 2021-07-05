@@ -25,7 +25,7 @@ def get_experiencia_by_id(
 def get_experiencias(
     db: Session, skip: int = 0, limit: int = 100
 ) -> t.List[schemas.ExperienciaProj]:
-    return db.query(models.ExperienciaProj).offset(skip).limit(limit).all()
+    return db.query(models.ExperienciaProj).offset(skip).limit(limit).order_by(models.ExperienciaProj.data_fim.desc()).all()
 
 
 def get_experiencias_from_pessoa(
@@ -34,14 +34,10 @@ def get_experiencias_from_pessoa(
     experiencias = (
         db.query(models.ExperienciaProj)
         .filter(models.ExperienciaProj.pessoa_id == pessoa_id)
+        .order_by(models.ExperienciaProj.data_fim.desc())
         .all()
     )
-    
-    if not experiencias:
-        raise HTTPException(
-            status_code=404,
-            detail="Pessoa não possui experiências de projeto",
-        )
+
     return experiencias
 
 
@@ -51,20 +47,20 @@ async def create_experiencia(
     pessoa_id: int
 ):
     db_experiencia_proj = models.ExperienciaProj(
-            nome=experiencia.nome,
-            data_fim=experiencia.data_fim,
-            data_inicio=experiencia.data_inicio,
-            descricao=experiencia.descricao,
-            pessoa_id=pessoa_id,
-            cargo=experiencia.cargo,
-            situacao=experiencia.situacao,
+        nome=experiencia.nome,
+        data_fim=experiencia.data_fim,
+        data_inicio=experiencia.data_inicio,
+        descricao=experiencia.descricao,
+        pessoa_id=pessoa_id,
+        cargo=experiencia.cargo,
+        situacao=experiencia.situacao,
     )
     db_exp = experiencia.dict(exclude_unset=True)
     await append_areas(db_exp, db)
 
     for key, value in db_exp.items():
         setattr(db_experiencia_proj, key, value)
-    
+
     db.add(db_experiencia_proj)
     db.commit()
     db.refresh(db_experiencia_proj)
