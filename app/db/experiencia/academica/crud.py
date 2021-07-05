@@ -6,6 +6,7 @@ from db import models
 from db.experiencia import schemas
 from db.utils.extract_areas import append_areas
 
+
 def get_experiencia_by_id(
     db: Session, experiencia_id: int
 ) -> schemas.ExperienciaAcad:
@@ -25,7 +26,7 @@ def get_experiencia_by_id(
 def get_experiencias(
     db: Session, skip: int = 0, limit: int = 100
 ) -> t.List[schemas.ExperienciaAcad]:
-    return db.query(models.ExperienciaAcad).offset(skip).limit(limit).all()
+    return db.query(models.ExperienciaAcad).offset(skip).limit(limit).order_by(models.ExperienciaAcad.data_fim.desc()).all()
 
 
 def get_experiencias_from_pessoa(
@@ -34,13 +35,10 @@ def get_experiencias_from_pessoa(
     experiencias = (
         db.query(models.ExperienciaAcad)
         .filter(models.ExperienciaAcad.pessoa_id == pessoa_id)
+        .order_by(models.ExperienciaAcad.data_fim.desc())
         .all()
     )
-    if not experiencias:
-        raise HTTPException(
-            status_code=404,
-            detail="Pessoa não possui experiências Academicas",
-        )
+
     return experiencias
 
 
@@ -48,14 +46,14 @@ async def create_experiencia(
     db: Session, experiencia: schemas.ExperienciaAcad, pessoa_id: int
 ):
     db_experiencia_acad = models.ExperienciaAcad(
-            escolaridade=experiencia.escolaridade,
-            data_fim=experiencia.data_fim,
-            data_inicio=experiencia.data_inicio,
-            descricao=experiencia.descricao,
-            instituicao=experiencia.instituicao,
-            curso=experiencia.curso,
-            situacao=experiencia.situacao,
-            pessoa_id=pessoa_id,
+        escolaridade=experiencia.escolaridade,
+        data_fim=experiencia.data_fim,
+        data_inicio=experiencia.data_inicio,
+        descricao=experiencia.descricao,
+        instituicao=experiencia.instituicao,
+        curso=experiencia.curso,
+        situacao=experiencia.situacao,
+        pessoa_id=pessoa_id,
     )
 
     db_exp = experiencia.dict(exclude_unset=True)
@@ -122,7 +120,6 @@ async def edit_experiencia(
 
     for key, value in update_data.items():
         setattr(db_experiencia, key, value)
-
 
     db.add(db_experiencia)
     db.commit()
