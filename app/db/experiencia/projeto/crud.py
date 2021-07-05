@@ -25,7 +25,7 @@ def get_experiencia_by_id(
 def get_experiencias(
     db: Session, skip: int = 0, limit: int = 100
 ) -> t.List[schemas.ExperienciaProj]:
-    return db.query(models.ExperienciaProj).offset(skip).limit(limit).order_by(models.ExperienciaAcad.data_fim.desc()).all()
+    return db.query(models.ExperienciaProj).offset(skip).limit(limit).order_by(models.ExperienciaProj.data_fim.desc()).all()
 
 
 def get_experiencias_from_pessoa(
@@ -34,7 +34,7 @@ def get_experiencias_from_pessoa(
     experiencias = (
         db.query(models.ExperienciaProj)
         .filter(models.ExperienciaProj.pessoa_id == pessoa_id)
-        .order_by(models.ExperienciaAcad.data_fim.desc())
+        .order_by(models.ExperienciaProj.data_fim.desc())
         .all()
     )
 
