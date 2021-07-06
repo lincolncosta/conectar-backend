@@ -218,18 +218,9 @@ async def authenticate_from_provider(
         else:
             raise HTTPException(status_code=422)
 
-        if new_pessoa.superusuario:
-            permissions = "admin"
-        else:
-            permissions = "user"
-
         access_token_expires = timedelta(
             minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
         )
-        if pessoa.superusuario:
-            permissions = "admin"
-        else:
-            permissions = "user"
 
         serialized_pessoa = {
             "id": pessoa.id,
@@ -237,7 +228,7 @@ async def authenticate_from_provider(
             "aliado": pessoa.aliado,
             "colaborador": pessoa.colaborador,
             "sub": pessoa.email,
-            "permissions": permissions
+            "permissions": "user"
         }
         access_token = handle_jwt.create_access_token(
             data=serialized_pessoa,
