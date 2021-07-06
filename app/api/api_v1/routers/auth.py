@@ -86,7 +86,6 @@ async def login(
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    
     DEV_ENV = getenv("DEV_ENV")
     response.set_cookie(
         key="jid", value=f"{access_token}", httponly=True)
@@ -113,7 +112,8 @@ async def refresh_token(
 @r.post("/logout")
 async def logout(response: Response):
     # response.delete_cookie(key="jid", path="/", domain=None)
-    response.set_cookie(key="jid",value="", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="jid", value="", httponly=True,
+                        samesite="none", secure=True)
     return {"message": "deslogado"}
 
 
@@ -240,8 +240,12 @@ async def authenticate_from_provider(
             expires_delta=access_token_expires,
         ).decode('utf-8')
 
+        DEV_ENV = getenv("DEV_ENV")
         response.set_cookie(
-            key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
+            key="jid", value=f"{access_token}", httponly=True)
+        if not DEV_ENV:
+            response.set_cookie(
+                key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
 
     except HTTPException as e:
         if e.status_code == 422:
