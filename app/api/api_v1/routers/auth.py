@@ -223,11 +223,11 @@ async def authenticate_from_provider(
         )
 
         serialized_pessoa = {
-            "id": pessoa.id,
-            "idealizador": pessoa.idealizador,
-            "aliado": pessoa.aliado,
-            "colaborador": pessoa.colaborador,
-            "sub": pessoa.email,
+            "id": new_pessoa.id,
+            "idealizador": new_pessoa.idealizador,
+            "aliado": new_pessoa.aliado,
+            "colaborador": new_pessoa.colaborador,
+            "sub": new_pessoa.email,
             "permissions": "user"
         }
         access_token = handle_jwt.create_access_token(
