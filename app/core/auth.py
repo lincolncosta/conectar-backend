@@ -129,8 +129,8 @@ async def authenticate_pessoa(db, email: str, senha: str):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, email)
 
-    username_message = {"message": "Nome de usuário incorreto"}
-    password_message = {"message": "Senha incorreta"}
+    username_message = {"message": "Nome de usuário incorreto", "fieldName": "username"}
+    password_message = {"message": "Senha incorreta", "fieldName": "password"}
 
     if not pessoa:
         if not pessoa_username:
