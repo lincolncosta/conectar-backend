@@ -25,7 +25,7 @@ def get_experiencia_by_id(
 def get_experiencias(
     db: Session, skip: int = 0, limit: int = 100
 ) -> t.List[schemas.ExperienciaProf]:
-    return db.query(models.ExperienciaProf).offset(skip).limit(limit).all()
+    return db.query(models.ExperienciaProf).offset(skip).limit(limit).order_by(models.ExperienciaProf.data_fim.desc()).all()
 
 
 def get_experiencias_from_pessoa(
@@ -34,13 +34,10 @@ def get_experiencias_from_pessoa(
     experiencias = (
         db.query(models.ExperienciaProf)
         .filter(models.ExperienciaProf.pessoa_id == pessoa_id)
+        .order_by(models.ExperienciaProf.data_fim.desc())
         .all()
     )
-    if not experiencias:
-        raise HTTPException(
-            status_code=404,
-            detail="Pessoa não possui experiências profissionais",
-        )
+
     return experiencias
 
 
@@ -48,12 +45,12 @@ async def create_experiencia(
     db: Session, experiencia: schemas.ExperienciaProf, pessoa_id: int
 ):
     db_experiencia_prof = models.ExperienciaProf(
-            cargo=experiencia.cargo,
-            data_fim=experiencia.data_fim,
-            data_inicio=experiencia.data_inicio,
-            descricao=experiencia.descricao,
-            organizacao=experiencia.organizacao,
-            pessoa_id=pessoa_id,
+        cargo=experiencia.cargo,
+        data_fim=experiencia.data_fim,
+        data_inicio=experiencia.data_inicio,
+        descricao=experiencia.descricao,
+        organizacao=experiencia.organizacao,
+        pessoa_id=pessoa_id,
     )
 
     db_exp = experiencia.dict(exclude_unset=True)
@@ -61,7 +58,7 @@ async def create_experiencia(
 
     for key, value in db_exp.items():
         setattr(db_experiencia_prof, key, value)
-    
+
     db.add(db_experiencia_prof)
     db.commit()
     db.refresh(db_experiencia_prof)

@@ -86,7 +86,6 @@ async def login(
         expires_delta=access_token_expires,
     ).decode('utf-8')
 
-    
     DEV_ENV = getenv("DEV_ENV")
     response.set_cookie(
         key="jid", value=f"{access_token}", httponly=True)
@@ -113,7 +112,8 @@ async def refresh_token(
 @r.post("/logout")
 async def logout(response: Response):
     # response.delete_cookie(key="jid", path="/", domain=None)
-    response.set_cookie(key="jid",value="", httponly=True, samesite="none", secure=True)
+    response.set_cookie(key="jid", value="", httponly=True,
+                        samesite="none", secure=True)
     return {"message": "deslogado"}
 
 
@@ -218,10 +218,9 @@ async def authenticate_from_provider(
         else:
             raise HTTPException(status_code=422)
 
-        if new_pessoa.superusuario:
-            permissions = "admin"
-        else:
-            permissions = "user"
+        access_token_expires = timedelta(
+            minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
 
         serialized_pessoa = {
             "id": new_pessoa.id,
@@ -229,19 +228,19 @@ async def authenticate_from_provider(
             "aliado": new_pessoa.aliado,
             "colaborador": new_pessoa.colaborador,
             "sub": new_pessoa.email,
-            "permissions": permissions
+            "permissions": "user"
         }
-        access_token_expires = timedelta(
-            minutes=handle_jwt.ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-
         access_token = handle_jwt.create_access_token(
             data=serialized_pessoa,
             expires_delta=access_token_expires,
         ).decode('utf-8')
 
+        DEV_ENV = getenv("DEV_ENV")
         response.set_cookie(
-            key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
+            key="jid", value=f"{access_token}", httponly=True)
+        if not DEV_ENV:
+            response.set_cookie(
+                key="jid", value=f"{access_token}", httponly=True, samesite="none", secure=True)
 
     except HTTPException as e:
         if e.status_code == 422:
