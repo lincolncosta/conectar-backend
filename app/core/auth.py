@@ -1,4 +1,5 @@
 import jwt
+import time
 from fastapi import Depends, HTTPException, status, File, UploadFile
 from jwt import PyJWTError
 
@@ -212,7 +213,7 @@ def authenticate_google(db, token: str):
                 schemas.PessoaCreate(
                     email=email,
                     nome=name,
-                    usuario=name,
+                    usuario=name.strip() + str(int(time.time())),
                     senha=password,
                     ativo=True,
                     superusuario=False,
@@ -236,7 +237,7 @@ def authenticate_facebook(
             detail=f"Não foi possível validar as credenciais",
             headers={"WWW-Authenticate": "Bearer"},
         )
-        
+
         db_pessoa = get_pessoa_by_email(db, pessoa.email)
         db_pessoa = get_pessoa_by_username(db, pessoa.nome)
         password = passwords.get_password_hash(passwords.get_random_string())
@@ -247,7 +248,7 @@ def authenticate_facebook(
                 schemas.PessoaCreate(
                     email=pessoa.email,
                     nome=pessoa.nome,
-                    usuario=pessoa.nome,
+                    usuario=pessoa.nome.strip() + str(int(time.time())),
                     senha=password,
                     ativo=True,
                     superusuario=False,
