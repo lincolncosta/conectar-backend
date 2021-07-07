@@ -16,6 +16,7 @@ from app.db.pessoa_projeto.crud import (
     get_similaridade_vaga,
     edit_pessoa_projeto,
     delete_pessoa_projeto,
+    get_vagas_convite,
 )
 from app.db.pessoa_projeto.schemas import (
     PessoaProjeto,
@@ -75,6 +76,20 @@ async def get_pessoas_projeto(
     pessoas_projeto = await get_all_pessoas_projeto(db)
     return pessoas_projeto
 
+@r.get(
+    "/pessoa_projeto/convites",
+    response_model=t.List[PessoaProjeto],
+    response_model_exclude_none=True,
+)
+async def get_pessoas_projeto(
+    request: Request,
+    db=Depends(get_db),
+    pessoa=Depends(get_current_active_pessoa),
+):
+
+    pessoas_projeto = await get_vagas_convite(db, pessoa.id)
+    
+    return pessoas_projeto
 
 @r.get(
     "/pessoa_projeto/similaridade_projeto/{projeto_id}",

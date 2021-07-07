@@ -259,6 +259,17 @@ async def get_similaridade_vaga(
 
     return pessoa_selecionada
 
+async def get_vagas_convite(
+    db: Session,
+    pessoa_id: int,
+):
+    pessoa_projeto = db.query(models.PessoaProjeto)\
+        .filter(models.PessoaProjeto.pessoa_id == pessoa_id)\
+        .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR")\
+        .order_by(models.PessoaProjeto.data_atualizacao.desc())\
+        .all()
+
+    return pessoa_projeto
 
 async def atualiza_match_vaga(
     db: Session,
