@@ -213,7 +213,7 @@ def authenticate_google(db, token: str):
                 schemas.PessoaCreate(
                     email=email,
                     nome=name,
-                    usuario=name.replace(' ', '') + str(int(time.time())),
+                    usuario=name.replace(' ', '').lower() + str(int(time.time())),
                     senha=password,
                     ativo=True,
                     superusuario=False,
@@ -248,7 +248,7 @@ def authenticate_facebook(
                 schemas.PessoaCreate(
                     email=pessoa.email,
                     nome=pessoa.nome,
-                    usuario=pessoa.nome.replace(' ', '') + str(int(time.time())),
+                    usuario=pessoa.nome.replace(' ', '').lower() + str(int(time.time())),
                     senha=password,
                     ativo=True,
                     superusuario=False,
