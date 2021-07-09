@@ -213,7 +213,8 @@ def authenticate_google(db, token: str):
                 schemas.PessoaCreate(
                     email=email,
                     nome=name,
-                    usuario=name.replace(' ', '').lower() + str(int(time.time())),
+                    usuario=name.replace(' ', '').lower() +
+                    str(int(time.time())),
                     senha=password,
                     ativo=True,
                     superusuario=False,
@@ -243,12 +244,19 @@ def authenticate_facebook(
         password = passwords.get_password_hash(passwords.get_random_string())
         if db_pessoa is None:
             # User not registered, creating a new account
+            while True:
+                nome_usuario = pessoa.nome.replace(
+                    ' ', '').lower() + str(int(time.time()))
+                username_existe = get_pessoa_by_username(db, nome_usuario)
+                if not username_existe:
+                    break
+
             new_pessoa = create_pessoa(
                 db,
                 schemas.PessoaCreate(
                     email=pessoa.email,
                     nome=pessoa.nome,
-                    usuario=pessoa.nome.replace(' ', '').lower() + str(int(time.time())),
+                    usuario=nome_usuario,
                     senha=password,
                     ativo=True,
                     superusuario=False,
