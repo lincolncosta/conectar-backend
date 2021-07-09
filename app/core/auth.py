@@ -130,8 +130,8 @@ async def authenticate_pessoa(db, email: str, senha: str):
     pessoa = get_pessoa_by_email(db, email)
     pessoa_username = get_pessoa_by_username(db, email)
 
-    username_message = {"message": "Nome de usuário incorreto"}
-    password_message = {"message": "Senha incorreta"}
+    username_message = {"message": "Nome de usuário incorreto", "fieldName": "username"}
+    password_message = {"message": "Senha incorreta", "fieldName": "password"}
 
     if not pessoa:
         if not pessoa_username:
@@ -208,12 +208,19 @@ def authenticate_google(db, token: str):
         password = passwords.get_password_hash(passwords.get_random_string())
         if pessoa is None:
             # User not registered, creating a new account
+            while True:
+                nome_usuario = pessoa.nome.replace(
+                    ' ', '').lower() + str(int(time.time()))
+                username_existe = get_pessoa_by_username(db, nome_usuario)
+                if not username_existe:
+                    break
+
             new_pessoa = create_pessoa(
                 db,
                 schemas.PessoaCreate(
                     email=email,
                     nome=name,
-                    usuario=name.replace(' ', '') + str(int(time.time())),
+                    usuario=nome_usuario,
                     senha=password,
                     ativo=True,
                     superusuario=False,
@@ -243,12 +250,19 @@ def authenticate_facebook(
         password = passwords.get_password_hash(passwords.get_random_string())
         if db_pessoa is None:
             # User not registered, creating a new account
+            while True:
+                nome_usuario = pessoa.nome.replace(
+                    ' ', '').lower() + str(int(time.time()))
+                username_existe = get_pessoa_by_username(db, nome_usuario)
+                if not username_existe:
+                    break
+
             new_pessoa = create_pessoa(
                 db,
                 schemas.PessoaCreate(
                     email=pessoa.email,
                     nome=pessoa.nome,
-                    usuario=pessoa.nome.replace(' ', '') + str(int(time.time())),
+                    usuario=nome_usuario,
                     senha=password,
                     ativo=True,
                     superusuario=False,

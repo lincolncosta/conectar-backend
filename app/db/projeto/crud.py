@@ -89,6 +89,20 @@ def get_projeto_reacao(
 
     return projetos
 
+async def get_projeto_participando(
+    db: Session,
+    colaborador_id: int
+):
+
+    projeto = db.query(models.Projeto)\
+        .join(models.PessoaProjeto, models.Projeto.projeto_pessoa, full=True, isouter=True)\
+        .filter(models.PessoaProjeto.pessoa_id == colaborador_id)\
+        .filter(models.PessoaProjeto.situacao == "FINALIZADO")\
+        .filter(models.Projeto.visibilidade == True)\
+        .all()
+
+    return projeto
+
 async def edit_projeto(
     db: Session,
     projeto_id: int,
