@@ -1,6 +1,7 @@
 from app.db.utils.salvar_imagem import delete_file
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 import typing as t
 
 from db import models
@@ -261,12 +262,14 @@ async def get_similaridade_vaga(
 
 async def get_vagas_convite(
     db: Session,
+    qtd: int,
     pessoa_id: int,
 ):
     pessoa_projeto = db.query(models.PessoaProjeto)\
         .filter(models.PessoaProjeto.pessoa_id == pessoa_id)\
         .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR")\
-        .order_by(models.PessoaProjeto.data_atualizacao.desc())\
+        .order_by(func.random())\
+        .limit(qtd)\
         .all()
 
     return pessoa_projeto

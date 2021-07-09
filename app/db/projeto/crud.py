@@ -89,7 +89,7 @@ def get_projeto_reacao(
 
     return projetos
 
-async def get_projeto_colaborador(
+async def get_projeto_participando(
     db: Session,
     colaborador_id: int
 ):

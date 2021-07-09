@@ -77,17 +77,18 @@ async def get_pessoas_projeto(
     return pessoas_projeto
 
 @r.get(
-    "/pessoa_projeto/convites",
+    "/pessoa_projeto/convites/{qtd}",
     response_model=t.List[PessoaProjeto],
     response_model_exclude_none=True,
 )
-async def get_pessoas_projeto(
+async def get_pessoas_projeto_convite(
     request: Request,
+    qtd: int,
     db=Depends(get_db),
     pessoa=Depends(get_current_active_pessoa),
 ):
 
-    pessoas_projeto = await get_vagas_convite(db, pessoa.id)
+    pessoas_projeto = await get_vagas_convite(db, qtd, pessoa.id)
     
     return pessoas_projeto
 

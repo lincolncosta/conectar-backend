@@ -21,7 +21,7 @@ from db.projeto.crud import (
     edit_projeto,
     edit_foto_projeto,
     get_projetos_destaque,
-    get_projeto_colaborador,
+    get_projeto_participando,
 )
 from db.projeto.schemas import Projeto, ProjetoEdit
 from core.auth import get_current_active_pessoa
@@ -69,18 +69,18 @@ async def projeto_details(
     return projeto
 
 @r.get(
-    "/projeto/colaborador/{colaborador_id}",
+    "/projeto/participando/{participante_id}",
     response_model=t.List[Projeto],
     response_model_exclude_none=True,
 )
 async def projeto_colaborador(
     request: Request,
-    colaborador_id: int,
+    participante_id: int,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
     
-    return await get_projeto_colaborador(db, colaborador_id)
+    return await get_projeto_participando(db, participante_id)
 
 
 @r.get(
