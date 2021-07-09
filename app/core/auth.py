@@ -208,13 +208,19 @@ def authenticate_google(db, token: str):
         password = passwords.get_password_hash(passwords.get_random_string())
         if pessoa is None:
             # User not registered, creating a new account
+            while True:
+                nome_usuario = pessoa.nome.replace(
+                    ' ', '').lower() + str(int(time.time()))
+                username_existe = get_pessoa_by_username(db, nome_usuario)
+                if not username_existe:
+                    break
+
             new_pessoa = create_pessoa(
                 db,
                 schemas.PessoaCreate(
                     email=email,
                     nome=name,
-                    usuario=name.replace(' ', '').lower() +
-                    str(int(time.time())),
+                    usuario=nome_usuario,
                     senha=password,
                     ativo=True,
                     superusuario=False,
