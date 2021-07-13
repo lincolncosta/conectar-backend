@@ -318,7 +318,6 @@ def notificacao_finalizado(
         projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
 
     if existe_notificacao(db, situacao, idealizador.id):
-        print('existe notificação')
         return
 
     anexo = createPDFacordo(db, pessoa_projeto)
@@ -333,9 +332,9 @@ def notificacao_finalizado(
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
+        link='/projeto/{}/vagas/{}'.format(
+            pessoa_projeto.projeto_id, pessoa_projeto.id)
     )
-
-    print('notificação do idealizador')
 
     db.add(db_notificacao)
     db.commit()
@@ -354,8 +353,6 @@ def notificacao_finalizado(
         lido=False,
         link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
     )
-
-    print('notificação colab')
 
     db.add(db_notificacao)
     db.commit()
