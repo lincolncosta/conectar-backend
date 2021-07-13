@@ -141,7 +141,7 @@ def notificacao_pendente_idealizador(
 
         projetos.append(pessoa_projeto.projeto_id)
 
-        situacao = "<strong>Existem pessoas a serem avaliadas para o projeto "\
+        situacao = "Existem pessoas a serem avaliadas para o projeto <strong>"\
             + projeto.nome + "</strong>. Dê uma olhada!"
 
         if existe_notificacao(db, situacao, projeto.pessoa_id):
@@ -199,8 +199,8 @@ def notificacao_pendente_colaborador(
     projeto = get_projeto(db, projeto_id)
     idealizador = get_pessoa_by_id(db, idealizador_id)
 
-    situacao = "<strong>" + idealizador.nome + " te fez um convite</strong> para o projeto " + \
-        projeto.nome + ". Confira!",
+    situacao = "<strong>" + idealizador.nome + "</strong> te convidou para o projeto <strong>" + \
+        projeto.nome + "</strong>. Confira!",
 
     if existe_notificacao(db, situacao, pessoa_projeto.pessoa_id):
         return
@@ -256,13 +256,13 @@ def notificacao_aceito_recusado(
 
     if pessoa_projeto.situacao == "RECUSADO":
         situacao = "<strong>" + colaborador.nome + \
-            " recusou seu convite</strong>  para o projeto " + \
-            projeto.nome + ". Realize uma nova busca."
+            "</strong> recusou seu convite para o projeto <strong>" + \
+            projeto.nome + "</strong>. Realize uma nova busca."
 
     elif pessoa_projeto.situacao == "ACEITO":
         situacao = "<strong>" + colaborador.nome + \
-            " aceitou seu convite</strong> para o projeto " + \
-            projeto.nome + ". Finalize o acordo e preencha essa vaga!"
+            "</strong> aceitou seu convite para o projeto <strong>" + \
+            projeto.nome + "</strong>. Finalize o acordo e preencha essa vaga!"
 
     if existe_notificacao(db, situacao, projeto.pessoa_id):
         return
@@ -314,8 +314,8 @@ def notificacao_finalizado(
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
     idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
 
-    situacao = "<strong>Seu acordo com " + colaborador.nome + " para participação no projeto " + \
-        projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
+    situacao = "Seu acordo com <strong>" + colaborador.nome + "</strong> para participação no projeto <strong>" + \
+        projeto.nome + "</strong> foi finalizado! Clique aqui para baixar seu documento.",
 
     if existe_notificacao(db, situacao, idealizador.id):
         return
@@ -346,8 +346,8 @@ def notificacao_finalizado(
         destinatario_id=colaborador.id,
         projeto_id=pessoa_projeto.projeto_id,
         pessoa_projeto_id=pessoa_projeto.id,
-        situacao="<strong>Seu acordo com " + idealizador.nome + " para participação no projeto " +
-        projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
+        situacao="Seu acordo com <strong>" + idealizador.nome + "</strong> para participação no projeto <strong>" +
+        projeto.nome + "</strong> foi finalizado! Clique aqui para baixar seu documento.",
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
@@ -392,8 +392,8 @@ def notificacao_checagem(
 
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
-            situacao = "<strong>Se liga:</strong> você tem " + str(6-diff.days) + " dias para responder ao convite de " + \
-                remetente.nome + " para o projeto " + projeto.nome + ".",
+            situacao = "<strong>Se liga:</strong> você tem " + str(6-diff.days) + " dias para responder ao convite de <strong>" + \
+                remetente.nome + "</strong> para o projeto <strong>" + projeto.nome + "</strong>.",
             destinatario_id = pessoa_projeto.pessoa_id
 
             if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
@@ -419,8 +419,8 @@ def notificacao_checagem(
 
         elif(diff.days == 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
-            situacao = "<strong>O prazo de resposta de " + \
-                remetente.nome + " expirou!</strong> Realize uma nova busca e complete seu time!"
+            situacao = "O prazo de resposta de <strong>" + \
+                remetente.nome + "</strong> expirou! Realize uma nova busca e complete seu time!"
             destinatario_id = projeto.pessoa_id
 
             if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
@@ -471,7 +471,7 @@ def notificacao_checagem_projeto(
             destinatario_id=projeto.pessoa_id,
             projeto_id=projeto.id,
             pessoa_projeto_id=None,
-            situacao="<strong>Finalize o cadastro do projeto " +
+            situacao="Finalize o cadastro do projeto <strong>" +
             projeto.nome + "</strong> e encontre o time ideal!",
             foto=projeto.foto_capa,
             lido=False,
@@ -507,7 +507,7 @@ def notificacao_checagem_projeto(
             destinatario_id=projeto.pessoa_id,
             projeto_id=projeto.id,
             pessoa_projeto_id=None,
-            situacao="<strong>Finalize o cadastro das vagas do projeto " +
+            situacao="Finalize o cadastro das vagas do projeto <strong>" +
             projeto.nome + "</strong> e encontre o time ideal!",
             foto=projeto.foto_capa,
             lido=False,
@@ -541,7 +541,7 @@ def notificacao_favorito(
         projeto_id=projeto.id,
         pessoa_projeto_id=None,
         situacao="<strong>" + remetente.nome +
-        " favoritou</strong> o projeto " + projeto.nome + "!",
+        "</strong> favoritou o projeto <strong>" + projeto.nome + "</strong>!",
         foto=projeto.foto_capa,
         lido=False,
         link='/projeto/{}'.format(projeto_id)
@@ -570,7 +570,7 @@ def notificacao_interesse(
         projeto_id=projeto.id,
         pessoa_projeto_id=None,
         situacao="<strong>" + remetente.nome +
-        " demonstrou interesse</strong> no projeto " + projeto.nome + "!",
+        "</strong> demonstrou interesse no projeto <strong>" + projeto.nome + "</strong>!",
         foto=projeto.foto_capa,
         lido=False,
         link='/projeto/{}'.format(projeto_id)
