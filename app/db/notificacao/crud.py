@@ -335,7 +335,7 @@ def notificacao_finalizado(
         lido=False,
     )
 
-    print('notificação do idealizador: ' + db_notificacao.situacao)
+    print('notificação do idealizador')
 
     db.add(db_notificacao)
     db.commit()
@@ -355,7 +355,7 @@ def notificacao_finalizado(
         link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
     )
 
-    print('notificação do idealizador: ' + db_notificacao.situacao)
+    print('notificação colab')
 
     db.add(db_notificacao)
     db.commit()
