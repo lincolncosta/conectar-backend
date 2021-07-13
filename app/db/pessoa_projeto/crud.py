@@ -218,6 +218,7 @@ async def get_similaridade_vaga(
         raise HTTPException(
             status_code=404, detail="Areas e Habilidades não encontradas para vaga")
 
+    print(habilidades_areas_vaga)
     # Precisamos criar um filtro para buscar somente pessoas que ainda não foram selecionadas
     pessoas = get_pessoas_by_papel(db, vaga.papel_id, pessoas_ignoradas_ids)
 
@@ -242,11 +243,13 @@ async def get_similaridade_vaga(
             areas_pessoa.sort()
             habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
+            print(habilidades_areas_pessoa)
             similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
                 habilidades_areas_vaga,
                 habilidades_areas_pessoa
             )
 
+    print(similaridades_pessoa)
     similaridades_retorno = dict(
         sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
@@ -259,6 +262,7 @@ async def get_similaridade_vaga(
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoa_selecionada
+
 
 async def get_vagas_convite(
     db: Session,
@@ -273,6 +277,7 @@ async def get_vagas_convite(
         .all()
 
     return pessoa_projeto
+
 
 async def atualiza_match_vaga(
     db: Session,
