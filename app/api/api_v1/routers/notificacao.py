@@ -94,28 +94,6 @@ async def aceito_recusado_notificacao(
 
 
 @r.post(
-    "/notificacao/finalizado",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
-)
-async def finalizado_notificacao(
-    request: Request,
-    pessoa_projeto_id: int,
-    db=Depends(get_db),
-    current_pessoa=Depends(get_current_active_pessoa),
-):
-    """
-    Create notificacao to pessoa_projeto that are "FINALIZADO"
-    """
-
-    pessoa_projeto = get_pessoa_projeto(db, pessoa_projeto_id)
-
-    notificacao = notificacao_finalizado(db, pessoa_projeto)
-
-    return notificacao
-
-
-@r.post(
     "/notificacao/checagem",
     response_model=t.List[Notificacao],
     response_model_exclude_none=True,
@@ -127,10 +105,11 @@ async def checagem_notificacao(
     """
     Create notificacao
     """
-    
+
     notificacao = notificacao_checagem(db)
 
     return notificacao
+
 
 @r.post(
     "/notificacao/checagem/projeto",
@@ -189,6 +168,7 @@ async def get_notificacao_destinatario(
 
     return notificacao
 
+
 @r.get(
     "/notificacao/destinatario/lidas",
     response_model=t.List[Notificacao],
@@ -205,7 +185,8 @@ async def get_notificacao_lida_destinatario(
     Get any notificacao lida details by destinatario
     """
 
-    notificacao = get_notificacao_lida_by_destinatario(db, destinatario_id, lido)
+    notificacao = get_notificacao_lida_by_destinatario(
+        db, destinatario_id, lido)
 
     return notificacao
 
@@ -244,6 +225,7 @@ async def notificacao_delete(
     """
 
     return delete_notificacao(db, notificacao_id)
+
 
 @r.post(
     "/notificacao/ler-todas",

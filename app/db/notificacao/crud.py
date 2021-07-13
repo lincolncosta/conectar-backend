@@ -310,17 +310,16 @@ def notificacao_finalizado(
             detail="PessoaProjeto não finalizada",
         )
 
-    notificacao = []
-
     colaborador = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
     projeto = get_projeto(db, pessoa_projeto.projeto_id)
     idealizador = get_pessoa_by_id(db, projeto.pessoa_id)
 
-
-    situacao="<strong>Seu acordo com " + colaborador.nome + " para participação no projeto " + projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
+    situacao = "<strong>Seu acordo com " + colaborador.nome + " para participação no projeto " + \
+        projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
 
     if existe_notificacao(db, situacao, idealizador.id):
-        return notificacao
+        print('existe notificação')
+        return
 
     anexo = createPDFacordo(db, pessoa_projeto)
 
@@ -336,11 +335,11 @@ def notificacao_finalizado(
         lido=False,
     )
 
+    print('notificação do idealizador: ' + db_notificacao.situacao)
+
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
-
-    notificacao.append(db_notificacao)
 
     # notificacao colab
     db_notificacao = models.Notificacao(
@@ -348,22 +347,21 @@ def notificacao_finalizado(
         destinatario_id=colaborador.id,
         projeto_id=pessoa_projeto.projeto_id,
         pessoa_projeto_id=pessoa_projeto.id,
-        situacao="<strong>Seu acordo com " + idealizador.nome + " para participação no projeto " + projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
+        situacao="<strong>Seu acordo com " + idealizador.nome + " para participação no projeto " +
+        projeto.nome + " foi finalizado!</strong> Clique aqui para baixar seu documento.",
         foto=projeto.foto_capa,
         anexo=anexo,
         lido=False,
         link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
     )
 
+    print('notificação do idealizador: ' + db_notificacao.situacao)
+
     db.add(db_notificacao)
     db.commit()
     db.refresh(db_notificacao)
 
-    notificacao.append(db_notificacao)
-
     delete_pessoas_ignoradas_by_vaga(db, pessoa_projeto.id)
-
-    return notificacao
 
 
 def notificacao_checagem(
@@ -412,7 +410,8 @@ def notificacao_checagem(
                 situacao=situacao,
                 foto=projeto.foto_capa,
                 lido=False,
-                link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
+                link='/projeto/{}/vagas/{}'.format(projeto.id,
+                                                   pessoa_projeto.id)
             )
 
             db.add(db_notificacao)
@@ -430,17 +429,17 @@ def notificacao_checagem(
             if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
                 continue
 
-            
             db_notificacao = models.Notificacao(
-                    remetente_id=remetente.id,
-                    destinatario_id=destinatario_id,
-                    projeto_id=pessoa_projeto.projeto_id,
-                    pessoa_projeto_id=pessoa_projeto.id,
-                    situacao=situacao,
-                    foto=projeto.foto_capa,
-                    lido=False,
-                    link='/projeto/{}/vagas/{}'.format(projeto.id, pessoa_projeto.id)
-                )
+                remetente_id=remetente.id,
+                destinatario_id=destinatario_id,
+                projeto_id=pessoa_projeto.projeto_id,
+                pessoa_projeto_id=pessoa_projeto.id,
+                situacao=situacao,
+                foto=projeto.foto_capa,
+                lido=False,
+                link='/projeto/{}/vagas/{}'.format(projeto.id,
+                                                   pessoa_projeto.id)
+            )
 
             db.add(db_notificacao)
             db.commit()
@@ -607,10 +606,7 @@ def existe_notificacao(
     if filtro:
 
         data1 = datetime.date(filtro.data_criacao)
-
         data2 = datetime.date(datetime.today())
-
-        data2-data1
 
         diferenca = data2-data1
 
