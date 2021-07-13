@@ -190,7 +190,7 @@ client = TestClient(app)
 @app.on_event("startup")
 @repeat_every(seconds=60*60*24)
 def test_read_main():
-    print("Verificação Diária")
+    print("Executando verificação diária.")
     client.post("https://boraconectar.com/notificacao/checagem")
     client.post("https://boraconectar.com/pendente_idealizador")
     client.post("https://boraconectar.com/notificacao/checagem/projeto")
