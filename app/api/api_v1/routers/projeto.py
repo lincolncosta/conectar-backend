@@ -20,7 +20,8 @@ from db.projeto.crud import (
     delete_projeto,
     edit_projeto,
     edit_foto_projeto,
-    get_projetos_destaque
+    get_projetos_destaque,
+    get_projeto_participando,
 )
 from db.projeto.schemas import Projeto, ProjetoEdit
 from core.auth import get_current_active_pessoa
@@ -66,6 +67,21 @@ async def projeto_details(
     """
     projeto = get_projeto(db, projeto_id)
     return projeto
+
+@r.get(
+    "/projeto/participando/{participante_id}",
+    response_model=t.List[Projeto],
+    response_model_exclude_none=True,
+)
+async def projeto_colaborador(
+    request: Request,
+    participante_id: int,
+    db=Depends(get_db),
+    current_pessoa=Depends(get_current_active_pessoa),
+):
+    
+    return await get_projeto_participando(db, participante_id)
+
 
 @r.get(
     "/projeto/destaque/{qtd_projetos}",
