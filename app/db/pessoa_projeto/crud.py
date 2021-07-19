@@ -248,7 +248,7 @@ async def get_similaridade_vaga(
             )
 
     similaridades_retorno = dict(
-        sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
+        sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=True))
 
     pessoa_selecionada = next(iter(similaridades_retorno))
     await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
@@ -259,6 +259,7 @@ async def get_similaridade_vaga(
         raise HTTPException(status_code=404, detail="pessoas não encontradas")
 
     return pessoa_selecionada
+
 
 async def get_vagas_convite(
     db: Session,
@@ -273,6 +274,7 @@ async def get_vagas_convite(
         .all()
 
     return pessoa_projeto
+
 
 async def atualiza_match_vaga(
     db: Session,

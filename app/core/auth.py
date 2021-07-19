@@ -1,4 +1,5 @@
 import jwt
+import time
 from fastapi import Depends, HTTPException, status, File, UploadFile
 from jwt import PyJWTError
 
@@ -207,12 +208,19 @@ def authenticate_google(db, token: str):
         password = passwords.get_password_hash(passwords.get_random_string())
         if pessoa is None:
             # User not registered, creating a new account
+            while True:
+                nome_usuario = pessoa.nome.replace(
+                    ' ', '').lower() + str(int(time.time()))
+                username_existe = get_pessoa_by_username(db, nome_usuario)
+                if not username_existe:
+                    break
+
             new_pessoa = create_pessoa(
                 db,
                 schemas.PessoaCreate(
                     email=email,
                     nome=name,
-                    usuario=name,
+                    usuario=nome_usuario,
                     senha=password,
                     ativo=True,
                     superusuario=False,
@@ -236,18 +244,25 @@ def authenticate_facebook(
             detail=f"Não foi possível validar as credenciais",
             headers={"WWW-Authenticate": "Bearer"},
         )
-        
+
         db_pessoa = get_pessoa_by_email(db, pessoa.email)
         db_pessoa = get_pessoa_by_username(db, pessoa.nome)
         password = passwords.get_password_hash(passwords.get_random_string())
         if db_pessoa is None:
             # User not registered, creating a new account
+            while True:
+                nome_usuario = pessoa.nome.replace(
+                    ' ', '').lower() + str(int(time.time()))
+                username_existe = get_pessoa_by_username(db, nome_usuario)
+                if not username_existe:
+                    break
+
             new_pessoa = create_pessoa(
                 db,
                 schemas.PessoaCreate(
                     email=pessoa.email,
                     nome=pessoa.nome,
-                    usuario=pessoa.nome,
+                    usuario=nome_usuario,
                     senha=password,
                     ativo=True,
                     superusuario=False,
