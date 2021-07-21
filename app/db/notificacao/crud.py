@@ -400,7 +400,7 @@ def notificacao_checagem(
                 remetente.nome + "</strong> para o projeto <strong>" + projeto.nome + "</strong>.",
             destinatario_id = pessoa_projeto.pessoa_id
 
-            if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+            if existe_notificacao(db, situacao, destinatario_id):
                 continue
 
             db_notificacao = models.Notificacao(
@@ -427,7 +427,7 @@ def notificacao_checagem(
                 remetente.nome + "</strong> expirou! Realize uma nova busca e complete seu time!"
             destinatario_id = projeto.pessoa_id
 
-            if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+            if existe_notificacao(db, situacao, destinatario_id):
                 continue
 
             db_notificacao = models.Notificacao(
