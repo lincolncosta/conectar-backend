@@ -124,8 +124,6 @@ async def checagem_notificacao_projeto(
     Create notificacao
     """
 
-    print('tô na notificação checagem.')
-
     notificacao = notificacao_checagem_projeto(db)
 
     return notificacao
