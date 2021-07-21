@@ -99,7 +99,7 @@ async def checagem_notificacao(
     """
     Create notificacao
     """
-    
+
     notificacao_checagem(db)
 
 
