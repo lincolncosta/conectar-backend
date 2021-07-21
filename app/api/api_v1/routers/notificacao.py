@@ -31,8 +31,7 @@ notificacao_router = r = APIRouter()
 
 @r.post(
     "/notificacao/pendente_idealizador",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def pendente_idealizador_notificacao(
     request: Request,
@@ -42,9 +41,7 @@ async def pendente_idealizador_notificacao(
     Create notificacao to pendente idealizador
     """
 
-    notificacao = notificacao_pendente_idealizador(db)
-
-    return notificacao
+    notificacao_pendente_idealizador(db)
 
 
 @r.post(
@@ -95,8 +92,7 @@ async def aceito_recusado_notificacao(
 
 @r.post(
     "/notificacao/checagem",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def checagem_notificacao(
     request: Request,
@@ -106,15 +102,12 @@ async def checagem_notificacao(
     Create notificacao
     """
 
-    notificacao = notificacao_checagem(db)
-
-    return notificacao
+    notificacao_checagem(db)
 
 
 @r.post(
     "/notificacao/checagem/projeto",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def checagem_notificacao_projeto(
     request: Request,
@@ -124,9 +117,7 @@ async def checagem_notificacao_projeto(
     Create notificacao
     """
 
-    notificacao = notificacao_checagem_projeto(db)
-
-    return notificacao
+    notificacao_checagem_projeto(db)
 
 
 @r.get(
