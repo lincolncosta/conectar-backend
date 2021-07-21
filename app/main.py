@@ -188,7 +188,7 @@ app.include_router(
 client = TestClient(app)
 
 @app.on_event("startup")
-@repeat_every(seconds=60)
+@repeat_every(seconds=60*60*24)
 def test_read_main():
     print("Executando verificação diária.")
     client.post("https://boraconectar.com/notificacao/checagem")
