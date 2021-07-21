@@ -144,8 +144,6 @@ def notificacao_pendente_idealizador(
         situacao = "Existem pessoas a serem avaliadas para o projeto <strong>"\
             + projeto.nome + "</strong>. Dê uma olhada!"
 
-        print(existe_notificacao(db, situacao, projeto.pessoa_id))
-
         if existe_notificacao(db, situacao, projeto.pessoa_id):
             continue
 
@@ -391,8 +389,6 @@ def notificacao_checagem(
         att = datetime.strptime(att_str, "%Y-%m-%d")
 
         diff = hoje - att
-        print('diff: ' + diff)
-        print('diff days: ' + diff.days)
 
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
@@ -612,9 +608,6 @@ def existe_notificacao(
         data2 = datetime.date(datetime.today())
 
         diferenca = data2-data1
-
-        print('diferenca: ' + diferenca)
-        print('diferenca days: ' + diferenca.days)
 
         if diferenca.days > 4:
             return False
