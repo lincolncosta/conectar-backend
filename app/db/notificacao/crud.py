@@ -461,8 +461,6 @@ def notificacao_checagem_projeto(
         .join(models.Area, models.Projeto.areas, full=True, isouter=True)\
         .all()
 
-    print(projetos)
-
     notificacao = []
 
     # projetos a serem ignorados na verificação das vagas
