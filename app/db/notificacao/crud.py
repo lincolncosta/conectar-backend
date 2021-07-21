@@ -420,7 +420,8 @@ def notificacao_checagem(
         elif(diff.days == 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
             situacao = "O prazo de resposta de <strong>" + \
-                remetente.nome + "</strong> expirou! Realize uma nova busca e complete seu time!"
+                remetente.nome + "</strong> para o projeto " + projeto.nome + \
+                " expirou! Realize uma nova busca e complete seu time!"
             destinatario_id = projeto.pessoa_id
 
             if existe_notificacao(db, situacao, destinatario_id):
