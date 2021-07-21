@@ -29,12 +29,11 @@ from app.core.auth import (
 notificacao_router = r = APIRouter()
 
 
-@r.post(
+@r.get(
     "/notificacao/pendente_idealizador",
     status_code=200
 )
 async def pendente_idealizador_notificacao(
-    request: Request,
     db=Depends(get_db)
 ):
     """
@@ -90,12 +89,11 @@ async def aceito_recusado_notificacao(
     return notificacao
 
 
-@r.post(
+@r.get(
     "/notificacao/checagem",
     status_code=200
 )
 async def checagem_notificacao(
-    request: Request,
     db=Depends(get_db)
 ):
     """
@@ -105,12 +103,11 @@ async def checagem_notificacao(
     notificacao_checagem(db)
 
 
-@r.post(
+@r.get(
     "/notificacao/checagem/projeto",
     status_code=200
 )
 async def checagem_notificacao_projeto(
-    request: Request,
     db=Depends(get_db)
 ):
     """
