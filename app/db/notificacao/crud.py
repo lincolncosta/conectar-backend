@@ -389,6 +389,8 @@ def notificacao_checagem(
         att = datetime.strptime(att_str, "%Y-%m-%d")
 
         diff = hoje - att
+        print('diff: ' + diff)
+        print('diff days: ' + diff.days)
 
         if(diff.days < 6):
             remetente = get_pessoa_by_id(db, projeto.pessoa_id)
