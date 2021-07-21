@@ -29,22 +29,18 @@ from app.core.auth import (
 notificacao_router = r = APIRouter()
 
 
-@r.post(
+@r.get(
     "/notificacao/pendente_idealizador",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def pendente_idealizador_notificacao(
-    request: Request,
     db=Depends(get_db)
 ):
     """
     Create notificacao to pendente idealizador
     """
 
-    notificacao = notificacao_pendente_idealizador(db)
-
-    return notificacao
+    notificacao_pendente_idealizador(db)
 
 
 @r.post(
@@ -93,40 +89,32 @@ async def aceito_recusado_notificacao(
     return notificacao
 
 
-@r.post(
+@r.get(
     "/notificacao/checagem",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def checagem_notificacao(
-    request: Request,
     db=Depends(get_db)
 ):
     """
     Create notificacao
     """
 
-    notificacao = notificacao_checagem(db)
-
-    return notificacao
+    notificacao_checagem(db)
 
 
-@r.post(
+@r.get(
     "/notificacao/checagem/projeto",
-    response_model=t.List[Notificacao],
-    response_model_exclude_none=True,
+    status_code=200
 )
 async def checagem_notificacao_projeto(
-    request: Request,
     db=Depends(get_db)
 ):
     """
     Create notificacao
     """
 
-    notificacao = notificacao_checagem_projeto(db)
-
-    return notificacao
+    notificacao_checagem_projeto(db)
 
 
 @r.get(
