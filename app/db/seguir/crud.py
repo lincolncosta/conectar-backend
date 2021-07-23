@@ -18,8 +18,6 @@ def create_seguir(
     db.commit()
     db.refresh(db_seguir)
 
-    return db_seguir
-
 
 def get_seguidores(
     db: Session, seguido_id: int

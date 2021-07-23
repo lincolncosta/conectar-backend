@@ -68,7 +68,7 @@ def get_num_seguindo(
     return qtd_seguindo
 
 
-@r.post("/seguir", response_model=Seguir, response_model_exclude_none=True)
+@r.post("/seguir", status_code=202)
 async def seguir_create(
     request: Request,
     seguir: SeguirCreate,
@@ -78,7 +78,7 @@ async def seguir_create(
     """
     Cria uma nova relação de seguir
     """
-    return create_seguir(db, seguir)
+    create_seguir(db, seguir)
 
 
 @r.delete(
