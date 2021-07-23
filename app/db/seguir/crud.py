@@ -32,6 +32,7 @@ def get_seguidores(
 
     return seguidores
 
+
 def get_seguindo(
     db: Session, seguidor_id: int
 ) -> schemas.Seguir:
@@ -44,6 +45,7 @@ def get_seguindo(
         seguindo.append(tupla[0])
 
     return seguindo
+
 
 def delete_seguir(
     db: Session,
@@ -62,4 +64,3 @@ def delete_seguir(
         )
     db.delete(db_seguir)
     db.commit()
-    return db_seguir
