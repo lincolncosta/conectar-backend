@@ -1,3 +1,4 @@
+from app.db.seguir.schemas import SeguirCreate
 from fastapi import APIRouter, Request, Depends
 from db.session import get_db
 
@@ -7,7 +8,7 @@ from db.seguir.crud import (
     get_seguidores,
     get_seguindo
 )
-from db.seguir.schemas import Seguir
+from db.seguir.schemas import Seguir, SeguirCreate
 from db.pessoa.schemas import Pessoa
 import typing as t
 from core.auth import get_current_active_pessoa
@@ -70,7 +71,7 @@ def get_num_seguindo(
 @r.post("/seguir", response_model=Seguir, response_model_exclude_none=True)
 async def seguir_create(
     request: Request,
-    seguir: Seguir,
+    seguir: SeguirCreate,
     db=Depends(get_db),
     current_pessoa=Depends(get_current_active_pessoa),
 ):
