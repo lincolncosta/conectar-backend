@@ -81,11 +81,7 @@ async def seguir_create(
     create_seguir(db, seguir)
 
 
-@r.delete(
-    "/seguir",
-    response_model=Seguir,
-    response_model_exclude_none=True,
-)
+@r.delete("/seguir", status_code=202)
 async def seguir_delete(
     request: Request,
     seguido_id: int,
@@ -96,4 +92,4 @@ async def seguir_delete(
     """
     Deleta relação existente de seguir
     """
-    return delete_seguir(db, seguido_id, seguidor_id)
+    delete_seguir(db, seguido_id, seguidor_id)
