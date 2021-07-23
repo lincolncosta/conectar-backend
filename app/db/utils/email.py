@@ -43,7 +43,7 @@ async def envia_email_assincrono(
 
     if not filtro:
         raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="Email Não Cadastrado!"
+            status.HTTP_404_NOT_FOUND, detail="Email incorreto ou inexistente."
         )
 
     pessoa = get_pessoa_by_email(db, email_para)
@@ -56,20 +56,3 @@ async def envia_email_assincrono(
 
     fm = FastMail(conf)
     await fm.send_message(message, template_name='email.html')
-
-
-def envia_email_bg(
-    background_tasks: BackgroundTasks,
-    subject: str,
-    email_to: str,
-    body: dict
-):
-    message = MessageSchema(
-        subject=subject,
-        recipients=[email_to],
-        body=body,
-        subtype='html',
-    )
-    fm = FastMail(conf)
-    background_tasks.add_task(
-        fm.send_message, message, template_name='email.html')
