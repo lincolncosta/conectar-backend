@@ -11,8 +11,7 @@ def create_seguir(
 
     db_seguir = models.Seguir(
         seguido_id=seguir.seguido_id,
-        seguidor_id=seguir.seguidor_id,
-        seguir=seguir.seguir,
+        seguidor_id=seguir.seguidor_id
     )
 
     db.add(db_seguir)
