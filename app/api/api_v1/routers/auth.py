@@ -6,7 +6,7 @@ from core.security import handle_jwt
 from core.auth import (authenticate_pessoa, sign_up_new_pessoa,
                        get_current_token, authenticate_google,
                        authenticate_facebook)
-from db.utils.email import envia_email_assincrono, envia_email_bg
+from db.utils.email import envia_email_assincrono
 
 import typing as t
 
