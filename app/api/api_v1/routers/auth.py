@@ -6,6 +6,7 @@ from core.security import handle_jwt
 from core.auth import (authenticate_pessoa, sign_up_new_pessoa,
                        get_current_token, authenticate_google,
                        authenticate_facebook)
+from db.utils.email import envia_email_assincrono, envia_email_bg
 
 import typing as t
 
@@ -247,3 +248,11 @@ async def authenticate_from_provider(
             raise providerExeption
         raise credentialsException
     return {"pessoa": new_pessoa}
+
+@r.get('/email/esqueci_a_senha')
+async def send_email_asynchronous(
+    email_conta: str,
+    db=Depends(get_db),
+):
+
+    await envia_email_assincrono(db, email_conta)
