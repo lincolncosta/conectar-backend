@@ -263,9 +263,9 @@ class Notificacao(Base):
     remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey(
-        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
+        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=True)
     pessoa_projeto_id = Column(Integer, ForeignKey(
-        "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
+        "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=True)
     situacao = Column(String, nullable=False)
     anexo = Column(String, nullable=True)
     foto = Column(String, nullable=True)
