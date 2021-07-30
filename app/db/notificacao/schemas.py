@@ -6,7 +6,7 @@ import typing as t
 class NotificacaoBase(BaseModel):
     remetente_id: int
     destinatario_id: int
-    projeto_id: int
+    projeto_id: t.Optional[int]
     pessoa_projeto_id: t.Optional[int]
     situacao: str
     foto: t.Optional[str]
