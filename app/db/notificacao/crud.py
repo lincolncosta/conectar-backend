@@ -360,6 +360,26 @@ def notificacao_finalizado(
 
     delete_pessoas_ignoradas_by_vaga(db, pessoa_projeto.id)
 
+def notificacao_seguindo(
+    db: Session,
+    seguido: int,
+    seguidor: int
+):
+
+    seguidor = get_pessoa_by_id(db, seguidor)
+
+    db_notificacao = models.Notificacao(
+        remetente_id=seguidor,
+        destinatario_id=seguido,
+        situacao="<strong>" + seguidor + "</strong> está te seguindo.",
+        foto=seguidor.foto_perfil,
+        lido=False,
+        link='/{}'.format(seguidor)
+    )
+
+    db.add(db_notificacao)
+    db.commit()
+    db.refresh(db_notificacao)
 
 def notificacao_checagem(
     db: Session

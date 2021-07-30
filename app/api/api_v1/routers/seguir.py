@@ -1,7 +1,7 @@
 from app.db.seguir.schemas import SeguirCreate
 from fastapi import APIRouter, Request, Depends
 from db.session import get_db
-
+from db.notificacao.crud import notificacao_seguindo
 from db.seguir.crud import (
     create_seguir,
     delete_seguir,
@@ -79,6 +79,7 @@ async def seguir_create(
     Cria uma nova relação de seguir
     """
     create_seguir(db, seguir)
+    notificacao_seguindo(db, SeguirCreate.seguido_id, SeguirCreate.seguidor_id)
 
 
 @r.delete("/seguir", status_code=202)
