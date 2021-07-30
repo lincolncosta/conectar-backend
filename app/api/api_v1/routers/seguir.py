@@ -8,7 +8,7 @@ from db.seguir.crud import (
     get_seguidores,
     get_seguindo
 )
-from db.seguir.schemas import Seguir, SeguirCreate
+from db.seguir.schemas import SeguirCreate
 from db.pessoa.schemas import Pessoa
 import typing as t
 from core.auth import get_current_active_pessoa
@@ -79,7 +79,7 @@ async def seguir_create(
     Cria uma nova relação de seguir
     """
     create_seguir(db, seguir)
-    notificacao_seguindo(db, SeguirCreate.seguido_id, SeguirCreate.seguidor_id)
+    notificacao_seguindo(db, seguir.seguido_id, seguir.seguidor_id)
 
 
 @r.delete("/seguir", status_code=202)
