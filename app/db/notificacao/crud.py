@@ -369,9 +369,9 @@ def notificacao_seguindo(
     seguidor = get_pessoa_by_id(db, seguidor)
 
     db_notificacao = models.Notificacao(
-        remetente_id=seguidor,
+        remetente_id=seguidor.id,
         destinatario_id=seguido,
-        situacao="<strong>" + seguidor + "</strong> está te seguindo.",
+        situacao="<strong>" + seguidor.nome + "</strong> está te seguindo.",
         foto=seguidor.foto_perfil,
         lido=False,
         link='/{}'.format(seguidor)
