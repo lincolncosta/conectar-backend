@@ -6,7 +6,9 @@ import typing as t
 
 from db import models
 from db.pessoa.schemas import Pessoa
+from db.reacoes.schemas import ReacoesCreate
 from . import schemas
+from db.reacoes.crud import checa_existe_reacao
 from db.pessoa.crud import get_pessoa_by_id, get_pessoas_by_papel
 from db.projeto.crud import get_projeto
 from db.notificacao.crud import (
@@ -149,9 +151,16 @@ async def get_similaridade_projeto(
                 areas_pessoa.sort()
                 habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
+                reacao = ReacoesCreate()
+                reacao.pessoa_id = pessoa.id
+                reacao.projeto_id = vaga.projeto_id
+                reacao.reacao = 'INTERESSE'
+                tem_interesse = checa_existe_reacao(db, reacao)
+
                 similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
                     habilidades_areas_vaga,
-                    habilidades_areas_pessoa
+                    habilidades_areas_pessoa,
+                    tem_interesse
                 )
 
         similaridades_retorno = dict(
@@ -242,9 +251,16 @@ async def get_similaridade_vaga(
             areas_pessoa.sort()
             habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
+            reacao = ReacoesCreate()
+            reacao.pessoa_id = pessoa.id
+            reacao.projeto_id = vaga.projeto_id
+            reacao.reacao = 'INTERESSE'
+            tem_interesse = checa_existe_reacao(db, reacao)
+
             similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
                 habilidades_areas_vaga,
-                habilidades_areas_pessoa
+                habilidades_areas_pessoa,
+                tem_interesse
             )
 
     similaridades_retorno = dict(
