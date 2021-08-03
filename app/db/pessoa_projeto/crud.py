@@ -151,10 +151,7 @@ async def get_similaridade_projeto(
                 areas_pessoa.sort()
                 habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
-                reacao = ReacoesCreate.__init__()
-                reacao.pessoa_id = pessoa.id
-                reacao.projeto_id = vaga.projeto_id
-                reacao.reacao = 'INTERESSE'
+                reacao = ReacoesCreate(pessoa_id=pessoa.id, projeto_id=vaga.projeto_id, reacao='INTERESSE')
                 tem_interesse = checa_existe_reacao(db, reacao)
 
                 similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
@@ -253,10 +250,7 @@ async def get_similaridade_vaga(
             areas_pessoa.sort()
             habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
-            reacao = ReacoesCreate.__init__()
-            reacao.pessoa_id = pessoa.id
-            reacao.projeto_id = vaga.projeto_id
-            reacao.reacao = 'INTERESSE'
+            reacao = ReacoesCreate(pessoa_id=pessoa.id, projeto_id=vaga.projeto_id, reacao='INTERESSE')
             tem_interesse = checa_existe_reacao(db, reacao)
 
             similaridades_pessoa[pessoa] = calcula_similaridade_vaga_pessoa(
