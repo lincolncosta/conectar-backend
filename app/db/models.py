@@ -214,6 +214,7 @@ class Projeto(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String)
     descricao = Column(String)
+    mural = Column(String)
     visibilidade = Column(Boolean, default=True)
     objetivo = Column(String)
     foto_capa = Column(String)
