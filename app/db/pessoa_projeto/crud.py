@@ -85,7 +85,7 @@ async def get_similaridade_projeto(
     '''
 
     pessoas_vagas = {}
-
+    pessoas = False
     # Com o id do projeto, buscar as vagas disponíveis
     vagas_projeto = await get_vagas_by_projeto(db, id_projeto)
     similaridades_retorno = {}
