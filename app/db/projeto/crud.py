@@ -110,6 +110,7 @@ async def edit_projeto(
     foto_capa: t.Optional[UploadFile] = None,
 ) -> schemas.Projeto:
 
+    print(projeto)
     db_projeto = get_projeto(db, projeto_id)
     if not db_projeto:
         raise HTTPException(
@@ -124,6 +125,7 @@ async def edit_projeto(
     for key, value in update_data.items():
         setattr(db_projeto, key, value)
 
+    print(db_projeto)
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
