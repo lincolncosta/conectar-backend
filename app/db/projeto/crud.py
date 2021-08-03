@@ -117,7 +117,7 @@ async def edit_projeto(
             status.HTTP_404_NOT_FOUND, detail="projeto não encontrado"
         )
     update_data = projeto.dict(exclude_unset=True)
-
+    print(update_data)
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
@@ -125,7 +125,7 @@ async def edit_projeto(
     for key, value in update_data.items():
         setattr(db_projeto, key, value)
 
-    print(db_projeto)
+    print(db_projeto.mural)
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
