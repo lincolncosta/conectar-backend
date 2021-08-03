@@ -166,6 +166,8 @@ async def get_similaridade_projeto(
         similaridades_retorno = dict(
             sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=False))
 
+        print(similaridades_retorno)
+
         pessoa_selecionada = next(iter(similaridades_retorno))
         await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
 
@@ -265,6 +267,8 @@ async def get_similaridade_vaga(
 
     similaridades_retorno = dict(
         sorted(similaridades_pessoa.items(), key=lambda item: item[1], reverse=True))
+
+    print(similaridades_retorno)
 
     pessoa_selecionada = next(iter(similaridades_retorno))
     await atualiza_match_vaga(db, vaga, pessoa_selecionada, pessoa_logada.id)
