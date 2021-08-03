@@ -253,7 +253,7 @@ async def get_similaridade_vaga(
             areas_pessoa.sort()
             habilidades_areas_pessoa = habilidades_areas_pessoa + areas_pessoa
 
-            reacao = ReacoesCreate()
+            reacao = ReacoesCreate.__init__()
             reacao.pessoa_id = pessoa.id
             reacao.projeto_id = vaga.projeto_id
             reacao.reacao = 'INTERESSE'
