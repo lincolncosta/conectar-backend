@@ -125,6 +125,7 @@ async def edit_projeto(
     for key, value in update_data.items():
         setattr(db_projeto, key, value)
 
+    print(db_projeto)
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)
