@@ -9,6 +9,7 @@ from db.reacoes.schemas import Reacoes
 class ProjetoBase(BaseModel):
     nome: str
     descricao: str
+    mural: str
     visibilidade: bool
     objetivo: str
     pessoa_id: t.Optional[int] = None
@@ -29,6 +30,7 @@ class ProjetoCreate(ProjetoBase):
 class ProjetoEdit(ProjetoBase):
     nome: t.Optional[str] = None
     descricao: t.Optional[str] = None
+    mural: t.Optional[str] = None
     visibilidade: t.Optional[bool] = None
     objetivo: t.Optional[str] = None
 
