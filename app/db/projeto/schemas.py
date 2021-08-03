@@ -11,7 +11,7 @@ class ProjetoBase(BaseModel):
     descricao: str    
     visibilidade: bool
     objetivo: str
-    mural: t.Optional[str] = None
+    mural: str
     pessoa_id: t.Optional[int] = None
     foto_capa: t.Optional[str] = None
     areas: t.Optional[t.List[ProjetoAreaCreate]] = None
@@ -30,7 +30,7 @@ class ProjetoCreate(ProjetoBase):
 class ProjetoEdit(ProjetoBase):
     nome: t.Optional[str] = None
     descricao: t.Optional[str] = None
-    mural: t.Optional[str] = None
+    mural: str
     visibilidade: t.Optional[bool] = None
     objetivo: t.Optional[str] = None
 
@@ -42,7 +42,7 @@ class Projeto(ProjetoBase):
     id: int    
     data_criacao: datetime
     projeto_reacoes: t.Optional[t.List[Reacoes]] = None
-    mural: t.Optional[str] = None
+    mural: str
 
     class Config:
         orm_mode = True
