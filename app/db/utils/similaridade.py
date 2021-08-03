@@ -28,7 +28,7 @@ def pre_processing(text):
     return text_clean
 
 
-def calcula_similaridade_vaga_pessoa(caracteristicas_vaga, caracteristicas_pessoa):
+def calcula_similaridade_vaga_pessoa(caracteristicas_vaga, caracteristicas_pessoa, tem_interesse):
 
   caracteristicas_vaga_concatenada = " ".join(caracteristicas_vaga)
   caracteristicas_pessoa_concatenada = " ".join(caracteristicas_pessoa)
@@ -39,5 +39,8 @@ def calcula_similaridade_vaga_pessoa(caracteristicas_vaga, caracteristicas_pesso
   texto_pessoa = pre_processing(caracteristicas_pessoa_concatenada)
   
   similaridade = jf.levenshtein_distance(texto_vaga, texto_pessoa)
+
+  if tem_interesse:
+      similaridade = similaridade + (similaridade * 0.1)
 
   return similaridade
