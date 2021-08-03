@@ -30,7 +30,7 @@ class ProjetoCreate(ProjetoBase):
 class ProjetoEdit(ProjetoBase):
     nome: t.Optional[str] = None
     descricao: t.Optional[str] = None
-    mural: str
+    mural: t.Optional[str] = None
     visibilidade: t.Optional[bool] = None
     objetivo: t.Optional[str] = None
 
