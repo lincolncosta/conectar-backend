@@ -5,10 +5,13 @@ from starlette.requests import Request
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from pydantic import BaseModel, EmailStr
 from typing import List
+import uuid
+import datetime
 from fastapi import HTTPException, status
 
+from db.pessoa.crud import get_pessoa_by_email, edit_pessoa
+
 from db import models
-from db.pessoa.crud import get_pessoa_by_email
 
 import os
 
@@ -36,7 +39,8 @@ conf = ConnectionConfig(
     TEMPLATE_FOLDER='templates/'
 )
 
-async def envia_email_assincrono(
+async def envia_email_senha(
+    background_tasks: BackgroundTasks,
     db: Session, 
     email_para: str,
 ):
@@ -50,28 +54,22 @@ async def envia_email_assincrono(
 
     pessoa = get_pessoa_by_email(db, email_para)
 
+    if not pessoa.token_senha or datetime.date.today() > pessoa.expiracao_token + datetime.timedelta(days=1):
+        
+        pessoa.token_senha = str(uuid.uuid4().hex)
+        pessoa.expiracao_token = datetime.date.today() + datetime.timedelta(days=1)
+
+        db.add(pessoa)
+        db.commit()
+        db.refresh(pessoa)
+
     message = MessageSchema(
         subject='Esqueci a senha',
         recipients=[email_para],
-        template_body={'name':pessoa.nome},
+        template_body={'name':pessoa.nome, 'token': pessoa.token_senha},
     )
     
-    fm = FastMail(conf)
-    await fm.send_message(message, template_name='email.html')
 
-
-def envia_email_bg(
-    background_tasks: BackgroundTasks,
-    subject: str,
-    email_to: str,
-    body: dict
-):
-    message = MessageSchema(
-        subject=subject,
-        recipients=[email_to],
-        body=body,
-        subtype='html',
-    )
     fm = FastMail(conf)
     background_tasks.add_task(
-       fm.send_message, message, template_name='email.html')
+        fm.send_message, message, template_name='email.html')
