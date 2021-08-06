@@ -293,17 +293,6 @@ async def edit_pessoa(
     
     update_data = pessoa.dict(exclude_unset=True)
 
-    #se alguém pediu um token pois esqueceu a senha
-    if db_pessoa.token_senha != None and datetime.date.today() < db_pessoa.expiracao_token + datetime.timedelta(days=1):
-        #mas não enviou o token/ enviou um token inválido
-        if not "token_senha" in update_data.keys() or update_data["token_senha"] != db_pessoa.token_senha:
-            raise HTTPException(status_code=409, detail="Token Inválido")
-    #então a edição não acontece
-    #se o tokén estiver correto, então apaga o token e a data do banco
-        else:
-            update_data["token_senha"] = None
-            update_data["expiracao_token"] = None
-
     if "senha" in update_data.keys():
         update_data["senha"] = get_password_hash(pessoa.senha)
     if "email" in update_data.keys():
@@ -316,6 +305,29 @@ async def edit_pessoa(
 
     for key, value in update_data.items():
         setattr(db_pessoa, key, value)
+
+    db.add(db_pessoa)
+    db.commit()
+    db.refresh(db_pessoa)
+
+    return db_pessoa
+
+async def edit_senha_pessoa(
+    db: Session,
+    token: str,
+    senha: str
+    ) -> schemas.Pessoa:
+
+    db_pessoa = db.query(models.Pessoa)\
+        .filter(models.Pessoa.token_senha == token)\
+        .first()
+        
+    if not db_pessoa:
+        raise HTTPException(status_code=404, detail="Token não encontrado")
+
+    db_pessoa.senha = get_password_hash(senha)
+    db_pessoa.token_senha = None
+    db_pessoa.expiracao_token = None
 
     db.add(db_pessoa)
     db.commit()

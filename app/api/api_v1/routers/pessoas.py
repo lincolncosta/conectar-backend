@@ -10,7 +10,7 @@ from db.pessoa.crud import (
     get_rand_pessoas,
     get_pessoas,
     get_pessoa_by_username,
-    get_pessoa_by_email,
+    edit_senha_pessoa,
     get_pessoa_by_id,
     create_pessoa,
     delete_pessoa,
@@ -246,3 +246,12 @@ async def send_email_asynchronous(
 ):
 
     await envia_email_senha(background_tasks, db, email_conta)
+
+@r.put('/pessoas/esqueci_a_senha/{token}')
+async def edit_senha(
+    token: str,
+    nova_senha: str,
+    db=Depends(get_db),
+):
+
+    await edit_senha_pessoa(db, token, nova_senha)
