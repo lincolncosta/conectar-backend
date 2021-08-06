@@ -1,19 +1,21 @@
-from fastapi import APIRouter, Request, Depends, Response, UploadFile, File
+from fastapi import APIRouter, Request, Depends, Response, UploadFile, File, BackgroundTasks
 from fastapi.responses import FileResponse
 import typing as t
 
 from db.session import get_db
 from db.projeto.crud import get_projetos_destaque
 from db.utils.pdfs import createPDFcurriculo
+from db.utils.email import envia_email_senha
 from db.pessoa.crud import (
     get_rand_pessoas,
     get_pessoas,
     get_pessoa_by_username,
+    get_pessoa_by_email,
     get_pessoa_by_id,
     create_pessoa,
     delete_pessoa,
     edit_pessoa,
-    edit_foto_pessoa
+    edit_foto_pessoa,
 )
 from db.pessoa.schemas import PessoaCreate, PessoaEdit, Pessoa, PessoaOut
 from core.auth import (
@@ -235,3 +237,12 @@ async def pessoa_delete_admin(
     """
 
     return delete_pessoa(db, pessoa_id)
+
+@r.get('/email/esqueci_a_senha')
+async def send_email_asynchronous(
+    background_tasks: BackgroundTasks,
+    email_conta: str,
+    db=Depends(get_db),
+):
+
+    await envia_email_senha(background_tasks, db, email_conta)

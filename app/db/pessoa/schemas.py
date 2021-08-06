@@ -23,7 +23,8 @@ class PessoaBase(BaseModel):
     foto_perfil: t.Optional[str] = None
     habilidades: t.Optional[t.List[PessoaHabilidadeCreate]] = None
     areas: t.Optional[t.List[PessoaAreaCreate]] = None
-
+    token_senha: t.Optional[str] = None
+    expiracao_token: t.Optional[date] = None
 
 class PessoaOut(PessoaBase):
     id: int
@@ -56,6 +57,8 @@ class PessoaEdit(PessoaBase):
     senha: t.Optional[str] = None
     email: t.Optional[str] = None
     usuario: t.Optional[str] = None
+    token_senha: t.Optional[str] = None
+    expiracao_token: t.Optional[date] = None
 
     class Config:
         orm_mode = True

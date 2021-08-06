@@ -168,7 +168,7 @@ class Pessoa(Base):
     foto_perfil = Column(String)
     ativo = Column(Boolean, default=True)
     superusuario = Column(Boolean, default=False)
-    token_senha = Column(Integer, nullable=True)
+    token_senha = Column(String, nullable=True)
     expiracao_token = Column(Date, nullable=True)
 
     experiencia_profissional = relationship("ExperienciaProf")

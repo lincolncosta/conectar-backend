@@ -2,6 +2,7 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 import typing as t
+import datetime
 
 from db import models
 from db.utils.extract_areas import append_areas
@@ -292,9 +293,19 @@ async def edit_pessoa(
     
     update_data = pessoa.dict(exclude_unset=True)
 
+    #se alguém pediu um token pois esqueceu a senha
+    if db_pessoa.token_senha != None and datetime.date.today() < db_pessoa.expiracao_token + datetime.timedelta(days=1):
+        #mas não enviou o token/ enviou um token inválido
+        if not "token_senha" in update_data.keys() or update_data["token_senha"] != db_pessoa.token_senha:
+            raise HTTPException(status_code=409, detail="Token Inválido")
+    #então a edição não acontece
+    #se o tokén estiver correto, então apaga o token e a data do banco
+        else:
+            update_data["token_senha"] = None
+            update_data["expiracao_token"] = None
+
     if "senha" in update_data.keys():
         update_data["senha"] = get_password_hash(pessoa.senha)
-        del update_data["senha"]
     if "email" in update_data.keys():
         filtro = get_pessoa_by_email(db, update_data["email"])
         if filtro:
