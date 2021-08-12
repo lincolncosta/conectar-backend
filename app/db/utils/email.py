@@ -35,8 +35,8 @@ conf = ConnectionConfig(
     MAIL_FROM_NAME=Envs.MAIL_FROM_NAME,
     MAIL_TLS=True,
     MAIL_SSL=False,
-    USE_CREDENTIALS=True,
-    TEMPLATE_FOLDER='templates/'
+    USE_CREDENTIALS=True
+    # TEMPLATE_FOLDER='templates/'
 )
 
 async def envia_email_senha(
