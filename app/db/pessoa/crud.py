@@ -2,6 +2,7 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
 import typing as t
+import datetime
 
 from db import models
 from db.utils.extract_areas import append_areas
@@ -294,7 +295,6 @@ async def edit_pessoa(
 
     if "senha" in update_data.keys():
         update_data["senha"] = get_password_hash(pessoa.senha)
-        del update_data["senha"]
     if "email" in update_data.keys():
         filtro = get_pessoa_by_email(db, update_data["email"])
         if filtro:
@@ -305,6 +305,29 @@ async def edit_pessoa(
 
     for key, value in update_data.items():
         setattr(db_pessoa, key, value)
+
+    db.add(db_pessoa)
+    db.commit()
+    db.refresh(db_pessoa)
+
+    return db_pessoa
+
+async def edit_senha_pessoa(
+    db: Session,
+    token: str,
+    senha: str
+    ) -> schemas.Pessoa:
+
+    db_pessoa = db.query(models.Pessoa)\
+        .filter(models.Pessoa.token_senha == token)\
+        .first()
+        
+    if not db_pessoa:
+        raise HTTPException(status_code=404, detail="Token não encontrado")
+
+    db_pessoa.senha = get_password_hash(senha)
+    db_pessoa.token_senha = None
+    db_pessoa.expiracao_token = None
 
     db.add(db_pessoa)
     db.commit()
