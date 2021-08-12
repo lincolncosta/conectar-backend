@@ -63,10 +63,12 @@ async def envia_email_senha(
         db.commit()
         db.refresh(pessoa)
 
+    url = 'http://boraconectar.com/esqueci-senha/' + pessoa.token_senha
+
     message = MessageSchema(
         subject='Esqueci a senha',
         recipients=[email_para],
-        template_body={'name':pessoa.nome, 'token': pessoa.token_senha},
+        template_body={'name':pessoa.nome, 'token': pessoa.token_senha, 'UrlToken': url},
     )
     
 

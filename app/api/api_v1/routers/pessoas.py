@@ -238,7 +238,7 @@ async def pessoa_delete_admin(
 
     return delete_pessoa(db, pessoa_id)
 
-@r.get('/email/esqueci_a_senha')
+@r.get('/email/esqueci-senha')
 async def send_email_asynchronous(
     background_tasks: BackgroundTasks,
     email_conta: str,
@@ -247,7 +247,7 @@ async def send_email_asynchronous(
 
     await envia_email_senha(background_tasks, db, email_conta)
 
-@r.put('/pessoas/esqueci_a_senha/{token}')
+@r.put('/pessoas/esqueci-senha/{token}')
 async def edit_senha(
     token: str,
     nova_senha: str,
