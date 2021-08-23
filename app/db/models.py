@@ -216,6 +216,7 @@ class Projeto(Base):
     descricao = Column(String)
     mural = Column(String)
     visibilidade = Column(Boolean, default=True)
+    finalizado = Column(Boolean, default=False)
     objetivo = Column(String)
     foto_capa = Column(String)
     habilidades = relationship("Habilidades", secondary=HabilidadesProjeto)
