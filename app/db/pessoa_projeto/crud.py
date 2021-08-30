@@ -338,6 +338,7 @@ async def create_pessoa_projeto(
 
     try:
         projeto = get_projeto(db, pessoa_projeto.projeto_id)
+        edit_finalizado_projeto(db, projeto.id, False)
         if pessoa_projeto.pessoa_id:
             pessoa = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
 
