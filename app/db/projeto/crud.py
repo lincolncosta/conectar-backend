@@ -110,6 +110,7 @@ async def edit_finalizado_projeto(
 ):
     projeto = get_projeto(db, projeto_id)
     projeto.finalizado = finalizado
+    print(projeto)
     db.add(projeto)
     db.commit()
     db.refresh(projeto)
