@@ -83,7 +83,7 @@ async def get_similaridade_projeto(
     '''
 
     '''
-    edit_finalizado_projeto(db, id_projeto, False)
+    await edit_finalizado_projeto(db, id_projeto, False)
     pessoas_vagas = {}
     pessoas = False
     # Com o id do projeto, buscar as vagas disponíveis
@@ -187,7 +187,7 @@ async def get_similaridade_vaga(
 
     # busca a vaga solicitada
     vaga = get_pessoa_projeto(db, vaga_id)
-    edit_finalizado_projeto(db, vaga.projeto_id, False)
+    await edit_finalizado_projeto(db, vaga.projeto_id, False)
 
     if vaga.situacao == "PENDENTE_COLABORADOR" or vaga.situacao == "ACEITO" or vaga.situacao == "FINALIZADO":
         return {}
@@ -339,7 +339,7 @@ async def create_pessoa_projeto(
 
     try:
         projeto = get_projeto(db, pessoa_projeto.projeto_id)
-        edit_finalizado_projeto(db, projeto.id, False)
+        await edit_finalizado_projeto(db, projeto.id, False)
         if pessoa_projeto.pessoa_id:
             pessoa = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
 
@@ -372,7 +372,7 @@ async def create_pessoa_projeto(
     db.refresh(db_pessoa_projeto)
     add_pessoa_ignorada(
         db, db_pessoa_projeto.projeto.pessoa_id, db_pessoa_projeto.id)
-    edit_finalizado_projeto(db, pessoa_projeto.projeto_id, False)
+    await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, False)
 
     return db_pessoa_projeto
     # db_vaga = db_pessoa_projeto.__dict__
@@ -405,13 +405,15 @@ async def edit_pessoa_projeto(
 
     if "situacao" in update_data.keys():
         if update_data["situacao"] == "PENDENTE_COLABORADOR":
+            await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, False)
             notificacao_pendente_colaborador(
                 db, pessoa_logada_id, db_pessoa_projeto)
         elif update_data["situacao"] == "ACEITO" or update_data["situacao"] == "RECUSADO":
+            await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, False)
             notificacao_aceito_recusado(
                 db, pessoa_logada_id, db_pessoa_projeto)
         elif update_data["situacao"] == "FINALIZADO":
-            edit_finalizado_projeto(db, pessoa_projeto.projeto_id, True)
+            await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, True)
             notificacao_finalizado(db, db_pessoa_projeto)
 
     return db_pessoa_projeto
