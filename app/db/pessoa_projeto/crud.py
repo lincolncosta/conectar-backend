@@ -83,7 +83,7 @@ async def get_similaridade_projeto(
     '''
 
     '''
-
+    edit_finalizado_projeto(db, id_projeto, False)
     pessoas_vagas = {}
     pessoas = False
     # Com o id do projeto, buscar as vagas disponíveis
@@ -182,11 +182,12 @@ async def get_similaridade_vaga(
     pessoa_logada: Pessoa,
     vaga_id: int
 ):
-
+    
     pessoas_vagas = {}
 
     # busca a vaga solicitada
     vaga = get_pessoa_projeto(db, vaga_id)
+    edit_finalizado_projeto(db, vaga.projeto_id, False)
 
     if vaga.situacao == "PENDENTE_COLABORADOR" or vaga.situacao == "ACEITO" or vaga.situacao == "FINALIZADO":
         return {}
