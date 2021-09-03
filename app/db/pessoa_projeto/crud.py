@@ -299,7 +299,7 @@ async def atualiza_match_vaga(
     altera a situação para pendente_idealizador
     '''
     vagaEdit = schemas.PessoaProjetoEdit()
-    vagaEdit.situacao = "PENDENTE_IDEALIZADOR"
+    vagaEdit.situacao = "PENDENTE_COLABORADOR"
     vagaEdit.pessoa_id = pessoa.id
 
     await edit_pessoa_projeto(db, vaga.id, vagaEdit, pessoa_logada_id)
