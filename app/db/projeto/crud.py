@@ -103,6 +103,19 @@ async def get_projeto_participando(
 
     return projeto
 
+async def edit_finalizado_projeto(
+    db: Session,
+    projeto_id: int,
+    finalizado: bool
+):
+    projeto = get_projeto(db, projeto_id)
+    projeto.finalizado = finalizado
+
+    db.add(projeto)
+    db.commit()
+    db.refresh(projeto)
+
+
 async def edit_projeto(
     db: Session,
     projeto_id: int,
@@ -110,14 +123,12 @@ async def edit_projeto(
     foto_capa: t.Optional[UploadFile] = None,
 ) -> schemas.Projeto:
 
-    print(projeto)
     db_projeto = get_projeto(db, projeto_id)
     if not db_projeto:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="projeto não encontrado"
         )
     update_data = projeto.dict(exclude_unset=True)
-    print(update_data)
 
     await append_areas(update_data, db)
     await append_habilidades(update_data, db)
@@ -125,7 +136,6 @@ async def edit_projeto(
     for key, value in update_data.items():
         setattr(db_projeto, key, value)
 
-    print(db_projeto.mural)
     db.add(db_projeto)
     db.commit()
     db.refresh(db_projeto)

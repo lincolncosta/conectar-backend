@@ -1,19 +1,18 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
+from fastapi import BackgroundTasks
 from sqlalchemy.orm.session import Session
-from starlette.responses import JSONResponse
-from starlette.requests import Request
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from pydantic import BaseModel, EmailStr
 from typing import List
 import uuid
 import datetime
 from fastapi import HTTPException, status
 
-from db.pessoa.crud import get_pessoa_by_email, edit_pessoa
-
+from db.pessoa.crud import get_pessoa_by_email
+from pathlib import Path
 from db import models
 
 import os
+
 
 class Envs:
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
@@ -23,8 +22,10 @@ class Envs:
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_FROM_NAME = os.getenv('MAIN_FROM_NAME')
 
+
 class EmailSchema(BaseModel):
     email: List[EmailStr]
+
 
 conf = ConnectionConfig(
     MAIL_USERNAME=Envs.MAIL_USERNAME,
@@ -36,12 +37,13 @@ conf = ConnectionConfig(
     MAIL_TLS=True,
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
-    TEMPLATE_FOLDER='templates/'
+    # TEMPLATE_FOLDER='./templates'
 )
+
 
 async def envia_email_senha(
     background_tasks: BackgroundTasks,
-    db: Session, 
+    db: Session,
     email_para: str,
 ):
 
@@ -55,7 +57,7 @@ async def envia_email_senha(
     pessoa = get_pessoa_by_email(db, email_para)
 
     if not pessoa.token_senha or datetime.date.today() > pessoa.expiracao_token + datetime.timedelta(days=1):
-        
+
         pessoa.token_senha = str(uuid.uuid4().hex)
         pessoa.expiracao_token = datetime.date.today() + datetime.timedelta(days=1)
 
@@ -68,9 +70,9 @@ async def envia_email_senha(
     message = MessageSchema(
         subject='Esqueci a senha',
         recipients=[email_para],
-        template_body={'name':pessoa.nome, 'token': pessoa.token_senha, 'UrlToken': url},
+        template_body={'name': pessoa.nome,
+                       'token': pessoa.token_senha, 'UrlToken': url},
     )
-    
 
     fm = FastMail(conf)
     background_tasks.add_task(
