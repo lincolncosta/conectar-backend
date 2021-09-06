@@ -191,9 +191,9 @@ client = TestClient(app)
 @repeat_every(seconds=60*60*24)
 def test_read_main():
     print("Executando verificação diária.")
-    client.post("https://boraconectar.herokuapp.com/api/v1/notificacao/checagem")
-    client.post("https://boraconectar.herokuapp.com/api/v1/pendente_idealizador")
-    client.post("https://boraconectar.herokuapp.com/api/v1/notificacao/checagem/projeto")
+    client.get("https://boraconectar.herokuapp.com/api/v1/notificacao/checagem")
+    client.get("https://boraconectar.herokuapp.com/api/v1/pendente_idealizador")
+    client.get("https://boraconectar.herokuapp.com/api/v1/notificacao/checagem/projeto")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8888)
