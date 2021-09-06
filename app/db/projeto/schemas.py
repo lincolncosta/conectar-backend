@@ -10,7 +10,7 @@ class ProjetoBase(BaseModel):
     nome: str
     descricao: str    
     visibilidade: bool
-    finalizado: bool
+    finalizado: t.Optional[bool] = None
     objetivo: str
     mural: t.Optional[str] = None
     pessoa_id: t.Optional[int] = None
