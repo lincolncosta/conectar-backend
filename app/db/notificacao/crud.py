@@ -374,7 +374,7 @@ def notificacao_seguindo(
         situacao="<strong>" + seguidor.nome + "</strong> está te seguindo.",
         foto=seguidor.foto_perfil,
         lido=False,
-        link='/{}'.format(seguidor.usuario)
+        link='/perfil/{}'.format(seguidor.usuario)
     )
 
     db.add(db_notificacao)
@@ -517,7 +517,7 @@ def notificacao_checagem_projeto(
 
     for vaga in vagas:
         if vaga.projeto_id in projetos_ignorados:
-            break
+            continue
 
         projetos_ignorados.append(vaga.projeto_id)
 
