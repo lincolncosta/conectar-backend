@@ -192,7 +192,7 @@ client = TestClient(app)
 def test_read_main():
     print("Executando verificação diária.")
     client.get("https://boraconectar.herokuapp.com/api/v1/notificacao/checagem")
-    client.get("https://boraconectar.herokuapp.com/api/v1/pendente_idealizador")
+    client.get("https://boraconectar.herokuapp.com/api/v1/notificação/pendente_idealizador")
     client.get("https://boraconectar.herokuapp.com/api/v1/notificacao/checagem/projeto")
 
 if __name__ == "__main__":
