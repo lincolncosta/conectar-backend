@@ -517,7 +517,7 @@ def notificacao_checagem_projeto(
 
     for vaga in vagas:
         if vaga.projeto_id in projetos_ignorados:
-            continue
+            break
 
         projetos_ignorados.append(vaga.projeto_id)
 
