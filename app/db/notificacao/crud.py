@@ -374,7 +374,7 @@ def notificacao_seguindo(
         situacao="<strong>" + seguidor.nome + "</strong> está te seguindo.",
         foto=seguidor.foto_perfil,
         lido=False,
-        link='/{}'.format(seguidor.usuario)
+        link='/perfil/{}'.format(seguidor.usuario)
     )
 
     db.add(db_notificacao)
