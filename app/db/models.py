@@ -240,7 +240,7 @@ class PessoaProjeto(Base):
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey(
-        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"),)
+        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
     papel_id = Column(Integer, ForeignKey("tb_papel.id"))
     tipo_acordo_id = Column(Integer, ForeignKey("tb_tipo_acordo.id"))
     papel = relationship("Papel")
@@ -265,9 +265,9 @@ class Notificacao(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     remetente_id = Column(Integer, ForeignKey(
-        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"),)
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"))
     destinatario_id = Column(Integer, ForeignKey(
-        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"),)
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"))
     projeto_id = Column(Integer, ForeignKey(
         "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=True)
     pessoa_projeto_id = Column(Integer, ForeignKey(
@@ -520,7 +520,7 @@ class PessoaIgnoradaVaga(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey(
-        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"),)
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"))
     pessoa_projeto_id = Column(Integer, ForeignKey(
         "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
 
