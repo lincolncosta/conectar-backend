@@ -225,7 +225,8 @@ class Projeto(Base):
     data_atualizacao = Column(DateTime(timezone=True), onupdate=func.now())
     projeto_pessoa = relationship("PessoaProjeto", back_populates="projeto")
 
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=True)
+    pessoa_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=True)
     dono = relationship("Pessoa", back_populates="projeto")
     reacoes = association_proxy("projeto_reacoes", "pessoa")
     # publico_alvo = Column(String, nullable=True)
@@ -238,7 +239,8 @@ class PessoaProjeto(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    projeto_id = Column(Integer, ForeignKey("tb_projeto.id"))
+    projeto_id = Column(Integer, ForeignKey(
+        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"),)
     papel_id = Column(Integer, ForeignKey("tb_papel.id"))
     tipo_acordo_id = Column(Integer, ForeignKey("tb_tipo_acordo.id"))
     papel = relationship("Papel")
@@ -262,8 +264,10 @@ class Notificacao(Base):
     __tablename__ = "tb_notificacao"
 
     id = Column(Integer, primary_key=True, index=True)
-    remetente_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    destinatario_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    remetente_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"),)
+    destinatario_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"),)
     projeto_id = Column(Integer, ForeignKey(
         "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=True)
     pessoa_projeto_id = Column(Integer, ForeignKey(
@@ -515,7 +519,8 @@ class PessoaIgnoradaVaga(Base):
     __tablename__ = "tb_pessoa_ignorada_vaga"
 
     id = Column(Integer, primary_key=True, index=True)
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    pessoa_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"),)
     pessoa_projeto_id = Column(Integer, ForeignKey(
         "tb_pessoa_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
 
