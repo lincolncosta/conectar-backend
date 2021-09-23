@@ -240,7 +240,7 @@ class PessoaProjeto(Base):
     id = Column(Integer, primary_key=True, index=True)
     pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"))
     projeto_id = Column(Integer, ForeignKey(
-        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"))
+        "tb_projeto.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     papel_id = Column(Integer, ForeignKey("tb_papel.id"))
     tipo_acordo_id = Column(Integer, ForeignKey("tb_tipo_acordo.id"))
     papel = relationship("Papel")
