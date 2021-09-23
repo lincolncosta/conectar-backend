@@ -406,15 +406,15 @@ async def edit_pessoa_projeto(
 
     if "situacao" in update_data.keys():
         if update_data["situacao"] == "PENDENTE_COLABORADOR":
-            await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, False)
+            await edit_finalizado_projeto(db, db_pessoa_projeto.projeto_id, False)
             notificacao_pendente_colaborador(
                 db, pessoa_logada_id, db_pessoa_projeto)
         elif update_data["situacao"] == "ACEITO" or update_data["situacao"] == "RECUSADO":
-            await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, False)
+            await edit_finalizado_projeto(db, db_pessoa_projeto.projeto_id, False)
             notificacao_aceito_recusado(
                 db, pessoa_logada_id, db_pessoa_projeto)
         elif update_data["situacao"] == "FINALIZADO":
-            await edit_finalizado_projeto(db, pessoa_projeto.projeto_id, True)
+            await edit_finalizado_projeto(db, db_pessoa_projeto.projeto_id, True)
             notificacao_finalizado(db, db_pessoa_projeto)
 
     return db_pessoa_projeto
