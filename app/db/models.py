@@ -314,7 +314,8 @@ class ExperienciaProf(Base):
     organizacao = Column(String)
     data_inicio = Column(Date, nullable=False)
     data_fim = Column(Date)
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
+    pessoa_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     cargo = Column(String)
     vinculo = Column(String)
     areas = relationship("Area", secondary=ExperienciaProfArea)
@@ -354,7 +355,8 @@ class ExperienciaAcad(Base):
     instituicao = Column(String)
     data_inicio = Column(Date, nullable=False)
     data_fim = Column(Date)
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
+    pessoa_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     escolaridade = Column(String)
     curso = Column(String)
     situacao = Column(String)
@@ -396,7 +398,8 @@ class ExperienciaProj(Base):
     data_fim = Column(Date)
     cargo = Column(String)
     situacao = Column(String)
-    pessoa_id = Column(Integer, ForeignKey("tb_pessoa.id"), nullable=False)
+    pessoa_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     areas = relationship("Area", secondary=ExperienciaProjArea)
 
 
@@ -576,6 +579,8 @@ class Seguir(Base):
     __tablename__ = "tb_seguir"
 
     id = Column(Integer, primary_key=True, index=True)
-    seguido_id = Column(Integer, ForeignKey("tb_pessoa.id"))
-    seguidor_id = Column(Integer, ForeignKey("tb_pessoa.id"))
+    seguido_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"))
+    seguidor_id = Column(Integer, ForeignKey(
+        "tb_pessoa.id", onupdate="CASCADE", ondelete="CASCADE"))
     data_criacao = Column(DateTime(timezone=True), server_default=func.now())
