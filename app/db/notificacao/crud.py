@@ -435,7 +435,7 @@ def notificacao_checagem(
                 db.refresh(db_notificacao)
 
 
-        elif(diff.days == 6):
+        elif(diff.days >= 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
             situacao = "O prazo de resposta de <strong>" + \
                 remetente.nome + "</strong> para o projeto " + projeto.nome + \
