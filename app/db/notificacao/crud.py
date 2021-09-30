@@ -400,7 +400,7 @@ def notificacao_checagem(
         .filter(models.PessoaProjeto.situacao == "PENDENTE_COLABORADOR")\
         .all()
 
-    notificacao = []
+    listaRetirados = []
 
     for pessoa_projeto in pessoa_projetos:
         projeto = get_projeto(db, pessoa_projeto.projeto_id)
@@ -416,26 +416,24 @@ def notificacao_checagem(
                 remetente.nome + "</strong> para o projeto <strong>" + projeto.nome + "</strong>.",
             destinatario_id = pessoa_projeto.pessoa_id
 
-            if existe_notificacao(db, situacao, destinatario_id):
-                continue
+            if not existe_notificacao(db, situacao, destinatario_id):
 
-            db_notificacao = models.Notificacao(
-                remetente_id=remetente.id,
-                destinatario_id=destinatario_id,
-                projeto_id=pessoa_projeto.projeto_id,
-                pessoa_projeto_id=pessoa_projeto.id,
-                situacao=situacao,
-                foto=projeto.foto_capa,
-                lido=False,
-                link='/projeto/{}/vagas/{}'.format(projeto.id,
-                                                   pessoa_projeto.id)
-            )
+                db_notificacao = models.Notificacao(
+                    remetente_id=remetente.id,
+                    destinatario_id=destinatario_id,
+                    projeto_id=pessoa_projeto.projeto_id,
+                    pessoa_projeto_id=pessoa_projeto.id,
+                    situacao=situacao,
+                    foto=projeto.foto_capa,
+                    lido=False,
+                    link='/projeto/{}/vagas/{}'.format(projeto.id,
+                                                    pessoa_projeto.id)
+                )
 
-            db.add(db_notificacao)
-            db.commit()
-            db.refresh(db_notificacao)
+                db.add(db_notificacao)
+                db.commit()
+                db.refresh(db_notificacao)
 
-            notificacao.append(db_notificacao)
 
         elif(diff.days == 6):
             remetente = get_pessoa_by_id(db, pessoa_projeto.pessoa_id)
@@ -444,28 +442,27 @@ def notificacao_checagem(
                 " expirou! Realize uma nova busca e complete seu time!"
             destinatario_id = projeto.pessoa_id
 
-            if existe_notificacao(db, situacao, destinatario_id):
-                continue
+            if not existe_notificacao(db, situacao, destinatario_id):
+                
+                listaRetirados.append(pessoa_projeto.id)
 
-            db_notificacao = models.Notificacao(
-                remetente_id=remetente.id,
-                destinatario_id=destinatario_id,
-                projeto_id=pessoa_projeto.projeto_id,
-                pessoa_projeto_id=pessoa_projeto.id,
-                situacao=situacao,
-                foto=projeto.foto_capa,
-                lido=False,
-                link='/projeto/{}/vagas/{}'.format(projeto.id,
-                                                   pessoa_projeto.id)
-            )
+                db_notificacao = models.Notificacao(
+                    remetente_id=remetente.id,
+                    destinatario_id=destinatario_id,
+                    projeto_id=pessoa_projeto.projeto_id,
+                    pessoa_projeto_id=pessoa_projeto.id,
+                    situacao=situacao,
+                    foto=projeto.foto_capa,
+                    lido=False,
+                    link='/projeto/{}/vagas/{}'.format(projeto.id,
+                                                    pessoa_projeto.id)
+                )
 
-            db.add(db_notificacao)
-            db.commit()
-            db.refresh(db_notificacao)
+                db.add(db_notificacao)
+                db.commit()
+                db.refresh(db_notificacao)
 
-            notificacao.append(db_notificacao)
-
-    return notificacao
+    return listaRetirados
 
 
 def notificacao_checagem_projeto(
@@ -499,14 +496,13 @@ def notificacao_checagem_projeto(
             link='/projeto/{}'.format(projeto.id)
         )
 
-        if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
-            continue
+        if not existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+            
+            db.add(db_notificacao)
+            db.commit()
+            db.refresh(db_notificacao)
 
-        db.add(db_notificacao)
-        db.commit()
-        db.refresh(db_notificacao)
-
-        notificacao.append(db_notificacao)
+            notificacao.append(db_notificacao)
 
     vagas = db.query(models.PessoaProjeto)\
         .filter(models.PessoaProjeto.areas == None, models.PessoaProjeto.habilidades == None)\
@@ -535,14 +531,13 @@ def notificacao_checagem_projeto(
             link='/projeto/{}'.format(projeto.id)
         )
 
-        if existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
-            continue
+        if not existe_notificacao(db, db_notificacao.situacao, db_notificacao.destinatario_id):
+            
+            db.add(db_notificacao)
+            db.commit()
+            db.refresh(db_notificacao)
 
-        db.add(db_notificacao)
-        db.commit()
-        db.refresh(db_notificacao)
-
-        notificacao.append(db_notificacao)
+            notificacao.append(db_notificacao)
 
     return notificacao
 

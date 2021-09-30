@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Request, Depends
-from app.db.pessoa_projeto.crud import get_pessoa_projeto
+from app.db.pessoa_projeto.crud import edit_pessoa_projeto, get_pessoa_projeto
 import typing as t
 
 from app.db.session import get_db
+from app.db.pessoa_projeto import schemas
 from app.db.notificacao.crud import (
     notificacao_pendente_idealizador,
     notificacao_pendente_colaborador,
@@ -100,8 +101,16 @@ async def checagem_notificacao(
     Create notificacao
     """
 
-    notificacao_checagem(db)
+    lista = notificacao_checagem(db)
 
+    vagaEdit = schemas.PessoaProjetoEdit()
+    vagaEdit.pessoa_id = None
+
+    for id in lista:
+        await edit_pessoa_projeto(db, id, vagaEdit, 0)
+
+    return lista
+    
 
 @r.get(
     "/notificacao/checagem/projeto",
